@@ -1,1 +1,213 @@
-I Miss You
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Web Interface with Fireworks and Sound</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4d4d;
+            transform: rotate(-45deg);
+            animation: fall 3s linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 10px;
+            top: 0;
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: var(--size);
+            height: var(--size);
+            background: var(--color);
+            border-radius: 50%;
+            animation: firework 1.2s ease-out forwards;
+            box-shadow: 0 0 8px var(--color);
+        }
+
+        .love-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            background: #ff4d4d;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 3;
+        }
+
+        .love-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes firework {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--firework-x), var(--firework-y)) scale(0.3);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💖 Tình Yêu Ngọt Ngào 💖</h1>
+        <button class="love-button" onclick="showMessage()">Gửi Yêu Thương</button>
+    </div>
+    <audio id="fireworkSound" src="https://www.soundjay.com/sounds/firework-01.mp3"></audio>
+
+    <script>
+        // Khởi tạo âm thanh
+        const fireworkSound = document.getElementById('fireworkSound');
+        fireworkSound.volume = 0.5; // Giảm âm lượng để không quá to
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.animationDelay = Math.random() + 's';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1500);
+        }
+
+        function createFirework() {
+            const button = document.querySelector('.love-button');
+            const rect = button.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const colors = ['#ff1a1a', '#ff69b4', '#dda0dd', '#ffcccb'];
+            const sizes = [5, 8, 12];
+
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 250 + 100;
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.setProperty('--size', size + 'px');
+                particle.style.setProperty('--color', color);
+                particle.style.setProperty('--firework-x', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--firework-y', Math.sin(angle) * distance + 'px');
+                particle.style.animationDuration = Math.random() * 0.6 + 0.8 + 's';
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1200);
+            }
+        }
+
+        function showMessage() {
+            createFirework();
+            fireworkSound.currentTime = 0; // Đặt lại thời gian để phát lại từ đầu
+            fireworkSound.play().catch(error => {
+                console.log('Không thể phát âm thanh:', error);
+            });
+            alert('Anh yêu em nhiều lắm! 💕');
+        }
+
+        setInterval(createHeart, 300);
+        setInterval(createSparkle, 500);
+    </script>
+</body>
+</html>
