@@ -1,1 +1,106 @@
-Ờ mày hay rùi đấy!
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Slogan Ngầu Chất</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        canvas { display: block; }
+        #slogan { 
+            position: absolute; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            color: #00ffcc; 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 2em; 
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff; 
+            text-align: center;
+            pointer-events: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="slogan"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Cài đặt Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Tạo nền không gian vũ trụ
+        const starGeometry = new THREE.BufferGeometry();
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+        const starVertices = [];
+        for (let i = 0; i < 10000; i++) {
+            const x = (Math.random() - 0.5) * 2000;
+            const y = (Math.random() - 0.5) * 2000;
+            const z = (Math.random() - 0.5) * 2000;
+            starVertices.push(x, y, z);
+        }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // Tạo vật thể 3D (hình cầu phát sáng)
+        const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const sphereMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x00ffcc, 
+            emissive: 0x00ffcc, 
+            emissiveIntensity: 0.5, 
+            metalness: 0.8, 
+            roughness: 0.2 
+        });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        scene.add(sphere);
+
+        // Thêm ánh sáng
+        const pointLight = new THREE.PointLight(0xff00ff, 1, 100);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        // Danh sách slogan
+        const slogans = [
+            "Kể cả khi đang ngủ Tao vẫn Đẳng Cấp hơn mày",
+            "Chúng sinh bình đẳng, bố mày thượng đẳng",
+            "Tao không phải số 1, vì tao là duy nhất",
+            "Đỉnh cao là tao, còn mày chỉ là cái bóng"
+        ];
+        let currentSlogan = 0;
+        const sloganElement = document.getElementById('slogan');
+        sloganElement.textContent = slogans[currentSlogan];
+
+        // Hiệu ứng chuyển slogan
+        setInterval(() => {
+            currentSlogan = (currentSlogan + 1) % slogans.length;
+            sloganElement.textContent = slogans[currentSlogan];
+        }, 5000);
+
+        // Đặt vị trí camera
+        camera.position.z = 5;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            sphere.rotation.y += 0.01;
+            stars.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Xử lý thay đổi kích thước cửa sổ
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
