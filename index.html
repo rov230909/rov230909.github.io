@@ -3,159 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rov Thượng Đẳng!</title>
+    <title>Mỹ Nghi - Boy Love</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; }
-        canvas { display: block; }
-        #slogan { 
-            position: absolute; 
-            top: 20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            color: #00ffcc; 
-            font-family: 'Orbitron', sans-serif; 
-            font-size: 2em; 
-            text-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #ff6f91;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            pointer-events: none;
+            color: white;
+            background: url('https://images.unsplash.com/photo-1519750783826-e2420f4d687f') no-repeat center center/cover;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content {
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: #ff6f91;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #ff4d73;
+        }
+
+        .content-section {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .content-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .content-section p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #555;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 300px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin: 15px;
+        }
+
+        .card p {
+            padding: 0 15px 20px;
+            color: #666;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="slogan"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <nav class="navbar">
+        <ul>
+            <li><a href="#home">Trang Chủ</a></li>
+            <li><a href="#stories">Câu Chuyện</a></li>
+            <li><a href="#about">Giới Thiệu</a></li>
+            <li><a href="#contact">Liên Hệ</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Mỹ Nghi</h1>
+            <p>Chào mừng bạn đến với thế giới của những câu chuyện tình lãng mạn</p>
+            <a href="#stories" class="btn">Khám Phá Ngay</a>
+        </div>
+    </section>
+
+    <section class="content-section" id="stories">
+        <h2>Câu Chuyện Lãng Mạn</h2>
+        <p>Khám phá những câu chuyện tình yêu đầy cảm xúc, nơi những trái tim hòa nhịp.</p>
+        <div class="card-container">
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Story 1">
+                <h3>Câu Chuyện 1</h3>
+                <p>Một hành trình tình yêu giữa hai chàng trai dưới ánh hoàng hôn.</p>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1518495973543-7f9b2b7929a9" alt="Story 2">
+                <h3>Câu Chuyện 2</h3>
+                <p>Tình yêu nảy nở trong những ngày mưa, nơi mọi rào cản tan biến.</p>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1495567720989-cebdb147981e" alt="Story 3">
+                <h3>Câu Chuyện 3</h3>
+                <p>Một lời hứa dưới bầu trời đầy sao, mãi mãi không phai.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="about">
+        <h2>Giới Thiệu</h2>
+        <p>Mỹ Nghi là nơi lưu giữ những câu chuyện tình yêu đẹp đẽ, nơi bạn có thể tìm thấy sự đồng cảm và cảm hứng từ những mối tình chân thành.</p>
+    </section>
+
+    <section class="content-section" id="contact">
+        <h2>Liên Hệ</h2>
+        <p>Hãy liên hệ với chúng tôi để chia sẻ câu chuyện của bạn hoặc nhận thông tin mới nhất!</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Mỹ Nghi. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
-        // Cài đặt Three.js
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // Thêm OrbitControls để tương tác
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.rotateSpeed = 0.5;
-        controls.enableZoom = true;
-        controls.enablePan = false;
-
-        // Tạo nền không gian vũ trụ
-        const starGeometry = new THREE.BufferGeometry();
-        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-        const starVertices = [];
-        for (let i = 0; i < 10000; i++) {
-            const x = (Math.random() - 0.5) * 2000;
-            const y = (Math.random() - 0.5) * 2000;
-            const z = (Math.random() - 0.5) * 2000;
-            starVertices.push(x, y, z);
-        }
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
-
-        // Tạo Trái Đất
-        const earthGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const textureLoader = new THREE.TextureLoader();
-        const earthTexture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-        const earthMaterial = new THREE.MeshStandardMaterial({ 
-            map: earthTexture,
-            metalness: 0.2,
-            roughness: 0.8
+        // Animation cho hero section
+        gsap.from(".hero-content", {
+            opacity: 0,
+            y: 100,
+            duration: 1.5,
+            ease: "power3.out"
         });
-        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        scene.add(earth);
 
-        // Tạo Mặt Trăng
-        const moonGeometry = new THREE.SphereGeometry(0.27, 32, 32);
-        const moonTexture = textureLoader.load('https://threejs.org/examples/textures/planets/moon_1024.jpg');
-        const moonMaterial = new THREE.MeshStandardMaterial({
-            map: moonTexture,
-            metalness: 0.2,
-            roughness: 0.8
+        // Animation cho navbar
+        gsap.from(".navbar", {
+            y: -50,
+            opacity: 0,
+            duration: 1,
+            ease: "power2.out"
         });
-        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-        moon.position.set(2, 0, 0);
-        scene.add(moon);
 
-        // Tạo Mặt Trời
-        const sunGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const sunMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffff00,
-            emissive: 0xffff00,
-            emissiveIntensity: 1
+        // Animation cho các card
+        gsap.from(".card", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".card-container",
+                start: "top 80%"
+            }
         });
-        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.position.set(10, 0, 0);
-        scene.add(sun);
 
-        // Thêm ánh sáng từ Mặt Trời
-        const sunLight = new THREE.PointLight(0xffffff, 1.5, 100);
-        sunLight.position.set(10, 0, 0);
-        scene.add(sunLight);
-        const ambientLight = new THREE.AmbientLight(0x202020);
-        scene.add(ambientLight);
-
-        // Danh sách slogan mở rộng
-        const slogans = [
-            "Kể cả khi đang ngủ Tao vẫn Đẳng Cấp hơn mày",
-            "Chúng sinh bình đẳng, bố mày thượng đẳng",
-            "Tao không phải số 1, vì tao là duy nhất",
-            "Đỉnh cao là tao, còn mày chỉ là cái bóng",
-            "Mày cố cả đời, tao chill vẫn vượt",
-            "Trái Đất xoay, nhưng tao là trung tâm",
-            "Mày là vệ tinh, tao là cả ngân hà",
-            "Không cần cố, tao sinh ra đã chất",
-            "Mày chạy theo trend, tao tạo ra luật chơi",
-            "Bầu trời có giới hạn, tao thì không",
-            "Mày thấy tao ngầu, nhưng đó mới là khởi động",
-            "Tao không cần ánh sáng, vì tao tự phát quang"
-        ];
-        let currentSlogan = 0;
-        const sloganElement = document.getElementById('slogan');
-        sloganElement.textContent = slogans[currentSlogan];
-
-        // Hiệu ứng chuyển slogan
-        setInterval(() => {
-            currentSlogan = (currentSlogan + 1) % slogans.length;
-            sloganElement.textContent = slogans[currentSlogan];
-        }, 5000);
-
-        // Đặt vị trí camera
-        camera.position.z = 4;
-
-        // Animation loop
-        let time = 0;
-        function animate() {
-            requestAnimationFrame(animate);
-            time += 0.01;
-
-            // Trái Đất tự xoay
-            earth.rotation.y += 0.005;
-
-            // Mặt Trăng xoay quanh Trái Đất
-            moon.position.x = 2 * Math.cos(time * 0.1);
-            moon.position.z = 2 * Math.sin(time * 0.1);
-            moon.rotation.y += 0.01;
-
-            // Mặt Trời đứng yên, ánh sáng đồng bộ
-            sunLight.position.copy(sun.position);
-
-            // Nền sao xoay nhẹ
-            stars.rotation.y += 0.0005;
-
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // Xử lý thay đổi kích thước cửa sổ
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        // Animation cho các section
+        gsap.from(".content-section", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.3,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".content-section",
+                start: "top 80%"
+            }
         });
     </script>
 </body>
