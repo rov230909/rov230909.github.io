@@ -25,6 +25,7 @@
 <body>
     <div id="slogan"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script>
         // Cài đặt Three.js
         const scene = new THREE.Scene();
@@ -32,6 +33,14 @@
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+
+        // Thêm OrbitControls để tương tác
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 0.5;
+        controls.enableZoom = true;
+        controls.enablePan = false;
 
         // Tạo nền không gian vũ trụ
         const starGeometry = new THREE.BufferGeometry();
@@ -47,31 +56,62 @@
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
-        // Tạo vật thể 3D (hình cầu phát sáng)
-        const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x00ffcc, 
-            emissive: 0x00ffcc, 
-            emissiveIntensity: 0.5, 
-            metalness: 0.8, 
-            roughness: 0.2 
+        // Tạo Trái Đất
+        const earthGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const textureLoader = new THREE.TextureLoader();
+        const earthTexture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+        const earthMaterial = new THREE.MeshStandardMaterial({ 
+            map: earthTexture,
+            metalness: 0.2,
+            roughness: 0.8
         });
-        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        scene.add(sphere);
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        scene.add(earth);
 
-        // Thêm ánh sáng
-        const pointLight = new THREE.PointLight(0xff00ff, 1, 100);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
-        const ambientLight = new THREE.AmbientLight(0x404040);
+        // Tạo Mặt Trăng
+        const moonGeometry = new THREE.SphereGeometry(0.27, 32, 32);
+        const moonTexture = textureLoader.load('https://threejs.org/examples/textures/planets/moon_1024.jpg');
+        const moonMaterial = new THREE.MeshStandardMaterial({
+            map: moonTexture,
+            metalness: 0.2,
+            roughness: 0.8
+        });
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        moon.position.set(2, 0, 0);
+        scene.add(moon);
+
+        // Tạo Mặt Trời
+        const sunGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const sunMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            emissive: 0xffff00,
+            emissiveIntensity: 1
+        });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sun.position.set(10, 0, 0);
+        scene.add(sun);
+
+        // Thêm ánh sáng từ Mặt Trời
+        const sunLight = new THREE.PointLight(0xffffff, 1.5, 100);
+        sunLight.position.set(10, 0, 0);
+        scene.add(sunLight);
+        const ambientLight = new THREE.AmbientLight(0x202020);
         scene.add(ambientLight);
 
-        // Danh sách slogan
+        // Danh sách slogan mở rộng
         const slogans = [
             "Kể cả khi đang ngủ Tao vẫn Đẳng Cấp hơn mày",
             "Chúng sinh bình đẳng, bố mày thượng đẳng",
             "Tao không phải số 1, vì tao là duy nhất",
-            "Đỉnh cao là tao, còn mày chỉ là cái bóng"
+            "Đỉnh cao là tao, còn mày chỉ là cái bóng",
+            "Mày cố cả đời, tao chill vẫn vượt",
+            "Trái Đất xoay, nhưng tao là trung tâm",
+            "Mày là vệ tinh, tao là cả ngân hà",
+            "Không cần cố, tao sinh ra đã chất",
+            "Mày chạy theo trend, tao tạo ra luật chơi",
+            "Bầu trời có giới hạn, tao thì không",
+            "Mày thấy tao ngầu, nhưng đó mới là khởi động",
+            "Tao không cần ánh sáng, vì tao tự phát quang"
         ];
         let currentSlogan = 0;
         const sloganElement = document.getElementById('slogan');
@@ -84,13 +124,29 @@
         }, 5000);
 
         // Đặt vị trí camera
-        camera.position.z = 5;
+        camera.position.z = 4;
 
         // Animation loop
+        let time = 0;
         function animate() {
             requestAnimationFrame(animate);
-            sphere.rotation.y += 0.01;
+            time += 0.01;
+
+            // Trái Đất tự xoay
+            earth.rotation.y += 0.005;
+
+            // Mặt Trăng xoay quanh Trái Đất
+            moon.position.x = 2 * Math.cos(time * 0.1);
+            moon.position.z = 2 * Math.sin(time * 0.1);
+            moon.rotation.y += 0.01;
+
+            // Mặt Trời đứng yên, ánh sáng đồng bộ
+            sunLight.position.copy(sun.position);
+
+            // Nền sao xoay nhẹ
             stars.rotation.y += 0.0005;
+
+            controls.update();
             renderer.render(scene, camera);
         }
         animate();
