@@ -94,14 +94,7 @@
         
     </div>
     <div class="error" id="error">Lỗi: Không thể tải tài nguyên!</div>
-    <div class="controls">
-        <input type="text" id="nameInput" placeholder="Nhập tên..." value="I am Rov!">
-        <input type="number" id="sizeInput" placeholder="Kích thước (0.5-2)" value="1" step="0.1" min="0.5" max="2">
-        <input type="number" id="speedInput" placeholder="Tốc độ xoay" value="0.01" step="0.005" min="0" max="0.05">
-        <input type="color" id="colorInput" value="#00ffff" title="Chọn màu phát sáng">
-        <button onclick="updateName()">Cập nhật tên</button>
-        <button onclick="toggleBloom()">Bật/Tắt Bloom</button>
-    </div>
+ 
 
     <script>
         // Kiểm tra dependencies
@@ -204,7 +197,7 @@
             textMesh.userData = { scale: 1, targetScale: 1, shake: 0, pulse: 0 };
             scene.add(textMesh);
         }
-        createTextMesh('Rov', textSize);
+        createTextMesh('I am Rov!', textSize);
 
         // Tạo nền sao
         const starCount = 100;
