@@ -2,221 +2,230 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hệ Thống Xem Điểm - Lớp 11</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --card-w: 19em;
+            --card-h: 25em;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{
+            height:100%;
+            overflow-x:hidden;
+            -webkit-tap-highlight-color:transparent;
+        }
+        body{
+            font-family:'Segoe UI',sans-serif;
+            background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+            padding:15px;
+            display:flex;
+            flex-direction:column;
+            color:#fff;
+        }
+        .container{max-width:1400px;margin:auto;width:100%;flex:1;display:flex;flex-direction:column}
+
+        /* HEADER */
+        .header{text-align:center;margin:20px 0 30px}
+        .header h1{font-size:2.6em;margin-bottom:8px;text-shadow:0 0 20px #9b40fc}
+        .header p{font-size:1.1em;opacity:0.9}
+
+        /* GRID – MOBILE CŨNG TO ĐẸP */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));
+            gap:2em;
+            padding:10px 5px;
+            justify-content:center;
+            flex:1;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* CARD – GIỮ NGUYÊN KÍCH THƯỚC TRÊN MOBILE */
+        .card{
+            width:var(--card-w);
+            height:var(--card-h);
+            margin:0 auto;
+            position:relative;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            background:#171717;
+            color:white;
+            font-family:Montserrat,sans-serif;
+            font-weight:bold;
+            padding:1em 2em 1em 1em;
+            border-radius:20px;
+            overflow:hidden;
+            cursor:pointer;
+            transition:transform .4s ease;
+            box-shadow:0 10px 30px rgba(0,0,0,.5);
+            user-select:none;
+        }
+        .card:hover{transform:translateY(-12px)}
+        .card img{
+            width:12em;
+            animation:move 10s ease-in-out infinite;
+            z-index:5;
+            pointer-events:none;
         }
 
-        .container {
-            max-width: 600px;
-            width: 100%;
+        /* TẤT CẢ HIỆU ỨNG VŨ TRỤ */
+        .card::before{
+            content:"";
+            position:absolute;
+            width:100%;height:100%;
+            inset:-3px;
+            border-radius:10px;
+            background:radial-gradient(#858585,transparent,transparent);
+            transform:translate(-5px,250px);
+            transition:.4s ease-in-out;
+            z-index:-1;
+        }
+        .card:hover::before{
+            width:150%;height:100%;
+            margin-left:-4.25em;
+        }
+        .card::after{
+            content:"";
+            position:absolute;
+            inset:2px;
+            border-radius:20px;
+            background:rgba(23,23,23,.7);
+            z-index:-1;
         }
 
-        .card {
-            background: white;
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: fadeInUp 0.8s ease;
+        .heading{
+            z-index:2;
+            font-size:1.35em;
+            text-align:center;
+            text-shadow:0 2px 10px #000;
+            transition:.4s;
+        }
+        .card:hover .heading{letter-spacing:.025em}
+        .heading::before{
+            content:"";
+            position:absolute;top:0;left:0;
+            width:2px;height:2px;
+            border-radius:50%;
+            box-shadow:
+                220px 118px #fff,280px 176px #fff,40px 50px #fff,
+                60px 180px #fff,120px 130px #fff,180px 176px #fff,
+                220px 290px #fff,520px 250px #fff,400px 220px #fff,
+                50px 350px #fff,10px 230px #fff;
+            animation:1s glowing-stars linear alternate infinite;
+            z-index:-1;
+        }
+        .heading::after{
+            content:"";
+            position:absolute;
+            top:-8.5%;left:-8.5%;
+            width:7.5em;height:7.5em;
+            border-radius:50%;
+            background:#f9f9fb;
+            box-shadow:0 0 100px rgba(193,119,241,.8),0 0 100px rgba(135,42,211,.8),inset #9b40fc 0 0 40px -12px;
+            transition:.4s;
+            z-index:-1;
+        }
+        .card:hover .heading::after{
+            box-shadow:0 0 200px rgba(193,119,241,1),0 0 200px rgba(135,42,211,1),inset #9b40fc 0 0 40px -12px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
+        .icons{
+            display:flex;
+            column-gap:1em;
+            z-index:1;
+        }
+        .icons svg{width:20px;height:20px;stroke:#808080;transition:.4s}
+        .instagram:hover svg{stroke:#cc39a4;transform:scale(1.4)}
+        .x:hover svg{stroke:#000;transform:scale(1.25)}
+        .discord:hover svg{stroke:#8c9eff;transform:scale(1.25)}
+
+        .icons::before,.icons::after{
+            content:"";
+            position:absolute;
+            width:2px;height:2px;
+            border-radius:50%;
+            animation:1s glowing-stars linear alternate infinite;
+            z-index:-1;
+        }
+        .icons::before{
+            box-shadow:
+                140px 20px #fff,425px 20px #fff,70px 120px #fff,
+                20px 130px #fff,110px 80px #fff,280px 80px #fff,
+                250px 350px #fff,280px 230px #fff,220px 190px #fff,
+                450px 100px #fff,380px 80px #fff,520px 50px #fff;
+            animation-delay:.4s;
+        }
+        .icons::after{
+            box-shadow:
+                490px 330px #fff,420px 300px #fff,320px 280px #fff,
+                380px 350px #fff,546px 170px #fff,420px 180px #fff,
+                370px 150px #fff,200px 250px #fff,80px 20px #fff,
+                190px 50px #fff,270px 20px #fff,120px 230px #fff,
+                350px -1px #fff,150px 369px #fff;
+            animation-delay:.8s;
         }
 
-        .header h1 {
-            font-size: 2em;
-            color: #667eea;
-            margin-bottom: 10px;
+        /* INFO + STATS */
+        .info-box{
+            background:rgba(255,255,255,.1);
+            backdrop-filter:blur(10px);
+            padding:16px;
+            border-radius:15px;
+            margin:20px auto;
+            max-width:500px;
+            border-left:4px solid #9b40fc;
+            font-size:.95em;
+            text-align:center;
+        }
+        .stats{
+            display:flex;
+            justify-content:center;
+            gap:3em;
+            margin:20px 0;
+            flex-wrap:wrap;
+        }
+        .stat-number{font-size:2.5em;font-weight:bold;color:#9b40fc}
+
+        /* ANIMATIONS */
+        @keyframes move{
+            0%,100%{transform:translate(0,0)}
+            25%{transform:translate(-1em,-1em) rotate(-10deg)}
+            50%{transform:translate(-1em,1em)}
+            75%{transform:translate(1em,-1.25em) rotate(10deg)}
+        }
+        @keyframes glowing-stars{
+            0%,100%{opacity:0}
+            50%{opacity:1}
         }
 
-        .header p {
-            color: #666;
-            font-size: 1em;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        select {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.1em;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            outline: none;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-            padding-right: 45px;
-        }
-
-        select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        select:hover {
-            border-color: #667eea;
-        }
-
-        .btn-view {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2em;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-view:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-view:active {
-            transform: translateY(0);
-        }
-
-        .btn-view:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #f0f0f0;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #764ba2;
-            display: block;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-
-        .info-box {
-            background: #f8f9ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border-left: 4px solid #667eea;
-        }
-
-        .info-box p {
-            color: #555;
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 30px 20px;
-            }
-            
-            .header h1 {
-                font-size: 1.5em;
-            }
-
-            select, .btn-view {
-                font-size: 1em;
-            }
+        /* MOBILE FIX – ép card to đẹp */
+        @media (max-width: 480px) {
+            :root{--card-w:18em;--card-h:24em}
+            .header h1{font-size:2.2em}
+            .grid{gap:1.5em;padding:5px}
+            .card{box-shadow:0 8px 25px rgba(0,0,0,.6)}
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <div class="header">
-                <h1>🎓 Hệ Thống Xem Điểm</h1>
-                <p>Lớp 11 - Năm Học 2025 - Học Kỳ 1</p>
-            </div>
+        <div class="header">
+            <h1>🌌 Hệ Thống Xem Điểm</h1>
+            <p>Lớp 11 - Năm Học 2025 - Học Kỳ 1</p>
+        </div>
 
-            <div class="form-group">
-                <label for="studentSelect">Chọn Học Sinh:</label>
-                <select id="studentSelect">
-                    <option value="">-- Chọn tên học sinh --</option>
-                </select>
-            </div>
+        <div class="grid" id="studentGrid"></div>
 
-            <button class="btn-view" id="btnView" disabled>
-                Xem Điểm
-            </button>
+        <div class="info-box">
+            <p>🚀 <b>Copyright</b> Thạch Mô Ra (Rov).</p>
+        </div>
 
-            <div class="info-box">
-                <p>💡 <strong>Hướng dẫn:</strong> Chọn tên học sinh từ danh sách và nhấn "Xem Điểm" để truy cập bảng điểm chi tiết.</p>
-            </div>
-
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="totalStudents">0</span>
-                    <span class="stat-label">Học Sinh</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">11</span>
-                    <span class="stat-label">Lớp</span>
-                </div>
-            </div>
+        <div class="stats">
+            <div><span class="stat-number" id="totalStudents">0</span><br>Học Sinh</div>
+            <div><span class="stat-number">11</span><br>Lớp</div>
         </div>
     </div>
 
@@ -236,10 +245,12 @@
             { name: "Nguyễn Lâm Nhật Duy", id: "5010453687" },
             { name: "Tăng Phước Đại", id: "5010453707" },
             { name: "Mai Lan Em", id: "5010453727" },
+            { name: "Phạm Tấn Đạt", id: "5010454367" },
             { name: "Huỳnh Ngọc Giao", id: "5010453747" },
             { name: "Lưu Gia Hân", id: "5010453767" },
             { name: "Nguyễn Ngọc Gia Hân", id: "5010453787" },
             { name: "Huỳnh Văn Hóa", id: "5010453807" },
+            { name: "Du Lý Gia Khang", id: "5010454387" },
             { name: "Lưu Vỹ Khang", id: "5010453827" },
             { name: "Nguyễn Thanh Lâm", id: "5010453847" },
             { name: "Trần Lâm", id: "5010453867" },
@@ -264,45 +275,30 @@
             { name: "Trần Văn Tý", id: "5010454267" },
             { name: "Dương Thị Ngọc Vy", id: "5010454287" },
             { name: "Trịnh Thị Kim Yến", id: "5010454327" },
-            { name: "Huỳnh Công Vinh", id: "5010454347" },
-            { name: "Phạm Tấn Đạt", id: "5010454367" },
-            { name: "Du Lý Gia Khang", id: "5010454387" }
+            { name: "Huỳnh Công Vinh", id: "5010454347" }
+            
+            
         ];
 
-        const studentSelect = document.getElementById('studentSelect');
-        const btnView = document.getElementById('btnView');
-        const totalStudentsEl = document.getElementById('totalStudents');
+        const grid = document.getElementById('studentGrid');
+        document.getElementById('totalStudents').textContent = students.length;
 
-        // Populate dropdown
-        students.forEach(student => {
-            const option = document.createElement('option');
-            option.value = student.id;
-            option.textContent = student.name;
-            studentSelect.appendChild(option);
-        });
-
-        // Update total students
-        totalStudentsEl.textContent = students.length;
-
-        // Enable button when student is selected
-        studentSelect.addEventListener('change', function() {
-            btnView.disabled = !this.value;
-        });
-
-        // View grades
-        btnView.addEventListener('click', function() {
-            const studentId = studentSelect.value;
-            if (studentId) {
-                const url = BASE_URL + studentId;
-                window.open(url, '_blank');
-            }
-        });
-
-        // Allow Enter key to submit
-        studentSelect.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && this.value) {
-                btnView.click();
-            }
+        students.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="image">
+                    <img src="https://i.ibb.co/9hN7q7K/astronaut.png" alt="🚀">
+                </div>
+                <div class="heading">${s.name}</div>
+                <div class="icons">
+                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
+                    <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
+                    <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0 0 16.56 6.3 13.47 13.47 0 0 0 15.89 4L15.65 3.5A14.13 14.13 0 0 0 12 3.2 14.13 14.13 0 0 0 8.35 3.5L8.11 4A13.47 13.47 0 0 0 7.44 6.3 13.86 13.86 0 0 0 3.78 8.43 14.05 14.05 0 0 0 2 14.9A14.4 14.4 0 0 0 8.13 18.5L8.6 17.8A10.08 10.08 0 0 1 6.5 15.7L7.2 15.3A9.85 9.85 0 0 0 12 16.5A9.85 9.85 0 0 0 16.8 15.3L17.5 15.7A10.08 10.08 0 0 1 15.4 17.8L15.87 18.5A14.4 14.4 0 0 0 22 14.9A14.05 14.05 0 0 0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
+                </div>
+            `;
+            card.onclick = () => window.open(BASE_URL + s.id, '_blank');
+            grid.appendChild(card);
         });
     </script>
 </body>
