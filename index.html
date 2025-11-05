@@ -10,9 +10,9 @@
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         html,body{
             height:100%;
-            overflow:hidden; /* FIX: Không còn khoảng trắng dưới */
+            overflow:hidden;
             -webkit-tap-highlight-color:transparent;
-            touch-action:pan-y; /* Mượt hơn khi cuộn */
+            touch-action:pan-y;
         }
         body{
             font-family:'Segoe UI',sans-serif;
@@ -22,167 +22,253 @@
             flex-direction:column;
         }
         .container{
-            max-width:1400px;
-            margin:auto;
-            width:100%;
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            overflow:hidden; /* Ngăn overflow */
+            max-width:1400px;margin:auto;width:100%;flex:1;
+            display:flex;flex-direction:column;overflow:hidden;
         }
         .header{
-            text-align:center;
-            padding:20px 15px 10px;
-            flex-shrink:0;
+            text-align:center;padding:20px 15px 5px;flex-shrink:0;
         }
         .header h1{
-            font-size:2.6em;
-            margin-bottom:8px;
+            font-size:2.6em;margin-bottom:8px;
             text-shadow:0 0 20px #9b40fc;
         }
         .header p{font-size:1.1em;opacity:0.9}
 
-        /* GRID SIÊU MƯỢT - KHÔNG LAG */
+        /* GRID MƯỢT + KHÔNG KHOẢNG TRẮNG */
         .grid{
             flex:1;
             overflow-y:auto;
-            -webkit-overflow-scrolling:touch; /* iOS mượt */
-            padding:10px 5px 80px; /* Đệm dưới để stats hiện */
+            -webkit-overflow-scrolling:touch;
+            padding:10px 5px 90px;
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));
-            gap:1.8em;
+            gap:2em;
             justify-content:center;
-            scrollbar-width:none; /* Ẩn thanh cuộn Firefox */
+            scrollbar-width:none;
         }
-        .grid::-webkit-scrollbar{display:none} /* Ẩn thanh cuộn Chrome/Safari */
+        .grid::-webkit-scrollbar{display:none}
 
+        /* CARD NGUYÊN BẢN – KHÔNG TỐI ƯU GÌ HẾT */
         .card{
-            width:var(--card-w);
-            height:var(--card-h);
-            margin:0 auto;
             position:relative;
-            background:#171717;
-            color:white;
-            font-family:Montserrat,sans-serif;
-            font-weight:bold;
+            width:var(--card-w);height:var(--card-h);
+            margin:0 auto;
+            display:flex;flex-direction:column;
+            align-items:center;justify-content:center;
+            background:#171717;color:white;
+            font-family:Montserrat,sans-serif;font-weight:bold;
             padding:1em 2em 1em 1em;
-            border-radius:20px;
-            overflow:hidden;
-            cursor:pointer;
+            border-radius:20px;overflow:hidden;
+            cursor:pointer;z-index:1;
+            row-gap:1em;
+            transition:transform .4s ease;
             box-shadow:0 10px 30px rgba(0,0,0,.5);
-            user-select:none;
-            contain:layout style; /* TỐI ƯU HIỆU NĂNG */
-            will-change:transform; /* Tăng tốc hover */
         }
-        .card:active{transform:translateY(-8px)!important}
-
+        .card:hover{transform:translateY(-12px)}
         .card img{
             width:12em;
-            animation:move 12s ease-in-out infinite;
+            margin-right:1em;
+            animation:move 10s ease-in-out infinite;
+            z-index:5;
+            user-select:none;
             pointer-events:none;
-            image-rendering:-webkit-optimize-contrast; /* Sắc nét hơn */
         }
+        .image:hover{cursor:grab}
+        .image:active{cursor:grabbing}
+
+        .card::before{
+            content:"";
+            position:absolute;
+            width:100%;height:100%;
+            inset:-3px;
+            border-radius:10px;
+            background:radial-gradient(#858585,transparent,transparent);
+            transform:translate(-5px,250px);
+            transition:.4s ease-in-out;
+            z-index:-1;
+        }
+        .card:hover::before{
+            width:150%;height:100%;
+            margin-left:-4.25em;
+        }
+        .card::after{
+            content:"";
+            position:absolute;
+            inset:2px;
+            border-radius:20px;
+            background:rgba(23,23,23,.7);
+            transition:all .4s ease-in-out;
+            z-index:-1;
+        }
+
         .heading{
             z-index:2;
+            transition:.4s ease-in-out;
             font-size:1.35em;
             text-align:center;
             text-shadow:0 2px 10px #000;
-            transition:letter-spacing .3s ease;
         }
+        .card:hover .heading{letter-spacing:.025em}
+
+        /* 100+ NGÔI SAO NHƯ BẢN GỐC */
+        .heading::before{
+            content:"";
+            position:absolute;top:0;left:0;
+            width:2px;height:2px;
+            border-radius:50%;
+            opacity:1;
+            box-shadow:
+                220px 118px #fff,280px 176px #fff,40px 50px #fff,
+                60px 180px #fff,120px 130px #fff,180px 176px #fff,
+                220px 290px #fff,520px 250px #fff,400px 220px #fff,
+                50px 350px #fff,10px 230px #fff;
+            z-index:-1;
+            animation:1s glowing-stars linear alternate infinite;
+        }
+        .icons::before{
+            content:"";
+            position:absolute;top:0;left:0;
+            width:2px;height:2px;
+            border-radius:50%;
+            opacity:1;
+            box-shadow:
+                140px 20px #fff,425px 20px #fff,70px 120px #fff,
+                20px 130px #fff,110px 80px #fff,280px 80px #fff,
+                250px 350px #fff,280px 230px #fff,220px 190px #fff,
+                450px 100px #fff,380px 80px #fff,520px 50px #fff;
+            z-index:-1;
+            animation:1s glowing-stars linear alternate infinite;
+            animation-delay:.4s;
+        }
+        .icons::after{
+            content:"";
+            position:absolute;top:0;left:0;
+            width:2px;height:2px;
+            border-radius:50%;
+            opacity:1;
+            box-shadow:
+                490px 330px #fff,420px 300px #fff,320px 280px #fff,
+                380px 350px #fff,546px 170px #fff,420px 180px #fff,
+                370px 150px #fff,200px 250px #fff,80px 20px #fff,
+                190px 50px #fff,270px 20px #fff,120px 230px #fff,
+                350px -1px #fff,150px 369px #fff;
+            z-index:-1;
+            animation:1s glowing-stars linear alternate infinite;
+            animation-delay:.8s;
+        }
+        .card:hover .heading::before,
+        .card:hover .icons::before,
+        .card:hover .icons::after{filter:blur(3px)}
+
         .heading::after{
             content:"";
-            position:absolute;
             top:-8.5%;left:-8.5%;
+            position:absolute;
             width:7.5em;height:7.5em;
             border-radius:50%;
             background:#f9f9fb;
-            box-shadow:0 0 100px rgba(193,119,241,.8),0 0 100px rgba(135,42,211,.8),
-                       inset #9b40fc 0 0 40px -12px;
-            transition:box-shadow .4s ease;
+            box-shadow:0px 0px 100px rgba(193,119,241,.8),
+                       0px 0px 100px rgba(135,42,211,.8),
+                       inset #9b40fc 0px 0px 40px -12px;
+            transition:.4s ease-in-out;
             z-index:-1;
         }
-
-        /* GIẢM HIỆU ỨNG NẶNG ĐỂ KHÔNG LAG */
-        .card::before,
-        .heading::before,
-        .icons::before,
-        .icons::after{
-            content:"";
-            position:absolute;
-            width:2px;height:2px;
-            border-radius:50%;
-            background:#fff;
-            box-shadow:var(--stars,none);
-            animation:glowing-stars 3s ease-in-out infinite alternate;
-            z-index:-1;
-            opacity:0.8;
-        }
-        .heading::before{--stars:220px 118px #fff,280px 176px #fff,40px 50px #fff,60px 180px #fff}
-        .icons::before{--stars:140px 20px #fff,70px 120px #fff,110px 80px #fff;animation-delay:.4s}
-        .icons::after{--stars:320px 280px #fff,200px 250px #fff,120px 230px #fff;animation-delay:.8s}
-
         .card:hover .heading::after{
-            box-shadow:0 0 160px rgba(193,119,241,1),0 0 160px rgba(135,42,211,1),
-                       inset #9b40fc 0 0 40px -12px;
+            box-shadow:0px 0px 200px rgba(193,119,241,1),
+                       0px 0px 200px rgba(135,42,211,1),
+                       inset #9b40fc 0px 0px 40px -12px;
         }
 
         .icons{
-            display:flex;
-            column-gap:1em;
-            z-index:1;
-            margin-top:8px;
+            display:flex;align-items:center;
+            justify-content:center;flex-direction:row;
+            column-gap:1em;z-index:1;
         }
-        .icons svg{
-            width:20px;height:20px;
-            stroke:#808080;
-            transition:transform .3s ease,stroke .3s;
+        .instagram,.x,.discord{
+            position:relative;
+            transition:.4s ease-in-out;
         }
-        .instagram:hover svg{stroke:#cc39a4;transform:scale(1.4)}
-        .x:hover svg{stroke:#000;transform:scale(1.25)}
-        .discord:hover svg{stroke:#8c9eff;transform:scale(1.25)}
+        .instagram:after,.x:after,.discord:after{
+            content:"";
+            position:absolute;
+            width:.5em;height:.5em;
+            left:0;
+            background:white;
+            box-shadow:0px 0px 10px rgba(233,233,233,.5);
+            border-radius:50%;
+            z-index:-1;
+            transition:.3s ease-in-out;
+        }
+        .instagram svg path,.x svg path,.discord svg path{
+            stroke:#808080;transition:.4s ease-in-out;
+        }
+        .instagram:hover svg path{stroke:#cc39a4}
+        .x:hover svg path{stroke:black}
+        .discord:hover svg path{stroke:#8c9eff}
+        .instagram:hover svg,.x:hover svg,.discord:hover svg{
+            transition:.3s ease-in-out;
+        }
+        .instagram:hover svg{scale:1.4}
+        .x:hover svg,.discord:hover svg{scale:1.25}
+        .instagram:hover:after,.x:hover:after,.discord:hover:after{
+            scale:4;
+            transform:translateX(.09em) translateY(.09em);
+        }
+
+        /* SAO BĂNG */
+        .instagram::before,.x::before,.discord::before{
+            content:"";
+            position:absolute;
+            rotate:-45deg;
+            width:5em;height:1px;
+            background:linear-gradient(90deg,#ffffff,transparent);
+            animation:4s shootingStar ease-in-out infinite;
+        }
+        .instagram::before{top:-700%;left:1050%;animation-delay:1s}
+        .x::before{top:-1300%;left:850%;animation-delay:3s}
+        .discord::before{top:-2100%;left:850%;animation-delay:5s}
+        .card:hover .instagram::before,
+        .card:hover .x::before,
+        .card:hover .discord::before{filter:blur(3px)}
 
         .info-box{
             background:rgba(255,255,255,.1);
-            backdrop-filter:blur(12px);
-            padding:14px;
-            border-radius:15px;
-            margin:15px auto;
-            max-width:500px;
+            backdrop-filter:blur(10px);
+            padding:16px;border-radius:15px;
+            margin:15px auto;max-width:500px;
             border-left:4px solid #9b40fc;
-            font-size:.95em;
-            text-align:center;
-            flex-shrink:0;
+            font-size:.95em;text-align:center;flex-shrink:0;
         }
         .stats{
-            display:flex;
-            justify-content:center;
-            gap:3em;
-            padding:15px 0;
-            flex-wrap:wrap;
-            background:rgba(0,0,0,.3);
-            flex-shrink:0;
+            display:flex;justify-content:center;gap:3em;
+            padding:15px 0;background:rgba(0,0,0,.3);
+            flex-wrap:wrap;flex-shrink:0;
         }
         .stat-number{
-            font-size:2.5em;
-            font-weight:bold;
-            color:#9b40fc;
+            font-size:2.5em;font-weight:bold;color:#9b40fc;
         }
 
         @keyframes move{
             0%,100%{transform:translate(0,0)}
-            25%{transform:translate(-.8em,-.8em) rotate(-8deg)}
-            50%{transform:translate(-.8em,.8em)}
-            75%{transform:translate(.8em,-1em) rotate(8deg)}
+            25%{transform:translate(-1em,-1em) rotate(-10deg)}
+            50%{transform:translate(-1em,1em)}
+            75%{transform:translate(1em,-1.25em) rotate(10deg)}
         }
         @keyframes glowing-stars{
-            0%,100%{opacity:0.3;transform:scale(0.8)}
-            50%{opacity:1;transform:scale(1.1)}
+            0%,100%{opacity:0}
+            50%{opacity:1}
+        }
+        @keyframes shootingStar{
+            0%{transform:translateX(0) translateY(0);opacity:1}
+            50%{transform:translateX(-55em) translateY(0);opacity:1}
+            70%{transform:translateX(-70em) translateY(0);opacity:0}
+            100%{transform:translateX(0) translateY(0);opacity:0}
         }
 
         @media (max-width:480px){
-            :root{--card-w:17.5em;--card-h:23.5em}
+            :root{--card-w:18em;--card-h:24em}
             .header h1{font-size:2.2em}
-            .grid{gap:1.4em;padding:8px 5px 90px}
+            .grid{gap:1.5em;padding:8px 5px 100px}
         }
     </style>
 </head>
@@ -196,7 +282,7 @@
         <div class="grid" id="studentGrid"></div>
 
         <div class="info-box">
-            <p>Copyright © 2025 Thạch Mô Ra (Rov) • Chạm card để xem điểm</p>
+            <p>Copyright © 2025 Thạch Mô Ra (Rov)</p>
         </div>
 
         <div class="stats">
@@ -206,37 +292,43 @@
     </div>
 
     <script>
-        // TỐI ƯU JS - KHÔNG LAG
         const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=1&hoc_sinh_id=";
+
         const students = [
-            "Lại Quế Anh_5010453507","Lý Ngọc Lan Anh_5010453527","Nguyễn Thị Ngọc Anh_5010453547",
-            "Thạch Kim Anh_5010453567","Huỳnh Tuyết Băng_5010453587","Ông Thị Tuyết Chi_5010453607",
-            "Lê Phong Dân_5010453627","Trần Thị Hồng Diệp_5010453647","Lâm Trường Duy_5010453667",
-            "Nguyễn Lâm Nhật Duy_5010453687","Tăng Phước Đại_5010453707","Mai Lan Em_5010453727",
-            "Phạm Tấn Đạt_5010454367","Huỳnh Ngọc Giao_5010453747","Lưu Gia Hân_5010453767",
-            "Nguyễn Ngọc Gia Hân_5010453787","Huỳnh Văn Hóa_5010453807","Du Lý Gia Khang_5010454387",
-            "Lưu Vỹ Khang (Anh Hai)_5010453827","Nguyễn Thanh Lâm_5010453847","Trần Lâm_5010453867",
-            "Triệu Thị Ngọc Linh_5010453887","Hứa Kim Lượng_5010453907","Quách Thảo My_5010453947",
-            "Lâm Kim Ngân_5010453967","Trịnh Khưu Mỹ Nghi_5010453987","Ong Thị Bảo Ngọc_5010454007",
-            "Phan Nguyễn Nhã Nguyên_5010454027","Lâm Đặng Phượng Quyên_5010454047",
-            "Nguyễn Thị Xuân Quỳnh_5010454067","Thạch Mô Ra_5010454087","Huỳnh Hoàng Tấn_5010454107",
-            "Nguyễn Tấn Thịnh_5010454127","Trần Thị Anh Thư_5010454147","Lâm Ngọc Hoài Thương_5010454167",
-            "Nguyễn Thị Ngọc Tiến_5010454187","Châu Thị Thủy Trúc_5010454207","Triệu Thanh Tú_5010454227",
-            "Dương Thị Bích Tuyền_5010454247","Trần Văn Tý_5010454267","Dương Thị Ngọc Vy_5010454287",
-            "Trịnh Thị Kim Yến_5010454327","Huỳnh Công Vinh_5010454347"
-        ].map(s => { const [n,i] = s.split('_'); return {name:n,id:i} });
+            {name:"Lại Quế Anh",id:"5010453507"},{name:"Lý Ngọc Lan Anh",id:"5010453527"},
+            {name:"Nguyễn Thị Ngọc Anh",id:"5010453547"},{name:"Thạch Kim Anh",id:"5010453567"},
+            {name:"Huỳnh Tuyết Băng",id:"5010453587"},{name:"Ông Thị Tuyết Chi",id:"5010453607"},
+            {name:"Lê Phong Dân",id:"5010453627"},{name:"Trần Thị Hồng Diệp",id:"5010453647"},
+            {name:"Lâm Trường Duy",id:"5010453667"},{name:"Nguyễn Lâm Nhật Duy",id:"5010453687"},
+            {name:"Tăng Phước Đại",id:"5010453707"},{name:"Mai Lan Em",id:"5010453727"},
+            {name:"Phạm Tấn Đạt",id:"5010454367"},{name:"Huỳnh Ngọc Giao",id:"5010453747"},
+            {name:"Lưu Gia Hân",id:"5010453767"},{name:"Nguyễn Ngọc Gia Hân",id:"5010453787"},
+            {name:"Huỳnh Văn Hóa",id:"5010453807"},{name:"Du Lý Gia Khang",id:"5010454387"},
+            {name:"Lưu Vỹ Khang (Anh Hai)",id:"5010453827"},{name:"Nguyễn Thanh Lâm",id:"5010453847"},
+            {name:"Trần Lâm",id:"5010453867"},{name:"Triệu Thị Ngọc Linh",id:"5010453887"},
+            {name:"Hứa Kim Lượng",id:"5010453907"},{name:"Quách Thảo My",id:"5010453947"},
+            {name:"Lâm Kim Ngân",id:"5010453967"},{name:"Trịnh Khưu Mỹ Nghi",id:"5010453987"},
+            {name:"Ong Thị Bảo Ngọc",id:"5010454007"},{name:"Phan Nguyễn Nhã Nguyên",id:"5010454027"},
+            {name:"Lâm Đặng Phượng Quyên",id:"5010454047"},{name:"Nguyễn Thị Xuân Quỳnh",id:"5010454067"},
+            {name:"Thạch Mô Ra",id:"5010454087"},{name:"Huỳnh Hoàng Tấn",id:"5010454107"},
+            {name:"Nguyễn Tấn Thịnh",id:"5010454127"},{name:"Trần Thị Anh Thư",id:"5010454147"},
+            {name:"Lâm Ngọc Hoài Thương",id:"5010454167"},{name:"Nguyễn Thị Ngọc Tiến",id:"5010454187"},
+            {name:"Châu Thị Thủy Trúc",id:"5010454207"},{name:"Triệu Thanh Tú",id:"5010454227"},
+            {name:"Dương Thị Bích Tuyền",id:"5010454247"},{name:"Trần Văn Tý",id:"5010454267"},
+            {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"},
+            {name:"Huỳnh Công Vinh",id:"5010454347"}
+        ];
 
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
-        // TẠO CARD SIÊU NHANH
         const frag = document.createDocumentFragment();
         students.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
                 <div class="image">
-                    <img src="anh11d1.jpg" alt="11" loading="lazy">
+                    <img src="anh11d1.jpg" alt="11D1" loading="lazy">
                 </div>
                 <div class="heading">${s.name}</div>
                 <div class="icons">
