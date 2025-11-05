@@ -6,51 +6,61 @@
     <title>Hệ Thống Xem Điểm - Lớp 11D1</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --card-w: 19em;
-            --card-h: 25em;
-        }
-        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--card-w:19em;--card-h:25em}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         html,body{
             height:100%;
-            overflow-x:hidden;
+            overflow:hidden; /* FIX: Không còn khoảng trắng dưới */
             -webkit-tap-highlight-color:transparent;
+            touch-action:pan-y; /* Mượt hơn khi cuộn */
         }
         body{
             font-family:'Segoe UI',sans-serif;
             background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-            padding:15px;
+            color:#fff;
             display:flex;
             flex-direction:column;
-            color:#fff;
         }
-        .container{max-width:1400px;margin:auto;width:100%;flex:1;display:flex;flex-direction:column}
-
-        /* HEADER */
-        .header{text-align:center;margin:20px 0 30px}
-        .header h1{font-size:2.6em;margin-bottom:8px;text-shadow:0 0 20px #9b40fc}
+        .container{
+            max-width:1400px;
+            margin:auto;
+            width:100%;
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden; /* Ngăn overflow */
+        }
+        .header{
+            text-align:center;
+            padding:20px 15px 10px;
+            flex-shrink:0;
+        }
+        .header h1{
+            font-size:2.6em;
+            margin-bottom:8px;
+            text-shadow:0 0 20px #9b40fc;
+        }
         .header p{font-size:1.1em;opacity:0.9}
 
-        /* GRID – MOBILE CŨNG TO ĐẸP */
+        /* GRID SIÊU MƯỢT - KHÔNG LAG */
         .grid{
+            flex:1;
+            overflow-y:auto;
+            -webkit-overflow-scrolling:touch; /* iOS mượt */
+            padding:10px 5px 80px; /* Đệm dưới để stats hiện */
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));
-            gap:2em;
-            padding:10px 5px;
+            gap:1.8em;
             justify-content:center;
-            flex:1;
+            scrollbar-width:none; /* Ẩn thanh cuộn Firefox */
         }
+        .grid::-webkit-scrollbar{display:none} /* Ẩn thanh cuộn Chrome/Safari */
 
-        /* CARD – GIỮ NGUYÊN KÍCH THƯỚC TRÊN MOBILE */
         .card{
             width:var(--card-w);
             height:var(--card-h);
             margin:0 auto;
             position:relative;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
             background:#171717;
             color:white;
             font-family:Montserrat,sans-serif;
@@ -59,63 +69,25 @@
             border-radius:20px;
             overflow:hidden;
             cursor:pointer;
-            transition:transform .4s ease;
             box-shadow:0 10px 30px rgba(0,0,0,.5);
             user-select:none;
+            contain:layout style; /* TỐI ƯU HIỆU NĂNG */
+            will-change:transform; /* Tăng tốc hover */
         }
-        .card:hover{transform:translateY(-12px)}
+        .card:active{transform:translateY(-8px)!important}
+
         .card img{
             width:12em;
-            animation:move 10s ease-in-out infinite;
-            z-index:5;
+            animation:move 12s ease-in-out infinite;
             pointer-events:none;
+            image-rendering:-webkit-optimize-contrast; /* Sắc nét hơn */
         }
-
-        /* TẤT CẢ HIỆU ỨNG VŨ TRỤ */
-        .card::before{
-            content:"";
-            position:absolute;
-            width:100%;height:100%;
-            inset:-3px;
-            border-radius:10px;
-            background:radial-gradient(#858585,transparent,transparent);
-            transform:translate(-5px,250px);
-            transition:.4s ease-in-out;
-            z-index:-1;
-        }
-        .card:hover::before{
-            width:150%;height:100%;
-            margin-left:-4.25em;
-        }
-        .card::after{
-            content:"";
-            position:absolute;
-            inset:2px;
-            border-radius:20px;
-            background:rgba(23,23,23,.7);
-            z-index:-1;
-        }
-
         .heading{
             z-index:2;
             font-size:1.35em;
             text-align:center;
             text-shadow:0 2px 10px #000;
-            transition:.4s;
-        }
-        .card:hover .heading{letter-spacing:.025em}
-        .heading::before{
-            content:"";
-            position:absolute;top:0;left:0;
-            width:2px;height:2px;
-            border-radius:50%;
-            box-shadow:
-                220px 118px #fff,280px 176px #fff,40px 50px #fff,
-                60px 180px #fff,120px 130px #fff,180px 176px #fff,
-                220px 290px #fff,520px 250px #fff,400px 220px #fff,
-                50px 350px #fff,10px 230px #fff;
-            animation:1s glowing-stars linear alternate infinite;
-            z-index:-1;
+            transition:letter-spacing .3s ease;
         }
         .heading::after{
             content:"";
@@ -124,103 +96,107 @@
             width:7.5em;height:7.5em;
             border-radius:50%;
             background:#f9f9fb;
-            box-shadow:0 0 100px rgba(193,119,241,.8),0 0 100px rgba(135,42,211,.8),inset #9b40fc 0 0 40px -12px;
-            transition:.4s;
+            box-shadow:0 0 100px rgba(193,119,241,.8),0 0 100px rgba(135,42,211,.8),
+                       inset #9b40fc 0 0 40px -12px;
+            transition:box-shadow .4s ease;
             z-index:-1;
         }
+
+        /* GIẢM HIỆU ỨNG NẶNG ĐỂ KHÔNG LAG */
+        .card::before,
+        .heading::before,
+        .icons::before,
+        .icons::after{
+            content:"";
+            position:absolute;
+            width:2px;height:2px;
+            border-radius:50%;
+            background:#fff;
+            box-shadow:var(--stars,none);
+            animation:glowing-stars 3s ease-in-out infinite alternate;
+            z-index:-1;
+            opacity:0.8;
+        }
+        .heading::before{--stars:220px 118px #fff,280px 176px #fff,40px 50px #fff,60px 180px #fff}
+        .icons::before{--stars:140px 20px #fff,70px 120px #fff,110px 80px #fff;animation-delay:.4s}
+        .icons::after{--stars:320px 280px #fff,200px 250px #fff,120px 230px #fff;animation-delay:.8s}
+
         .card:hover .heading::after{
-            box-shadow:0 0 200px rgba(193,119,241,1),0 0 200px rgba(135,42,211,1),inset #9b40fc 0 0 40px -12px;
+            box-shadow:0 0 160px rgba(193,119,241,1),0 0 160px rgba(135,42,211,1),
+                       inset #9b40fc 0 0 40px -12px;
         }
 
         .icons{
             display:flex;
             column-gap:1em;
             z-index:1;
+            margin-top:8px;
         }
-        .icons svg{width:20px;height:20px;stroke:#808080;transition:.4s}
+        .icons svg{
+            width:20px;height:20px;
+            stroke:#808080;
+            transition:transform .3s ease,stroke .3s;
+        }
         .instagram:hover svg{stroke:#cc39a4;transform:scale(1.4)}
         .x:hover svg{stroke:#000;transform:scale(1.25)}
         .discord:hover svg{stroke:#8c9eff;transform:scale(1.25)}
 
-        .icons::before,.icons::after{
-            content:"";
-            position:absolute;
-            width:2px;height:2px;
-            border-radius:50%;
-            animation:1s glowing-stars linear alternate infinite;
-            z-index:-1;
-        }
-        .icons::before{
-            box-shadow:
-                140px 20px #fff,425px 20px #fff,70px 120px #fff,
-                20px 130px #fff,110px 80px #fff,280px 80px #fff,
-                250px 350px #fff,280px 230px #fff,220px 190px #fff,
-                450px 100px #fff,380px 80px #fff,520px 50px #fff;
-            animation-delay:.4s;
-        }
-        .icons::after{
-            box-shadow:
-                490px 330px #fff,420px 300px #fff,320px 280px #fff,
-                380px 350px #fff,546px 170px #fff,420px 180px #fff,
-                370px 150px #fff,200px 250px #fff,80px 20px #fff,
-                190px 50px #fff,270px 20px #fff,120px 230px #fff,
-                350px -1px #fff,150px 369px #fff;
-            animation-delay:.8s;
-        }
-
-        /* INFO + STATS */
         .info-box{
             background:rgba(255,255,255,.1);
-            backdrop-filter:blur(10px);
-            padding:16px;
+            backdrop-filter:blur(12px);
+            padding:14px;
             border-radius:15px;
-            margin:20px auto;
+            margin:15px auto;
             max-width:500px;
             border-left:4px solid #9b40fc;
             font-size:.95em;
             text-align:center;
+            flex-shrink:0;
         }
         .stats{
             display:flex;
             justify-content:center;
             gap:3em;
-            margin:20px 0;
+            padding:15px 0;
             flex-wrap:wrap;
+            background:rgba(0,0,0,.3);
+            flex-shrink:0;
         }
-        .stat-number{font-size:2.5em;font-weight:bold;color:#9b40fc}
+        .stat-number{
+            font-size:2.5em;
+            font-weight:bold;
+            color:#9b40fc;
+        }
 
-        /* ANIMATIONS */
         @keyframes move{
             0%,100%{transform:translate(0,0)}
-            25%{transform:translate(-1em,-1em) rotate(-10deg)}
-            50%{transform:translate(-1em,1em)}
-            75%{transform:translate(1em,-1.25em) rotate(10deg)}
+            25%{transform:translate(-.8em,-.8em) rotate(-8deg)}
+            50%{transform:translate(-.8em,.8em)}
+            75%{transform:translate(.8em,-1em) rotate(8deg)}
         }
         @keyframes glowing-stars{
-            0%,100%{opacity:0}
-            50%{opacity:1}
+            0%,100%{opacity:0.3;transform:scale(0.8)}
+            50%{opacity:1;transform:scale(1.1)}
         }
 
-        /* MOBILE FIX – ép card to đẹp */
-        @media (max-width: 480px) {
-            :root{--card-w:18em;--card-h:24em}
+        @media (max-width:480px){
+            :root{--card-w:17.5em;--card-h:23.5em}
             .header h1{font-size:2.2em}
-            .grid{gap:1.5em;padding:5px}
-            .card{box-shadow:0 8px 25px rgba(0,0,0,.6)}
+            .grid{gap:1.4em;padding:8px 5px 90px}
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Welcome</h1>
+            <h1>11D1</h1>
             <p>Lớp 11D1 - Năm Học 2025 - Học Kỳ 1</p>
         </div>
 
         <div class="grid" id="studentGrid"></div>
 
         <div class="info-box">
-            <p>🚀 <b>Copyright</b> Thạch Mô Ra (Rov).</p>
+            <p>Copyright © 2025 Thạch Mô Ra (Rov) • Chạm card để xem điểm</p>
         </div>
 
         <div class="stats">
@@ -230,65 +206,37 @@
     </div>
 
     <script>
+        // TỐI ƯU JS - KHÔNG LAG
         const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=1&hoc_sinh_id=";
-
         const students = [
-            { name: "Lại Quế Anh", id: "5010453507" },
-            { name: "Lý Ngọc Lan Anh", id: "5010453527" },
-            { name: "Nguyễn Thị Ngọc Anh", id: "5010453547" },
-            { name: "Thạch Kim Anh", id: "5010453567" },
-            { name: "Huỳnh Tuyết Băng", id: "5010453587" },
-            { name: "Ông Thị Tuyết Chi", id: "5010453607" },
-            { name: "Lê Phong Dân", id: "5010453627" },
-            { name: "Trần Thị Hồng Diệp", id: "5010453647" },
-            { name: "Lâm Trường Duy", id: "5010453667" },
-            { name: "Nguyễn Lâm Nhật Duy", id: "5010453687" },
-            { name: "Tăng Phước Đại", id: "5010453707" },
-            { name: "Mai Lan Em", id: "5010453727" },
-            { name: "Phạm Tấn Đạt", id: "5010454367" },
-            { name: "Huỳnh Ngọc Giao", id: "5010453747" },
-            { name: "Lưu Gia Hân", id: "5010453767" },
-            { name: "Nguyễn Ngọc Gia Hân", id: "5010453787" },
-            { name: "Huỳnh Văn Hóa", id: "5010453807" },
-            { name: "Du Lý Gia Khang", id: "5010454387" },
-            { name: "Lưu Vỹ Khang (Anh Hai)", id: "5010453827" },
-            { name: "Nguyễn Thanh Lâm", id: "5010453847" },
-            { name: "Trần Lâm", id: "5010453867" },
-            { name: "Triệu Thị Ngọc Linh", id: "5010453887" },
-            { name: "Hứa Kim Lượng", id: "5010453907" },
-            { name: "Quách Thảo My", id: "5010453947" },
-            { name: "Lâm Kim Ngân", id: "5010453967" },
-            { name: "Trịnh Khưu Mỹ Nghi", id: "5010453987" },
-            { name: "Ong Thị Bảo Ngọc", id: "5010454007" },
-            { name: "Phan Nguyễn Nhã Nguyên", id: "5010454027" },
-            { name: "Lâm Đặng Phượng Quyên", id: "5010454047" },
-            { name: "Nguyễn Thị Xuân Quỳnh", id: "5010454067" },
-            { name: "Thạch Mô Ra", id: "5010454087" },
-            { name: "Huỳnh Hoàng Tấn", id: "5010454107" },
-            { name: "Nguyễn Tấn Thịnh", id: "5010454127" },
-            { name: "Trần Thị Anh Thư", id: "5010454147" },
-            { name: "Lâm Ngọc Hoài Thương", id: "5010454167" },
-            { name: "Nguyễn Thị Ngọc Tiến", id: "5010454187" },
-            { name: "Châu Thị Thủy Trúc", id: "5010454207" },
-            { name: "Triệu Thanh Tú", id: "5010454227" },
-            { name: "Dương Thị Bích Tuyền", id: "5010454247" },
-            { name: "Trần Văn Tý", id: "5010454267" },
-            { name: "Dương Thị Ngọc Vy", id: "5010454287" },
-            { name: "Trịnh Thị Kim Yến", id: "5010454327" },
-            { name: "Huỳnh Công Vinh", id: "5010454347" }
-            
-            
-        ];
+            "Lại Quế Anh_5010453507","Lý Ngọc Lan Anh_5010453527","Nguyễn Thị Ngọc Anh_5010453547",
+            "Thạch Kim Anh_5010453567","Huỳnh Tuyết Băng_5010453587","Ông Thị Tuyết Chi_5010453607",
+            "Lê Phong Dân_5010453627","Trần Thị Hồng Diệp_5010453647","Lâm Trường Duy_5010453667",
+            "Nguyễn Lâm Nhật Duy_5010453687","Tăng Phước Đại_5010453707","Mai Lan Em_5010453727",
+            "Phạm Tấn Đạt_5010454367","Huỳnh Ngọc Giao_5010453747","Lưu Gia Hân_5010453767",
+            "Nguyễn Ngọc Gia Hân_5010453787","Huỳnh Văn Hóa_5010453807","Du Lý Gia Khang_5010454387",
+            "Lưu Vỹ Khang (Anh Hai)_5010453827","Nguyễn Thanh Lâm_5010453847","Trần Lâm_5010453867",
+            "Triệu Thị Ngọc Linh_5010453887","Hứa Kim Lượng_5010453907","Quách Thảo My_5010453947",
+            "Lâm Kim Ngân_5010453967","Trịnh Khưu Mỹ Nghi_5010453987","Ong Thị Bảo Ngọc_5010454007",
+            "Phan Nguyễn Nhã Nguyên_5010454027","Lâm Đặng Phượng Quyên_5010454047",
+            "Nguyễn Thị Xuân Quỳnh_5010454067","Thạch Mô Ra_5010454087","Huỳnh Hoàng Tấn_5010454107",
+            "Nguyễn Tấn Thịnh_5010454127","Trần Thị Anh Thư_5010454147","Lâm Ngọc Hoài Thương_5010454167",
+            "Nguyễn Thị Ngọc Tiến_5010454187","Châu Thị Thủy Trúc_5010454207","Triệu Thanh Tú_5010454227",
+            "Dương Thị Bích Tuyền_5010454247","Trần Văn Tý_5010454267","Dương Thị Ngọc Vy_5010454287",
+            "Trịnh Thị Kim Yến_5010454327","Huỳnh Công Vinh_5010454347"
+        ].map(s => { const [n,i] = s.split('_'); return {name:n,id:i} });
 
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
+        // TẠO CARD SIÊU NHANH
+        const frag = document.createDocumentFragment();
         students.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
                 <div class="image">
-                    <img src="anh11d1.jpg" alt="Lớp 11D1">
+                    <img src="anh11d1.jpg" alt="11" loading="lazy">
                 </div>
                 <div class="heading">${s.name}</div>
                 <div class="icons">
@@ -298,8 +246,9 @@
                 </div>
             `;
             card.onclick = () => window.open(BASE_URL + s.id, '_blank');
-            grid.appendChild(card);
+            frag.appendChild(card);
         });
+        grid.appendChild(frag);
     </script>
 </body>
 </html>
