@@ -18,7 +18,7 @@
     <!-- TWITTER -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Hệ Thống Xem Điểm - Lớp 11D1">
-    <meta name="twitter:description" content="Lớp 11D1 - Năm Học 2025 - Học Kỳ 1">
+    <meta name="twitter:description" content="Lớp 11D1 - Năm Học 2025 - Học Kỳ Học 1">
     <meta name="twitter:image" content="https://rov230909.github.io/title11d1.png">
 
     <title>Hệ Thống Xem Điểm - Lớp 11D1</title>
@@ -89,6 +89,39 @@
             text-shadow:0 0 20px #9b40fc;
         }
         .header p{font-size:1.1em;opacity:0.9}
+
+        /* === NÚT ÂM THANH === */
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(155, 64, 252, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 8px 25px rgba(155, 64, 252, 0.4);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(155, 64, 252, 0.5);
+        }
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(155, 64, 252, 0.5);
+        }
+        .sound-toggle svg {
+            width: 28px;
+            height: 28px;
+            fill: #fff;
+            transition: 0.3s;
+        }
+        .sound-toggle.muted svg {
+            fill: #ff5c5c;
+        }
 
         /* BẢNG XẾP HẠNG */
         .ranking-wrapper {
@@ -290,7 +323,7 @@
             column-gap:1em;z-index:1;
         }
 
-        /* === MODAL IFRAME === */
+        /* MODAL IFRAME */
         .modal {
             display: none;
             position: fixed;
@@ -366,7 +399,7 @@
             background: #fff;
         }
 
-        /* FOOTER KIỂU CŨ */
+        /* FOOTER */
         .footer-wrapper {
             margin-top: auto;
             display: flex;
@@ -403,35 +436,6 @@
             font-size:2.5em;font-weight:bold;color:#9b40fc;
         }
 
-        /* NÚT ÂM THANH (TÙY CHỌN) */
-        .sound-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(155, 64, 252, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(155, 64, 252, 0.5);
-            color: #fff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
-        .sound-toggle:hover {
-            background: rgba(155, 64, 252, 0.6);
-            transform: scale(1.1);
-        }
-        .sound-toggle.muted {
-            color: #ff5c5c;
-        }
-
         @keyframes move{
             0%,100%{transform:translate(0,0)}
             25%{transform:translate(-1em,-1em) rotate(-10deg)}
@@ -453,19 +457,24 @@
             .modal-content { height: 95vh; border-radius: 15px; }
             .modal-header { height: 45px; padding: 0 15px; }
             .modal-title { font-size: 1.1em; }
-            .sound-toggle { width: 45px; height: 45px; font-size: 1.3em; bottom: 15px; right: 15px; }
+            .sound-toggle { width: 50px; height: 50px; bottom: 15px; right: 15px; }
+            .sound-toggle svg { width: 24px; height: 24px; }
         }
     </style>
 </head>
 <body>
-    <!-- ÂM THANH ẨN -->
-    <audio id="bgMusic" loop preload="auto">
-        <source src="vn.mp4" type="audio/mpeg">
-        Trình duyệt không hỗ trợ âm thanh.
-    </audio>
+    <!-- VIDEO ÂM THANH (ẨN) -->
+    <video id="bgMusic" loop muted playsinline>
+        <source src="vn.mp4" type="video/mp4">
+        Trình duyệt không hỗ trợ video.
+    </video>
 
-    <!-- NÚT BẬT/TẮT ÂM THANH (TÙY CHỌN) -->
-    <div class="sound-toggle" id="soundToggle">Sound On</div>
+    <!-- NÚT BẬT/TẮT ÂM THANH -->
+    <div class="sound-toggle" id="soundToggle">
+        <svg viewBox="0 0 24 24" id="soundIcon">
+            <path d="M3,9H7L12,4V20L7,15H3V9M14,11H17V13H14V11M14,15H19V17H14V15M10,10V14H8V10H10Z" />
+        </svg>
+    </div>
 
     <div class="container">
         <div class="header">
@@ -519,6 +528,73 @@
     </div>
 
     <script>
+        // === ÂM THANH ===
+        const video = document.getElementById('bgMusic');
+        const soundToggle = document.getElementById('soundToggle');
+        const soundIcon = document.getElementById('soundIcon');
+        let isPlaying = false;
+        let userInteracted = false;
+
+        // Bấm bất kỳ đâu để bật nhạc (tránh lỗi autoplay)
+        document.body.addEventListener('click', function unlockAudio() {
+            if (!userInteracted) {
+                userInteracted = true;
+                video.muted = false;
+                video.play().catch(() => {});
+                document.body.removeEventListener('click', unlockAudio);
+            }
+        }, { once: true });
+
+        // Nút bật/tắt âm thanh
+        soundToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!userInteracted) {
+                userInteracted = true;
+                video.muted = false;
+            }
+            if (isPlaying) {
+                video.pause();
+                isPlaying = false;
+                soundToggle.classList.add('muted');
+                soundIcon.innerHTML = '<path d="M3,9H7L12,4V20L7,15H3V9M16.5,12A4.5,4.5 0 0,1 14,16.5V7.5A4.5,4.5 0 0,1 16.5,12M19,12A7,7 0 0,1 14,19V5A7,7 0 0,1 19,12Z" />';
+            } else {
+                video.play();
+                isPlaying = true;
+                soundToggle.classList.remove('muted');
+                soundIcon.innerHTML = '<path d="M3,9H7L12,4V20L7,15H3V9M14,11H17V13H14V11M14,15H19V17H14V15M10,10V14H8V10H10Z" />';
+            }
+        });
+
+        // Tự động phát khi load (nếu được phép)
+        window.addEventListener('load', () => {
+            video.muted = true;
+            video.play().catch(() => {});
+            setTimeout(() => {
+                if (!userInteracted) {
+                    soundToggle.style.opacity = '0.7';
+                    soundToggle.style.animation = 'pulse 2s infinite';
+                }
+            }, 1000);
+        });
+
+        // Lặp lại khi hết
+        video.addEventListener('ended', () => {
+            video.currentTime = 0;
+            if (isPlaying) video.play();
+        });
+
+        // CSS pulse
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(155, 64, 252, 0.7); }
+                70% { box-shadow: 0 0 0 15px rgba(155, 64, 252, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(155, 64, 252, 0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // === DỮ LIỆU HỌC SINH ===
         const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=1&hoc_sinh_id=";
 
         const students = [
@@ -541,52 +617,11 @@
             {name:"Nguyễn Tấn Thịnh",id:"5010454127"},{name:"Trần Thị Anh Thư",id:"5010454147"},
             {name:"Lâm Ngọc Hoài Thương",id:"5010454167"},{name:"Nguyễn Thị Ngọc Tiến",id:"5010454187"},
             {name:"Châu Thị Thủy Trúc",id:"5010454207"},{name:"Triệu Thanh Tú",id:"5010454227"},
-            {name:"Dương Thị Bích Tuyền",id:"5010454247"},{name:"Trần Văn Tý",id:"5010454267"},
-            {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"},
-            {name:"Huỳnh Công Vinh",id:"5010454347"}
+            {name:"Dương Thị Bích Tuyền",id:"5010454247"},{name:"Trần Văn Tý",id:"5010454267"}, {name:"Huỳnh Công Vinh",id:"5010454347"},
+            {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"}
+            
         ];
 
-        // === ÂM THANH ===
-        const audio = document.getElementById('bgMusic');
-        const soundToggle = document.getElementById('soundToggle');
-        let isPlaying = false;
-
-        // Tự động phát khi load xong
-        function playAudio() {
-            audio.volume = 0.3; // Âm lượng nhẹ
-            audio.play().then(() => {
-                isPlaying = true;
-                soundToggle.textContent = 'Sound On';
-                soundToggle.classList.remove('muted');
-            }).catch(err => {
-                console.log("Tự động phát bị chặn. Cần tương tác người dùng.");
-                isPlaying = false;
-                soundToggle.textContent = 'Sound Off';
-                soundToggle.classList.add('muted');
-            });
-        }
-
-        // Bật/tắt âm thanh
-        soundToggle.onclick = () => {
-            if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-                soundToggle.textContent = 'Sound Off';
-                soundToggle.classList.add('muted');
-            } else {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    soundToggle.textContent = 'Sound On';
-                    soundToggle.classList.remove('muted');
-                });
-            }
-        };
-
-        // Tự động phát khi người dùng tương tác lần đầu
-        document.body.addEventListener('click', playAudio, { once: true });
-        document.body.addEventListener('touchstart', playAudio, { once: true });
-
-        // === GRID + MODAL ===
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
@@ -602,36 +637,13 @@
                 <div class="icons">
                     <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
                     <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
-                    <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65  3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
+                    <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
                 </div>
             `;
-            card.onclick = () => openGradeModal(s.name, BASE_URL + s.id);
+            card.onclick = () => window.open(BASE_URL + s.id, '_blank');
             frag.appendChild(card);
         });
         grid.appendChild(frag);
-
-        // Modal
-        const modal = document.getElementById('gradeModal');
-        const iframe = document.getElementById('gradeIframe');
-        const title = document.getElementById('modalTitle');
-        const closeBtn = document.getElementById('closeModal');
-
-        function openGradeModal(studentName, url) {
-            title.textContent = `Điểm của ${studentName}`;
-            iframe.src = url;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        closeBtn.onclick = () => {
-            modal.classList.remove('active');
-            iframe.src = '';
-            document.body.style.overflow = '';
-        };
-
-        modal.onclick = (e) => {
-            if (e.target === modal) closeBtn.click();
-        };
 
         async function fetchStudentGrades(studentId) {
             const url = `${BASE_URL}${studentId}`;
