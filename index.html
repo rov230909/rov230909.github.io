@@ -48,7 +48,7 @@
         }
         .grid::-webkit-scrollbar{display:none}
 
-        /* CARD NGUYÊN BẢN – KHÔNG TỐI ƯU GÌ HẾT */
+        /* CARD NGUYÊN BẢN */
         .card{
             position:relative;
             width:var(--card-w);height:var(--card-h);
@@ -265,10 +265,92 @@
             100%{transform:translateX(0) translateY(0);opacity:0}
         }
 
+        /* BẢNG XẾP HẠNG */
+        .ranking-container {
+            margin: 20px auto;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(155, 64, 252, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .ranking-title {
+            text-align: center;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            color: #9b40fc;
+            text-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        .ranking-table th {
+            background: rgba(155, 64, 252, 0.2);
+            color: #fff;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .ranking-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ranking-table tr:hover {
+            background: rgba(155, 64, 252, 0.15);
+            transition: 0.3s;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .rank-1 { background: linear-gradient(45deg, #ffd700, #ffaa00); box-shadow: 0 0 15px #ffd700; }
+        .rank-2 { background: linear-gradient(45deg, #c0c0c0, #aaaaaa); box-shadow: 0 0 12px #c0c0c0; }
+        .rank-3 { background: linear-gradient(45deg, #cd7f32, #a97142); box-shadow: 0 0 12px #cd7f32; }
+        .rank-other { background: rgba(155, 64, 252, 0.6); }
+
+        .student-name-rank {
+            font-weight: 600;
+            color: #e0e0ff;
+        }
+
+        .avg-score {
+            font-weight: bold;
+            color: #9b40fc;
+            font-size: 1.1em;
+        }
+
+        .loading-rank {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            padding: 20px;
+        }
+
         @media (max-width:480px){
             :root{--card-w:18em;--card-h:24em}
             .header h1{font-size:2.2em}
             .grid{gap:1.5em;padding:8px 5px 100px}
+            .ranking-container { margin: 15px 10px; padding: 15px; }
+            .ranking-title { font-size: 1.4em; }
         }
     </style>
 </head>
@@ -280,6 +362,22 @@
         </div>
 
         <div class="grid" id="studentGrid"></div>
+
+        <!-- BẢNG XẾP HẠNG -->
+        <div class="ranking-container" id="rankingSection">
+            <div class="ranking-title">TOP 10 HỌC SINH XUẤT SẮC NHẤT</div>
+            <div id="rankingLoading" class="loading-rank">Đang tải bảng xếp hạng...</div>
+            <table class="ranking-table" id="rankingTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Hạng</th>
+                        <th>Họ tên</th>
+                        <th>ĐTB</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingBody"></tbody>
+            </table>
+        </div>
 
         <div class="info-box">
             <p>Copyright © 2025 Thạch Mô Ra (Rov)</p>
@@ -341,6 +439,92 @@
             frag.appendChild(card);
         });
         grid.appendChild(frag);
+
+        // === BẢNG XẾP HẠNG ===
+        async function fetchStudentGrades(studentId) {
+            const url = `${BASE_URL}${studentId}`;
+            try {
+                const response = await fetch(url, { method: 'GET', credentials: 'omit' });
+                if (!response.ok) return null;
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+
+                let avg = 0;
+                let count = 0;
+
+                // Ưu tiên TBM
+                const tbmCells = doc.querySelectorAll('.table-point-content .table tbody th.text-center');
+                tbmCells.forEach(cell => {
+                    const scoreText = cell.textContent.trim();
+                    const score = parseFloat(scoreText);
+                    if (!isNaN(score)) {
+                        avg += score;
+                        count++;
+                    }
+                });
+
+                // Nếu không có TBM → lấy GK
+                if (count === 0) {
+                    const gkCells = doc.querySelectorAll('span.border-custom');
+                    gkCells.forEach(cell => {
+                        const score = parseFloat(cell.textContent.trim());
+                        if (!isNaN(score)) {
+                            avg += score;
+                            count++;
+                        }
+                    });
+                }
+
+                return count > 0 ? (avg / count).toFixed(2) : null;
+            } catch (err) {
+                console.warn(`Lỗi tải điểm HS ${studentId}:`, err);
+                return null;
+            }
+        }
+
+        async function loadRanking() {
+            const loadingEl = document.getElementById('rankingLoading');
+            const tableEl = document.getElementById('rankingTable');
+            const bodyEl = document.getElementById('rankingBody');
+
+            const results = await Promise.all(
+                students.map(async (s) => {
+                    const avg = await fetchStudentGrades(s.id);
+                    return { name: s.name, avg: avg ? parseFloat(avg) : null };
+                })
+            );
+
+            const validResults = results
+                .filter(r => r.avg !== null)
+                .sort((a, b) => b.avg - a.avg)
+                .slice(0, 10);
+
+            if (validResults.length === 0) {
+                loadingEl.textContent = "Không tải được dữ liệu điểm.";
+                return;
+            }
+
+            validResults.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const rank = index + 1;
+                const badgeClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
+
+                tr.innerHTML = `
+                    <td><span class="rank-badge ${badgeClass}">${rank}</span></td>
+                    <td class="student-name-rank">${item.name}</td>
+                    <td class="avg-score">${item.avg}</td>
+                `;
+                bodyEl.appendChild(tr);
+            });
+
+            loadingEl.style.display = 'none';
+            tableEl.style.display = 'table';
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(loadRanking, 800);
+        });
     </script>
 </body>
 </html>
