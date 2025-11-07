@@ -597,37 +597,7 @@
                 return null;
             }
         }
-        async function loadRanking() {
-            const loadingEl = document.getElementById('rankingLoading');
-            const containerEl = document.getElementById('rankingTableContainer');
-            const bodyEl = document.getElementById('rankingBody');
-            const results = await Promise.all(
-                students.map(async (s) => {
-                    const avg = await fetchStudentGrades(s.id);
-                    return { name: s.name, avg: avg ? parseFloat(avg) : null };
-                })
-            );
-            const validResults = results
-                .filter(r => r.avg !== null)
-                .sort((a, b) => b.avg - a.avg);
-            if (validResults.length === 0) {
-                loadingEl.textContent = "Không thể tải điểm. Vui lòng thử lại.";
-                return;
-            }
-            validResults.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                const rank = index + 1;
-                const badgeClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-                tr.innerHTML = `
-                    <td><span class="rank-badge ${badgeClass}">${rank}</span></td>
-                    <td class="student-name-rank" title="${item.name}">${item.name}</td>
-                    <td class="avg-score">${item.avg}</td>
-                `;
-                bodyEl.appendChild(tr);
-            });
-            loadingEl.style.display = 'none';
-            containerEl.style.display = 'block';
-        }
+       
         window.addEventListener('load', () => {
             setTimeout(loadRanking, 800);
         });
