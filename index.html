@@ -8,9 +8,24 @@
     <style>
         :root{--card-w:19em;--card-h:25em}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        
+        /* ẨN THANH CUỘN TRANG HOÀN TOÀN */
+        html, body, .container {
+            -ms-overflow-style: none;  /* IE & Edge */
+            scrollbar-width: none;     /* Firefox */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        .container::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
         html,body{
             height:100%;
-            overflow:hidden;
             -webkit-tap-highlight-color:transparent;
             touch-action:pan-y;
         }
@@ -22,7 +37,6 @@
             flex-direction:column;
         }
 
-        /* TOÀN TRANG CUỘN MƯỢT */
         .container{
             max-width:1400px;
             margin:auto;
@@ -30,8 +44,6 @@
             flex:1;
             display:flex;
             flex-direction:column;
-            overflow-y:auto;
-            -webkit-overflow-scrolling:touch;
             padding-bottom:100px;
         }
 
@@ -47,7 +59,7 @@
         }
         .header p{font-size:1.1em;opacity:0.9}
 
-        /* BẢNG XẾP HẠNG - Ở TRÊN ĐẦU */
+        /* BẢNG XẾP HẠNG */
         .ranking-wrapper {
             margin: 20px 15px;
             background: rgba(255, 255, 255, 0.1);
@@ -77,19 +89,28 @@
             overflow-y: auto;
             border-radius: 12px;
             scrollbar-width: thin;
-            scrollbar-color: #9b40fc #333;
+            scrollbar-color: rgba(155, 64, 252, 0.3) transparent;
         }
 
+        /* THANH CUỘN BẢNG: ĐẸP + TRONG SUỐT */
         .ranking-table-container::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
         .ranking-table-container::-webkit-scrollbar-track {
-            background: #333;
+            background: transparent;
             border-radius: 10px;
+            margin: 4px 0;
         }
         .ranking-table-container::-webkit-scrollbar-thumb {
-            background: #9b40fc;
+            background: rgba(155, 64, 252, 0.3);
             border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+            transition: all 0.3s ease;
+        }
+        .ranking-table-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(155, 64, 252, 0.6);
+            box-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
         }
 
         .ranking-table {
@@ -159,7 +180,7 @@
             font-size: 1.1em;
         }
 
-        /* GRID HỌC SINH - Ở DƯỚI BẢNG */
+        /* GRID HỌC SINH */
         .grid{
             padding: 20px 10px 30px;
             display:grid;
@@ -196,7 +217,6 @@
             pointer-events:none;
         }
 
-        /* HIỆU ỨNG CARD */
         .card::before{
             content:"";
             position:absolute;
@@ -231,7 +251,6 @@
         }
         .card:hover .heading{letter-spacing:.025em}
 
-        /* SAO + HIỆU ỨNG */
         .heading::before,.icons::before,.icons::after{
             content:"";
             position:absolute;top:0;left:0;
@@ -331,16 +350,15 @@
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <div class="header">
             <h1>11D1</h1>
             <p>Lớp 11D1 - Năm Học 2025 - Học Kỳ 1</p>
         </div>
 
-        <!-- BẢNG XẾP HẠNG - Ở TRÊN ĐẦU -->
+        <!-- BẢNG XẾP HẠNG -->
         <div class="ranking-wrapper">
-            <div class="ranking-title">BẢNG XẾP HẠNG</div>
-            <div id="rankingLoading" class="loading-rank">Đợi một tí nào bro...</div>
+            <div class="ranking-title">BẢNG XẾP HẠNG ĐIỂM TRUNG BÌNH (TOÀN LỚP)</div>
+            <div id="rankingLoading" class="loading-rank">Đang tải dữ liệu điểm từ VNEDU...</div>
             <div class="ranking-table-container" id="rankingTableContainer" style="display:none;">
                 <table class="ranking-table" id="rankingTable">
                     <thead>
@@ -355,10 +373,9 @@
             </div>
         </div>
 
-        <!-- GRID HỌC SINH - Ở DƯỚI -->
+        <!-- GRID HỌC SINH -->
         <div class="grid" id="studentGrid"></div>
 
-        <!-- FOOTER -->
         <div class="info-box">
             <p>Copyright © 2025 Thạch Mô Ra (Rov)</p>
         </div>
@@ -397,7 +414,6 @@
             {name:"Huỳnh Công Vinh",id:"5010454347"}
         ];
 
-        // Tạo card
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
@@ -411,7 +427,7 @@
                 </div>
                 <div class="heading">${s.name}</div>
                 <div class="icons">
-                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
+                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
                     <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
                     <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
                 </div>
@@ -421,7 +437,6 @@
         });
         grid.appendChild(frag);
 
-        // BẢNG XẾP HẠNG
         async function fetchStudentGrades(studentId) {
             const url = `${BASE_URL}${studentId}`;
             try {
