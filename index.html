@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- ICON CHO TRÌNH DUYỆT -->
+    <!-- ICON -->
     <link rel="icon" href="title11d1.png" type="image/png">
     <link rel="apple-touch-icon" href="title11d1.png">
 
-    <!-- OPEN GRAPH META TAGS - CHO SHARE LINK THUMBNAIL -->
+    <!-- OPEN GRAPH -->
     <meta property="og:title" content="Hệ Thống Xem Điểm - Lớp 11D1">
     <meta property="og:description" content="Lớp 11D1 - Năm Học 2025 - Học Kỳ 1">
     <meta property="og:image" content="https://rov230909.github.io/title11d1.png">
     <meta property="og:url" content="https://rov230909.github.io/index.html">
     <meta property="og:type" content="website">
 
-    <!-- TWITTER CARD -->
+    <!-- TWITTER -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Hệ Thống Xem Điểm - Lớp 11D1">
     <meta name="twitter:description" content="Lớp 11D1 - Năm Học 2025 - Học Kỳ 1">
@@ -27,7 +27,7 @@
         :root{--card-w:19em;--card-h:25em}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-        /* === TỐI ƯU CUỘN TRANG MƯỢT NHƯ IOS === */
+        /* === CUỘN MƯỢT === */
         html {
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
@@ -39,13 +39,12 @@
         body {
             transform: translateZ(0);
             will-change: transform;
-        }
-        .container, .ranking-table-container {
-            transform: translateZ(0);
-            will-change: transform;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ẨN THANH CUỘN TRANG HOÀN TOÀN */
+        /* ẨN THANH CUỘN */
         html, body, .container {
             -ms-overflow-style: none;
             scrollbar-width: none;
@@ -64,8 +63,6 @@
             font-family:'Segoe UI',sans-serif;
             background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
             color:#fff;
-            display:flex;
-            flex-direction:column;
         }
 
         .container{
@@ -75,7 +72,9 @@
             flex:1;
             display:flex;
             flex-direction:column;
-            padding-bottom:100px;
+            padding: 0 15px 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .header{
@@ -90,8 +89,9 @@
         }
         .header p{font-size:1.1em;opacity:0.9}
 
+        /* BẢNG XẾP HẠNG */
         .ranking-wrapper {
-            margin: 20px 15px;
+            margin: 20px 0;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
             border-radius: 16px;
@@ -108,10 +108,19 @@
         .ranking-title {
             text-align: center;
             font-size: 1.7em;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             color: #9b40fc;
             text-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
             font-weight: bold;
+        }
+
+        .ranking-note {
+            text-align: center;
+            font-size: 0.85em;
+            color: #ccc;
+            font-style: italic;
+            margin-bottom: 15px;
+            opacity: 0.9;
         }
 
         .ranking-table-container {
@@ -120,6 +129,7 @@
             border-radius: 12px;
             scrollbar-width: thin;
             scrollbar-color: rgba(155, 64, 252, 0.3) transparent;
+            transform: translateZ(0);
             will-change: transform, scroll-position;
         }
 
@@ -211,6 +221,7 @@
             font-size: 1.1em;
         }
 
+        /* GRID */
         .grid{
             padding: 20px 10px 30px;
             display:grid;
@@ -221,6 +232,7 @@
         }
         .grid::-webkit-scrollbar{display:none}
 
+        /* CARD */
         .card{
             position:relative;
             width:var(--card-w);height:var(--card-h);
@@ -248,13 +260,6 @@
             pointer-events:none;
         }
 
-        /* Tắt hiệu ứng nặng */
-        .card::before,
-        .card::after,
-        .heading::after {
-            will-change: auto;
-        }
-
         .heading{
             z-index:2;
             transition:letter-spacing .3s ease;
@@ -263,24 +268,6 @@
             text-shadow:0 2px 10px #000;
         }
         .card:hover .heading{letter-spacing:.025em}
-
-        /* Giảm hiệu ứng sao */
-        .heading::before,.icons::before,.icons::after{
-            content:"";
-            position:absolute;top:0;left:0;
-            width:2px;height:2px;
-            border-radius:50%;
-            opacity:0;
-            z-index:-1;
-            animation:1s glowing-stars linear alternate infinite;
-        }
-        .card:hover .heading::before,
-        .card:hover .icons::before,
-        .card:hover .icons::after {
-            opacity:1;
-            filter: blur(2px);
-            transition: filter 0.3s ease;
-        }
 
         .heading::after{
             content:"";
@@ -302,18 +289,38 @@
             column-gap:1em;z-index:1;
         }
 
+        /* === FOOTER KIỂU CŨ – DÍNH ĐÁY === */
+        .footer-wrapper {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 15px 30px;
+        }
+
         .info-box{
             background:rgba(255,255,255,.1);
             backdrop-filter:blur(10px);
-            padding:16px;border-radius:15px;
-            margin:15px auto;max-width:500px;
+            padding:16px;
+            border-radius:15px;
+            max-width:500px;
+            width: 100%;
             border-left:4px solid #9b40fc;
-            font-size:.95em;text-align:center;flex-shrink:0;
+            font-size:.95em;
+            text-align:center;
         }
+
         .stats{
-            display:flex;justify-content:center;gap:3em;
-            padding:15px 0;background:rgba(0,0,0,.3);
-            flex-wrap:wrap;flex-shrink:0;
+            display:flex;
+            justify-content:center;
+            gap:3em;
+            padding:15px 0;
+            background:rgba(0,0,0,.3);
+            border-radius: 15px;
+            flex-wrap:wrap;
+            max-width: 500px;
+            width: 100%;
         }
         .stat-number{
             font-size:2.5em;font-weight:bold;color:#9b40fc;
@@ -325,19 +332,18 @@
             50%{transform:translate(-1em,1em)}
             75%{transform:translate(1em,-1.25em) rotate(10deg)}
         }
-        @keyframes glowing-stars{
-            0%,100%{opacity:0}
-            50%{opacity:1}
-        }
 
         @media (max-width:480px){
             :root{--card-w:17em;--card-h:23em}
             .header h1{font-size:2.1em}
             .grid{gap:1.5em;padding:10px 5px 20px}
-            .ranking-wrapper { margin: 15px 10px; padding: 15px; }
+            .ranking-wrapper { margin: 15px 0; padding: 15px; }
             .ranking-title { font-size: 1.4em; }
-            .ranking-table th, .ranking-table td { padding: 10px 6px; font-size: 0.85em; }
-            .student-name-rank { max-width: 120px; }
+            .ranking-note { font-size: 0.8em; }
+            .ranking-table th, .ranking-table td { padding: 8px 4px; font-size: 0.8em; }
+            .student-name-rank { max-width: 100px; }
+            .stats { gap: 20px; padding: 12px; }
+            .stat-number { font-size: 2em; }
         }
     </style>
 </head>
@@ -348,8 +354,10 @@
             <p>Lớp 11D1 - Năm Học 2025 - Học Kỳ 1</p>
         </div>
 
+        <!-- BẢNG XẾP HẠNG -->
         <div class="ranking-wrapper">
             <div class="ranking-title">BẢNG XẾP HẠNG</div>
+            <div class="ranking-note">Bảng xếp hạng sẽ thay đổi khi điểm có sự thay đổi từ hệ thống VNedu!</div>
             <div id="rankingLoading" class="loading-rank">Đợi một tí bro...</div>
             <div class="ranking-table-container" id="rankingTableContainer" style="display:none;">
                 <table class="ranking-table" id="rankingTable">
@@ -365,15 +373,19 @@
             </div>
         </div>
 
+        <!-- GRID HỌC SINH -->
         <div class="grid" id="studentGrid"></div>
 
-        <div class="info-box">
-            <p>Copyright © 2025 Thạch Mô Ra (Rov)</p>
-        </div>
+        <!-- FOOTER KIỂU CŨ – DÍNH ĐÁY -->
+        <div class="footer-wrapper">
+            <div class="info-box">
+                <p>Copyright © 2025 Thạch Mô Ra (Rov)</p>
+            </div>
 
-        <div class="stats">
-            <div><span class="stat-number" id="totalStudents">0</span><br>Học Sinh</div>
-            <div><span class="stat-number">11D1</span><br>Lớp</div>
+            <div class="stats">
+                <div><span class="stat-number" id="totalStudents">0</span><br>Học Sinh</div>
+                <div><span class="stat-number">11D1</span><br>Lớp</div>
+            </div>
         </div>
     </div>
 
@@ -400,10 +412,11 @@
             {name:"Nguyễn Tấn Thịnh",id:"5010454127"},{name:"Trần Thị Anh Thư",id:"5010454147"},
             {name:"Lâm Ngọc Hoài Thương",id:"5010454167"},{name:"Nguyễn Thị Ngọc Tiến",id:"5010454187"},
             {name:"Châu Thị Thủy Trúc",id:"5010454207"},{name:"Triệu Thanh Tú",id:"5010454227"},
-            {name:"Dương Thị Bích Tuyền",id:"5010454247"},{name:"Trần Văn Tý",id:"5010454267"},
-            {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"},
-            {name:"Huỳnh Công Vinh",id:"5010454347"}
+            {name:"Dương Thị Bích Tuyền",id:"5010454247"},{name:"Trần Văn Tý",id:"5010454267"}, {name:"Huỳnh Công Vinh",id:"5010454347"},
+            {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"}
+            
         ];
+
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
