@@ -276,112 +276,61 @@
         }
         .grid::-webkit-scrollbar{display:none}
 
-        /* === CARD MỚI – CÓ MÀU CHẠY QUAY KHUNG === */
-        .card {
-            position: relative;
-            width: var(--card-w);
-            height: var(--card-h);
-            margin: 0 auto;
-            cursor: pointer;
-            z-index: 1;
+        /* CARD */
+        .card{
+            position:relative;
+            width:var(--card-w);height:var(--card-h);
+            margin:0 auto;
+            display:flex;flex-direction:column;
+            align-items:center;justify-content:center;
+            background:#171717;color:white;
+            font-family:Montserrat,sans-serif;font-weight:bold;
+            padding:1em 2em 1em 1em;
+            border-radius:20px;overflow:hidden;
+            cursor:pointer;z-index:1;
+            row-gap:1em;
             transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow:0 10px 30px rgba(0,0,0,.5);
             will-change: transform;
         }
-        .card:hover {
-            transform: translateY(-12px) translateZ(0);
+        .card:hover{transform: translateY(-12px) translateZ(0);}
+
+        .card img{
+            width:12em;
+            margin-right:1em;
+            animation:move 10s ease-in-out infinite;
+            z-index:5;
+            user-select:none;
+            pointer-events:none;
         }
 
-        .card .content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: #171717;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            row-gap: 1em;
-            padding: 1em;
-            font-family: Montserrat, sans-serif;
-            font-weight: bold;
-            color: white;
+        .heading{
+            z-index:2;
+            transition:letter-spacing .3s ease;
+            font-size:1.35em;
+            text-align:center;
+            text-shadow:0 2px 10px #000;
+        }
+        .card:hover .heading{letter-spacing:.025em}
+
+        .heading::after{
+            content:"";
+            top:-8.5%;left:-8.5%;
+            position:absolute;
+            width:7.5em;height:7.5em;
+            border-radius:50%;
+            background:#f9f9fb;
+            box-shadow:0px 0px 100px rgba(193,119,241,.8),inset #9b40fc 0px 0px 40px -12px;
+            transition:box-shadow .4s ease;
+            z-index:-1;
+        }
+        .card:hover .heading::after{
+            box-shadow:0px 0px 200px rgba(193,119,241,1),inset #9b40fc 0px 0px 40px -12px;
         }
 
-        /* Hiệu ứng màu chạy quay khung */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(
-                from 0deg,
-                transparent,
-                #9b40fc,
-                #c77dff,
-                #ff6b9d,
-                #ff8c8c,
-                #9b40fc,
-                transparent
-            );
-            animation: rotate 4s linear infinite;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .card .back-content {
-            position: absolute;
-            inset: 4px;
-            background: #171717;
-            border-radius: 16px;
-            z-index: -1;
-        }
-
-        .card img {
-            width: 12em;
-            animation: move 10s ease-in-out infinite;
-            z-index: 5;
-            user-select: none;
-            pointer-events: none;
-        }
-
-        .heading {
-            z-index: 2;
-            transition: letter-spacing .3s ease;
-            font-size: 1.35em;
-            text-align: center;
-            text-shadow: 0 2px 10px #000;
-        }
-        .card:hover .heading {
-            letter-spacing: .025em;
-        }
-
-        .icons {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            column-gap: 1em;
-            z-index: 1;
-        }
-
-        @keyframes move {
-            0%,100%{transform:translate(0,0)}
-            25%{transform:translate(-1em,-1em) rotate(-10deg)}
-            50%{transform:translate(-1em,1em)}
-            75%{transform:translate(1em,-1.25em) rotate(10deg)}
+        .icons{
+            display:flex;align-items:center;justify-content:center;flex-direction:row;
+            column-gap:1em;z-index:1;
         }
 
         /* MODAL IFRAME */
@@ -460,14 +409,14 @@
             background: #fff;
         }
 
-        /* FOOTER */
+        /* FOOTER KIỂU CŨ – DÍNH ĐÁY */
         .footer-wrapper {
             margin-top: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            padding: 20px 15px 80px;
+            padding: 20px 15px 80px; /* Tránh bị che bởi nút nhạc */
         }
 
         .info-box{
@@ -495,6 +444,13 @@
         }
         .stat-number{
             font-size:2.5em;font-weight:bold;color:#9b40fc;
+        }
+
+        @keyframes move{
+            0%,100%{transform:translate(0,0)}
+            25%{transform:translate(-1em,-1em) rotate(-10deg)}
+            50%{transform:translate(-1em,1em)}
+            75%{transform:translate(1em,-1.25em) rotate(10deg)}
         }
 
         @media (max-width:480px){
@@ -551,7 +507,7 @@
         <!-- GRID HỌC SINH -->
         <div class="grid" id="studentGrid"></div>
 
-        <!-- FOOTER -->
+        <!-- FOOTER KIỂU CŨ -->
         <div class="footer-wrapper">
             <div class="info-box">
                 <p>Copyright © 2025 Thạch Mô Ra (Rov)</p>
@@ -563,14 +519,14 @@
         </div>
     </div>
 
-    <!-- NÚT NHẠC -->
+    <!-- NÚT BẬT/TẮT NHẠC -->
     <div class="music-toggle" id="musicToggle">
         <svg viewBox="0 0 24 24" id="musicIcon">
             <path d="M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z"/>
         </svg>
     </div>
 
-    <!-- MODAL -->
+    <!-- MODAL IFRAME -->
     <div class="modal" id="gradeModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -582,7 +538,7 @@
     </div>
 
     <script>
-        // === NHẠC ===
+        // === ÂM THANH ===
         const audio = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('musicToggle');
         const icon = document.getElementById('musicIcon');
@@ -618,7 +574,7 @@
 
         audio.loop = true;
 
-        // === DỮ LIỆU ===
+        // === DỮ LIỆU HỌC SINH ===
         const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=1&hoc_sinh_id=";
 
         const students = [
@@ -646,6 +602,7 @@
             {name:"Huỳnh Công Vinh",id:"5010454347"}
         ];
 
+        // === RENDER GRID ===
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
@@ -654,15 +611,14 @@
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <div class="back-content"></div>
-                <div class="content">
+                <div class="image">
                     <img src="anh11d1.jpg" alt="11D1" loading="lazy">
-                    <div class="heading">${s.name}</div>
-                    <div class="icons">
-                        <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
-                        <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
-                        <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
-                    </div>
+                </div>
+                <div class="heading">${s.name}</div>
+                <div class="icons">
+                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
+                    <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
+                    <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
                 </div>
             `;
             card.onclick = () => openGradeModal(s.name, BASE_URL + s.id);
