@@ -8,31 +8,48 @@
     <link rel="icon" href="title11d1.png" type="image/png">
     <link rel="apple-touch-icon" href="title11d1.png">
 
-
     <!-- OPEN GRAPH META TAGS - CHO SHARE LINK THUMBNAIL -->
     <meta property="og:title" content="Hệ Thống Xem Điểm - Lớp 11D1">
     <meta property="og:description" content="Lớp 11D1 - Năm Học 2025 - Học Kỳ 1">
-    <meta property="og:image" content="title11d1.png"> <!-- Hoặc dùng "anh11d1.jpg" nếu muốn ảnh lớp -->
-    <meta property="og:url" content="https://rov230909.github.io/index.html"> <!-- Thay bằng URL thực của bạn -->
+    <meta property="og:image" content="https://rov230909.github.io/title11d1.png">
+    <meta property="og:url" content="https://rov230909.github.io/index.html">
     <meta property="og:type" content="website">
 
-    <!-- TWITTER CARD - CHO SHARE TRÊN TWITTER/X -->
+    <!-- TWITTER CARD -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Hệ Thống Xem Điểm - Lớp 11D1">
     <meta name="twitter:description" content="Lớp 11D1 - Năm Học 2025 - Học Kỳ 1">
-    <meta name="twitter:image" content="title11d1.png">
+    <meta name="twitter:image" content="https://rov230909.github.io/title11d1.png">
+
     <title>Hệ Thống Xem Điểm - Lớp 11D1</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root{--card-w:19em;--card-h:25em}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-        
+
+        /* === TỐI ƯU CUỘN TRANG MƯỢT NHƯ IOS === */
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            transform: translateZ(0);
+            will-change: transform;
+            overscroll-behavior-y: none;
+        }
+        body {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        .container, .ranking-table-container {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
         /* ẨN THANH CUỘN TRANG HOÀN TOÀN */
         html, body, .container {
-            -ms-overflow-style: none;  /* IE & Edge */
-            scrollbar-width: none;     /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
         html::-webkit-scrollbar,
         body::-webkit-scrollbar,
@@ -42,11 +59,7 @@
             height: 0 !important;
         }
 
-        html,body{
-            height:100%;
-            -webkit-tap-highlight-color:transparent;
-            touch-action:pan-y;
-        }
+        html,body{height:100%;-webkit-tap-highlight-color:transparent}
         body{
             font-family:'Segoe UI',sans-serif;
             background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
@@ -77,7 +90,6 @@
         }
         .header p{font-size:1.1em;opacity:0.9}
 
-        /* BẢNG XẾP HẠNG */
         .ranking-wrapper {
             margin: 20px 15px;
             background: rgba(255, 255, 255, 0.1);
@@ -108,9 +120,9 @@
             border-radius: 12px;
             scrollbar-width: thin;
             scrollbar-color: rgba(155, 64, 252, 0.3) transparent;
+            will-change: transform, scroll-position;
         }
 
-        /* THANH CUỘN BẢNG: ĐẸP + TRONG SUỐT */
         .ranking-table-container::-webkit-scrollbar {
             width: 10px;
         }
@@ -146,6 +158,7 @@
             position: sticky;
             top: 0;
             z-index: 2;
+            transform: translateZ(0);
         }
 
         .ranking-table td {
@@ -156,7 +169,7 @@
 
         .ranking-table tr:hover {
             background: rgba(155, 64, 252, 0.15);
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         .rank-badge {
@@ -198,7 +211,6 @@
             font-size: 1.1em;
         }
 
-        /* GRID HỌC SINH */
         .grid{
             padding: 20px 10px 30px;
             display:grid;
@@ -209,7 +221,6 @@
         }
         .grid::-webkit-scrollbar{display:none}
 
-        /* CARD */
         .card{
             position:relative;
             width:var(--card-w);height:var(--card-h);
@@ -222,10 +233,12 @@
             border-radius:20px;overflow:hidden;
             cursor:pointer;z-index:1;
             row-gap:1em;
-            transition:transform .4s ease;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow:0 10px 30px rgba(0,0,0,.5);
+            will-change: transform;
         }
-        .card:hover{transform:translateY(-12px)}
+        .card:hover{transform: translateY(-12px) translateZ(0);}
+
         .card img{
             width:12em;
             margin-right:1em;
@@ -235,53 +248,39 @@
             pointer-events:none;
         }
 
-        .card::before{
-            content:"";
-            position:absolute;
-            width:100%;height:100%;
-            inset:-3px;
-            border-radius:10px;
-            background:radial-gradient(#858585,transparent,transparent);
-            transform:translate(-5px,250px);
-            transition:.4s ease-in-out;
-            z-index:-1;
-        }
-        .card:hover::before{
-            width:150%;height:100%;
-            margin-left:-4.25em;
-        }
-        .card::after{
-            content:"";
-            position:absolute;
-            inset:2px;
-            border-radius:20px;
-            background:rgba(23,23,23,.7);
-            transition:all .4s ease-in-out;
-            z-index:-1;
+        /* Tắt hiệu ứng nặng */
+        .card::before,
+        .card::after,
+        .heading::after {
+            will-change: auto;
         }
 
         .heading{
             z-index:2;
-            transition:.4s ease-in-out;
+            transition:letter-spacing .3s ease;
             font-size:1.35em;
             text-align:center;
             text-shadow:0 2px 10px #000;
         }
         .card:hover .heading{letter-spacing:.025em}
 
+        /* Giảm hiệu ứng sao */
         .heading::before,.icons::before,.icons::after{
             content:"";
             position:absolute;top:0;left:0;
             width:2px;height:2px;
             border-radius:50%;
-            opacity:1;
+            opacity:0;
             z-index:-1;
             animation:1s glowing-stars linear alternate infinite;
         }
-        .heading::before{box-shadow:220px 118px #fff,280px 176px #fff,40px 50px #fff,60px 180px #fff,120px 130px #fff,180px 176px #fff,220px 290px #fff,520px 250px #fff,400px 220px #fff,50px 350px #fff,10px 230px #fff;}
-        .icons::before{box-shadow:140px 20px #fff,425px 20px #fff,70px 120px #fff,20px 130px #fff,110px 80px #fff,280px 80px #fff,250px 350px #fff,280px 230px #fff,220px 190px #fff,450px 100px #fff,380px 80px #fff,520px 50px #fff;animation-delay:.4s;}
-        .icons::after{box-shadow:490px 330px #fff,420px 300px #fff,320px 280px #fff,380px 350px #fff,546px 170px #fff,420px 180px #fff,370px 150px #fff,200px 250px #fff,80px 20px #fff,190px 50px #fff,270px 20px #fff,120px 230px #fff,350px -1px #fff,150px 369px #fff;animation-delay:.8s;}
-        .card:hover .heading::before,.card:hover .icons::before,.card:hover .icons::after{filter:blur(3px)}
+        .card:hover .heading::before,
+        .card:hover .icons::before,
+        .card:hover .icons::after {
+            opacity:1;
+            filter: blur(2px);
+            transition: filter 0.3s ease;
+        }
 
         .heading::after{
             content:"";
@@ -290,36 +289,18 @@
             width:7.5em;height:7.5em;
             border-radius:50%;
             background:#f9f9fb;
-            box-shadow:0px 0px 100px rgba(193,119,241,.8),0px 0px 100px rgba(135,42,211,.8),inset #9b40fc 0px 0px 40px -12px;
-            transition:.4s ease-in-out;
+            box-shadow:0px 0px 100px rgba(193,119,241,.8),inset #9b40fc 0px 0px 40px -12px;
+            transition:box-shadow .4s ease;
             z-index:-1;
         }
         .card:hover .heading::after{
-            box-shadow:0px 0px 200px rgba(193,119,241,1),0px 0px 200px rgba(135,42,211,1),inset #9b40fc 0px 0px 40px -12px;
+            box-shadow:0px 0px 200px rgba(193,119,241,1),inset #9b40fc 0px 0px 40px -12px;
         }
 
         .icons{
             display:flex;align-items:center;justify-content:center;flex-direction:row;
             column-gap:1em;z-index:1;
         }
-        .instagram,.x,.discord{position:relative;transition:.4s ease-in-out;}
-        .instagram:after,.x:after,.discord:after{
-            content:"";position:absolute;width:.5em;height:.5em;left:0;background:white;
-            box-shadow:0px 0px 10px rgba(233,233,233,.5);border-radius:50%;z-index:-1;transition:.3s ease-in-out;
-        }
-        .instagram svg path,.x svg path,.discord svg path{stroke:#808080;transition:.4s ease-in-out;}
-        .instagram:hover svg path{stroke:#cc39a4}.x:hover svg path{stroke:black}.discord:hover svg path{stroke:#8c9eff}
-        .instagram:hover svg{scale:1.4}.x:hover svg,.discord:hover svg{scale:1.25}
-        .instagram:hover:after,.x:hover:after,.discord:hover:after{scale:4;transform:translateX(.09em) translateY(.09em);}
-
-        .instagram::before,.x::before,.discord::before{
-            content:"";position:absolute;rotate:-45deg;width:5em;height:1px;
-            background:linear-gradient(90deg,#ffffff,transparent);animation:4s shootingStar ease-in-out infinite;
-        }
-        .instagram::before{top:-700%;left:1050%;animation-delay:1s}
-        .x::before{top:-1300%;left:850%;animation-delay:3s}
-        .discord::before{top:-2100%;left:850%;animation-delay:5s}
-        .card:hover .instagram::before,.card:hover .x::before,.card:hover .discord::before{filter:blur(3px)}
 
         .info-box{
             background:rgba(255,255,255,.1);
@@ -348,12 +329,6 @@
             0%,100%{opacity:0}
             50%{opacity:1}
         }
-        @keyframes shootingStar{
-            0%{transform:translateX(0) translateY(0);opacity:1}
-            50%{transform:translateX(-55em) translateY(0);opacity:1}
-            70%{transform:translateX(-70em) translateY(0);opacity:0}
-            100%{transform:translateX(0) translateY(0);opacity:0}
-        }
 
         @media (max-width:480px){
             :root{--card-w:17em;--card-h:23em}
@@ -373,7 +348,6 @@
             <p>Lớp 11D1 - Năm Học 2025 - Học Kỳ 1</p>
         </div>
 
-        <!-- BẢNG XẾP HẠNG -->
         <div class="ranking-wrapper">
             <div class="ranking-title">BẢNG XẾP HẠNG</div>
             <div id="rankingLoading" class="loading-rank">Đợi một tí bro...</div>
@@ -391,7 +365,6 @@
             </div>
         </div>
 
-        <!-- GRID HỌC SINH -->
         <div class="grid" id="studentGrid"></div>
 
         <div class="info-box">
@@ -431,7 +404,6 @@
             {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"},
             {name:"Huỳnh Công Vinh",id:"5010454347"}
         ];
-
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
 
@@ -445,7 +417,7 @@
                 </div>
                 <div class="heading">${s.name}</div>
                 <div class="icons">
-                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
+                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
                     <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
                     <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
                 </div>
