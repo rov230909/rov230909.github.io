@@ -22,7 +22,7 @@
             flex-direction:column;
         }
 
-        /* TOÀN TRANG CÓ THỂ CUỘN */
+        /* TOÀN TRANG CUỘN MƯỢT */
         .container{
             max-width:1400px;
             margin:auto;
@@ -30,7 +30,7 @@
             flex:1;
             display:flex;
             flex-direction:column;
-            overflow-y:auto; /* CHO PHÉP CUỘN TOÀN TRANG */
+            overflow-y:auto;
             -webkit-overflow-scrolling:touch;
             padding-bottom:100px;
         }
@@ -47,9 +47,121 @@
         }
         .header p{font-size:1.1em;opacity:0.9}
 
-        /* GRID HỌC SINH - Ở TRÊN */
+        /* BẢNG XẾP HẠNG - Ở TRÊN ĐẦU */
+        .ranking-wrapper {
+            margin: 20px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(155, 64, 252, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+            max-width: 800px;
+            width: 100%;
+            align-self: center;
+            z-index: 5;
+        }
+
+        .ranking-title {
+            text-align: center;
+            font-size: 1.7em;
+            margin-bottom: 15px;
+            color: #9b40fc;
+            text-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
+            font-weight: bold;
+        }
+
+        .ranking-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: #9b40fc #333;
+        }
+
+        .ranking-table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .ranking-table-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+        .ranking-table-container::-webkit-scrollbar-thumb {
+            background: #9b40fc;
+            border-radius: 10px;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        .ranking-table th {
+            background: rgba(155, 64, 252, 0.3);
+            color: #fff;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .ranking-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ranking-table tr:hover {
+            background: rgba(155, 64, 252, 0.15);
+            transition: 0.3s;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.95em;
+            color: white;
+        }
+
+        .rank-1 { background: linear-gradient(45deg, #ffd700, #ffaa00); box-shadow: 0 0 18px #ffd700; }
+        .rank-2 { background: linear-gradient(45deg, #c0c0c0, #aaaaaa); box-shadow: 0 0 15px #c0c0c0; }
+        .rank-3 { background: linear-gradient(45deg, #cd7f32, #a97142); box-shadow: 0 0 15px #cd7f32; }
+        .rank-other { background: rgba(155, 64, 252, 0.7); }
+
+        .student-name-rank {
+            font-weight: 600;
+            color: #e0e0ff;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .avg-score {
+            font-weight: bold;
+            color: #9b40fc;
+            font-size: 1.1em;
+        }
+
+        .loading-rank {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            padding: 30px;
+            font-size: 1.1em;
+        }
+
+        /* GRID HỌC SINH - Ở DƯỚI BẢNG */
         .grid{
-            padding:15px 10px 30px;
+            padding: 20px 10px 30px;
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));
             gap:2em;
@@ -172,118 +284,6 @@
         .discord::before{top:-2100%;left:850%;animation-delay:5s}
         .card:hover .instagram::before,.card:hover .x::before,.card:hover .discord::before{filter:blur(3px)}
 
-        /* BẢNG XẾP HẠNG - Ở DƯỚI, KHÔNG CHE CARD */
-        .ranking-wrapper {
-            margin: 30px 15px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(155, 64, 252, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            flex-shrink: 0;
-            max-width: 800px;
-            width: 100%;
-            align-self: center;
-            z-index: 1;
-        }
-
-        .ranking-title {
-            text-align: center;
-            font-size: 1.7em;
-            margin-bottom: 15px;
-            color: #9b40fc;
-            text-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
-            font-weight: bold;
-        }
-
-        .ranking-table-container {
-            max-height: 450px;
-            overflow-y: auto;
-            border-radius: 12px;
-            scrollbar-width: thin;
-            scrollbar-color: #9b40fc #333;
-        }
-
-        .ranking-table-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .ranking-table-container::-webkit-scrollbar-track {
-            background: #333;
-            border-radius: 10px;
-        }
-        .ranking-table-container::-webkit-scrollbar-thumb {
-            background: #9b40fc;
-            border-radius: 10px;
-        }
-
-        .ranking-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95em;
-        }
-
-        .ranking-table th {
-            background: rgba(155, 64, 252, 0.3);
-            color: #fff;
-            padding: 14px 10px;
-            text-align: center;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-
-        .ranking-table td {
-            padding: 12px 10px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .ranking-table tr:hover {
-            background: rgba(155, 64, 252, 0.15);
-            transition: 0.3s;
-        }
-
-        .rank-badge {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 0.95em;
-            color: white;
-        }
-
-        .rank-1 { background: linear-gradient(45deg, #ffd700, #ffaa00); box-shadow: 0 0 18px #ffd700; }
-        .rank-2 { background: linear-gradient(45deg, #c0c0c0, #aaaaaa); box-shadow: 0 0 15px #c0c0c0; }
-        .rank-3 { background: linear-gradient(45deg, #cd7f32, #a97142); box-shadow: 0 0 15px #cd7f32; }
-        .rank-other { background: rgba(155, 64, 252, 0.7); }
-
-        .student-name-rank {
-            font-weight: 600;
-            color: #e0e0ff;
-            max-width: 200px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .avg-score {
-            font-weight: bold;
-            color: #9b40fc;
-            font-size: 1.1em;
-        }
-
-        .loading-rank {
-            text-align: center;
-            color: #aaa;
-            font-style: italic;
-            padding: 30px;
-            font-size: 1.1em;
-        }
-
         .info-box{
             background:rgba(255,255,255,.1);
             backdrop-filter:blur(10px);
@@ -322,7 +322,7 @@
             :root{--card-w:17em;--card-h:23em}
             .header h1{font-size:2.1em}
             .grid{gap:1.5em;padding:10px 5px 20px}
-            .ranking-wrapper { margin: 20px 10px; padding: 15px; }
+            .ranking-wrapper { margin: 15px 10px; padding: 15px; }
             .ranking-title { font-size: 1.4em; }
             .ranking-table th, .ranking-table td { padding: 10px 6px; font-size: 0.85em; }
             .student-name-rank { max-width: 120px; }
@@ -337,13 +337,10 @@
             <p>Lớp 11D1 - Năm Học 2025 - Học Kỳ 1</p>
         </div>
 
-        <!-- CARD HỌC SINH (LUÔN Ở TRÊN) -->
-        <div class="grid" id="studentGrid"></div>
-
-        <!-- BẢNG XẾP HẠNG (LUÔN Ở DƯỚI) -->
+        <!-- BẢNG XẾP HẠNG - Ở TRÊN ĐẦU -->
         <div class="ranking-wrapper">
-            <div class="ranking-title">BẢNG XẾP HẠNG ĐIỂM TRUNG BÌNH (TOÀN LỚP)</div>
-            <div id="rankingLoading" class="loading-rank">Đang tải dữ liệu điểm từ VNEDU...</div>
+            <div class="ranking-title">BẢNG XẾP HẠNG</div>
+            <div id="rankingLoading" class="loading-rank">Đợi một tí nào bro...</div>
             <div class="ranking-table-container" id="rankingTableContainer" style="display:none;">
                 <table class="ranking-table" id="rankingTable">
                     <thead>
@@ -357,6 +354,9 @@
                 </table>
             </div>
         </div>
+
+        <!-- GRID HỌC SINH - Ở DƯỚI -->
+        <div class="grid" id="studentGrid"></div>
 
         <!-- FOOTER -->
         <div class="info-box">
@@ -492,7 +492,7 @@
         }
 
         window.addEventListener('load', () => {
-            setTimeout(loadRanking, 1000);
+            setTimeout(loadRanking, 800);
         });
     </script>
 </body>
