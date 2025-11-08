@@ -129,6 +129,7 @@
             width: 100%;
             align-self: center;
             z-index: 5;
+            position: relative;
         }
         .ranking-title {
             text-align: center;
@@ -154,6 +155,11 @@
             scrollbar-color: rgba(155, 64, 252, 0.3) transparent;
             transform: translateZ(0);
             will-change: transform, scroll-position;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .ranking-table-container.visible {
+            opacity: 1;
         }
 
         .ranking-table-container::-webkit-scrollbar {
@@ -228,13 +234,143 @@
             color: #9b40fc;
             font-size: 1.1em;
         }
-        .loading-rank {
-            text-align: center;
-            color: #aaa;
-            font-style: italic;
-            padding: 30px;
-            font-size: 1.1em;
+
+        /* Loading Animation - Uiverse */
+        .loader {
+          --main-size: 4em;
+          --text-color: #ffffff;
+          --shine-color: #ffffff40;
+          --shadow-color: #aaaaaa;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+          user-select: none;
+          position: relative;
+          font-size: var(--main-size);
+          font-weight: 900;
+          text-transform: uppercase;
+          color: var(--text-color);
+          width: 7.3em;
+          height: 1em;
+          filter: drop-shadow(0 0 0.05em var(--shine-color));
         }
+
+        .loader .text {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          position: absolute;
+        }
+
+        .loader .text:nth-child(1) { clip-path: polygon(0% 0%, 11.11% 0%, 11.11% 100%, 0% 100%); font-size: calc(var(--main-size) / 20); margin-left: -2.1em; opacity: 0.6; }
+        .loader .text:nth-child(2) { clip-path: polygon(11.11% 0%, 22.22% 0%, 22.22% 100%, 11.11% 100%); font-size: calc(var(--main-size) / 16); margin-left: -0.98em; opacity: 0.7; }
+        .loader .text:nth-child(3) { clip-path: polygon(22.22% 0%, 33.33% 0%, 33.33% 100%, 22.22% 100%); font-size: calc(var(--main-size) / 13); margin-left: -0.33em; opacity: 0.8; }
+        .loader .text:nth-child(4) { clip-path: polygon(33.33% 0%, 44.44% 0%, 44.44% 100%, 33.33% 100%); font-size: calc(var(--main-size) / 11); margin-left: -0.05em; opacity: 0.9; }
+        .loader .text:nth-child(5) { clip-path: polygon(44.44% 0%, 55.55% 0%, 55.55% 100%, 44.44% 100%); font-size: calc(var(--main-size) / 10); margin-left: 0em; opacity: 1; }
+        .loader .text:nth-child(6) { clip-path: polygon(55.55% 0%, 66.66% 0%, 66.66% 100%, 55.55% 100%); font-size: calc(var(--main-size) / 11); margin-left: 0.05em; opacity: 0.9; }
+        .loader .text:nth-child(7) { clip-path: polygon(66.66% 0%, 77.77% 0%, 77.77% 100%, 66.66% 100%); font-size: calc(var(--main-size) / 13); margin-left: 0.33em; opacity: 0.8; }
+        .loader .text:nth-child(8) { clip-path: polygon(77.77% 0%, 88.88% 0%, 88.88% 100%, 77.77% 100%); font-size: calc(var(--main-size) / 16); margin-left: 0.98em; opacity: 0.7; }
+        .loader .text:nth-child(9) { clip-path: polygon(88.88% 0%, 100% 0%, 100% 100%, 88.88% 100%); font-size: calc(var(--main-size) / 20); margin-left: 2.1em; opacity: 0.6; }
+
+        .loader .text span {
+          animation: scrolling 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite, shadow 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite;
+        }
+
+        .loader .text:nth-child(1) span { background: linear-gradient(to right, var(--text-color) 4%, var(--shadow-color) 7%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(2) span { background: linear-gradient(to right, var(--text-color) 9%, var(--shadow-color) 13%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(3) span { background: linear-gradient(to right, var(--text-color) 15%, var(--shadow-color) 18%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(4) span { background: linear-gradient(to right, var(--text-color) 20%, var(--shadow-color) 23%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(6) span { background: linear-gradient(to right, var(--shadow-color) 29%, var(--text-color) 32%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(7) span { background: linear-gradient(to right, var(--shadow-color) 34%, var(--text-color) 37%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(8) span { background: linear-gradient(to right, var(--shadow-color) 39%, var(--text-color) 42%); background-size: 200% auto; background-clip: text; color: transparent; }
+        .loader .text:nth-child(9) span { background: linear-gradient(to right, var(--shadow-color) 45%, var(--text-color) 48%); background-size: 200% auto; background-clip: text; color: transparent; }
+
+        .loader .line {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          height: 0.05em;
+          width: calc(var(--main-size) / 2);
+          margin-top: 0.9em;
+          border-radius: 0.05em;
+        }
+
+        .loader .line::before {
+          content: "";
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          background-color: var(--text-color);
+          opacity: 0.3;
+        }
+
+        .loader .line::after {
+          content: "";
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          background-color: var(--text-color);
+          border-radius: 0.05em;
+          transform: translateX(-90%);
+          animation: wobble 2s cubic-bezier(0.5, 0.8, 0.5, 0.2) infinite;
+        }
+
+        @keyframes wobble {
+          0% { transform: translateX(-90%); }
+          50% { transform: translateX(90%); }
+          100% { transform: translateX(-90%); }
+        }
+
+        @keyframes scrolling {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        @keyframes shadow {
+          0% { background-position: -98% 0; }
+          100% { background-position: 102% 0; }
+        }
+
+        /* Ranking Loading */
+        #rankingLoading {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 16px;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Modal Loading */
+        .modal-loading {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(17, 17, 17, 0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-loading.hidden,
+        #rankingLoading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .grid{
             padding: 20px 10px 30px;
             display:grid;
@@ -405,126 +541,6 @@
             75%{transform:translate(1em,-1.25em) rotate(10deg)}
         }
 
-        /* Loading Animation - Uiverse */
-        .loader {
-          --main-size: 4em;
-          --text-color: #ffffff;
-          --shine-color: #ffffff40;
-          --shadow-color: #aaaaaa;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          user-select: none;
-          position: relative;
-          font-size: var(--main-size);
-          font-weight: 900;
-          text-transform: uppercase;
-          color: var(--text-color);
-          width: 7.3em;
-          height: 1em;
-          filter: drop-shadow(0 0 0.05em var(--shine-color));
-        }
-
-        .loader .text {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          white-space: nowrap;
-          overflow: hidden;
-          position: absolute;
-        }
-
-        .loader .text:nth-child(1) { clip-path: polygon(0% 0%, 11.11% 0%, 11.11% 100%, 0% 100%); font-size: calc(var(--main-size) / 20); margin-left: -2.1em; opacity: 0.6; }
-        .loader .text:nth-child(2) { clip-path: polygon(11.11% 0%, 22.22% 0%, 22.22% 100%, 11.11% 100%); font-size: calc(var(--main-size) / 16); margin-left: -0.98em; opacity: 0.7; }
-        .loader .text:nth-child(3) { clip-path: polygon(22.22% 0%, 33.33% 0%, 33.33% 100%, 22.22% 100%); font-size: calc(var(--main-size) / 13); margin-left: -0.33em; opacity: 0.8; }
-        .loader .text:nth-child(4) { clip-path: polygon(33.33% 0%, 44.44% 0%, 44.44% 100%, 33.33% 100%); font-size: calc(var(--main-size) / 11); margin-left: -0.05em; opacity: 0.9; }
-        .loader .text:nth-child(5) { clip-path: polygon(44.44% 0%, 55.55% 0%, 55.55% 100%, 44.44% 100%); font-size: calc(var(--main-size) / 10); margin-left: 0em; opacity: 1; }
-        .loader .text:nth-child(6) { clip-path: polygon(55.55% 0%, 66.66% 0%, 66.66% 100%, 55.55% 100%); font-size: calc(var(--main-size) / 11); margin-left: 0.05em; opacity: 0.9; }
-        .loader .text:nth-child(7) { clip-path: polygon(66.66% 0%, 77.77% 0%, 77.77% 100%, 66.66% 100%); font-size: calc(var(--main-size) / 13); margin-left: 0.33em; opacity: 0.8; }
-        .loader .text:nth-child(8) { clip-path: polygon(77.77% 0%, 88.88% 0%, 88.88% 100%, 77.77% 100%); font-size: calc(var(--main-size) / 16); margin-left: 0.98em; opacity: 0.7; }
-        .loader .text:nth-child(9) { clip-path: polygon(88.88% 0%, 100% 0%, 100% 100%, 88.88% 100%); font-size: calc(var(--main-size) / 20); margin-left: 2.1em; opacity: 0.6; }
-
-        .loader .text span {
-          animation: scrolling 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite, shadow 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite;
-        }
-
-        .loader .text:nth-child(1) span { background: linear-gradient(to right, var(--text-color) 4%, var(--shadow-color) 7%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(2) span { background: linear-gradient(to right, var(--text-color) 9%, var(--shadow-color) 13%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(3) span { background: linear-gradient(to right, var(--text-color) 15%, var(--shadow-color) 18%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(4) span { background: linear-gradient(to right, var(--text-color) 20%, var(--shadow-color) 23%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(6) span { background: linear-gradient(to right, var(--shadow-color) 29%, var(--text-color) 32%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(7) span { background: linear-gradient(to right, var(--shadow-color) 34%, var(--text-color) 37%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(8) span { background: linear-gradient(to right, var(--shadow-color) 39%, var(--text-color) 42%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(9) span { background: linear-gradient(to right, var(--shadow-color) 45%, var(--text-color) 48%); background-size: 200% auto; background-clip: text; color: transparent; }
-
-        .loader .line {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          height: 0.05em;
-          width: calc(var(--main-size) / 2);
-          margin-top: 0.9em;
-          border-radius: 0.05em;
-        }
-
-        .loader .line::before {
-          content: "";
-          position: absolute;
-          height: 100%;
-          width: 100%;
-          background-color: var(--text-color);
-          opacity: 0.3;
-        }
-
-        .loader .line::after {
-          content: "";
-          position: absolute;
-          height: 100%;
-          width: 100%;
-          background-color: var(--text-color);
-          border-radius: 0.05em;
-          transform: translateX(-90%);
-          animation: wobble 2s cubic-bezier(0.5, 0.8, 0.5, 0.2) infinite;
-        }
-
-        @keyframes wobble {
-          0% { transform: translateX(-90%); }
-          50% { transform: translateX(90%); }
-          100% { transform: translateX(-90%); }
-        }
-
-        @keyframes scrolling {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-
-        @keyframes shadow {
-          0% { background-position: -98% 0; }
-          100% { background-position: 102% 0; }
-        }
-
-        /* Modal Loading Overlay */
-        .modal-loading {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(17, 17, 17, 0.98);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal-loading.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
         @media (max-width:480px){
             :root{--card-w:17em;--card-h:23em}
             .header h1{font-size:2.1em}
@@ -558,8 +574,24 @@
         <div class="ranking-wrapper">
             <div class="ranking-title">BẢNG XẾP HẠNG</div>
             <div class="ranking-note">Bảng xếp hạng sẽ thay đổi khi điểm có sự thay đổi từ hệ thống VNedu!</div>
-            <div id="rankingLoading" class="loading-rank">Đợi một tí bro!</div>
-            <div class="ranking-table-container" id="rankingTableContainer" style="display:none;">
+
+            <!-- LOADING BXH -->
+            <div id="rankingLoading">
+                <div class="loader">
+                    <div class="text"><span>L</span></div>
+                    <div class="text"><span>o</span></div>
+                    <div class="text"><span>a</span></div>
+                    <div class="text"><span>d</span></div>
+                    <div class="text"><span>d</span></div>
+                    <div class="text"><span>i</span></div>
+                    <div class="text"><span>n</span></div>
+                    <div class="text"><span>g</span></div>
+                    <div class="line"></div>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đợi một tí bro...</p>
+            </div>
+
+            <div class="ranking-table-container" id="rankingTableContainer">
                 <table class="ranking-table" id="rankingTable">
                     <thead>
                         <tr>
@@ -598,18 +630,17 @@
             <!-- Loading Overlay -->
             <div class="modal-loading" id="modalLoading">
                 <div class="loader">
-                    <div class="text"><span>Đ</span></div>
-                    <div class="text"><span>Đ</span></div>
+                    <div class="text"><span>L</span></div>
+                    <div class="text"><span>o</span></div>
                     <div class="text"><span>a</span></div>
+                    <div class="text"><span>d</span></div>
+                    <div class="text"><span>d</span></div>
+                    <div class="text"><span>i</span></div>
                     <div class="text"><span>n</span></div>
                     <div class="text"><span>g</span></div>
-                    <div class="text"><span> </span></div>
-                    <div class="text"><span>t</span></div>
-                    <div class="text"><span>ả</span></div>
-                    <div class="text"><span>i</span></div>
                     <div class="line"></div>
                 </div>
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đang tải điểm từ VNedu...</p>
+                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đợi một tí bro...</p>
             </div>
         </div>
     </div>
@@ -681,7 +712,7 @@
                 </div>
                 <div class="heading">${s.name}</div>
                 <div class="icons">
-                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
+                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,112,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
                     <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
                     <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
                 </div>
@@ -695,20 +726,21 @@
         const title = document.getElementById('modalTitle');
         const closeBtn = document.getElementById('closeModal');
         const modalLoading = document.getElementById('modalLoading');
+        const rankingLoading = document.getElementById('rankingLoading');
+        const rankingContainer = document.getElementById('rankingTableContainer');
 
         function openGradeModal(studentName, url) {
             title.textContent = `Điểm của ${studentName}`;
-            iframe.src = ''; // Clear old src
-            modalLoading.classList.remove('hidden'); // Show loading
+            iframe.src = '';
+            modalLoading.classList.remove('hidden');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // Set new src and wait for load
             iframe.src = url;
             iframe.onload = () => {
                 setTimeout(() => {
                     modalLoading.classList.add('hidden');
-                }, 300); // Small delay for smooth transition
+                }, 300);
             };
         }
 
@@ -753,34 +785,31 @@
         }
 
         async function loadRanking() {
-            const loadingEl = document.getElementById('rankingLoading');
-            const containerEl = document.getElementById('rankingTableContainer');
             const bodyEl = document.getElementById('rankingBody');
-        
             bodyEl.innerHTML = '';
-        
+
             const results = await Promise.all(
                 students.map(async (s) => {
                     const avg = await fetchStudentGrades(s.id);
                     return { name: s.name, avg: avg ? parseFloat(avg) : null };
                 })
             );
-        
+
             const top10 = results
                 .filter(r => r.avg !== null)
                 .sort((a, b) => b.avg - a.avg)
                 .slice(0, 10);
-        
+
             if (top10.length === 0) {
-                loadingEl.textContent = "Không thể tải điểm. Vui lòng thử lại.";
+                rankingLoading.innerHTML = `<p style="color:#aaa; font-style:italic;">Không thể tải điểm. Vui lòng thử lại.</p>`;
                 return;
             }
-        
+
             top10.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 const rank = index + 1;
                 const badgeClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-        
+
                 tr.innerHTML = `
                     <td><span class="rank-badge ${badgeClass}">${rank}</span></td>
                     <td class="student-name-rank" title="${item.name}">${item.name}</td>
@@ -788,9 +817,10 @@
                 `;
                 bodyEl.appendChild(tr);
             });
-        
-            loadingEl.style.display = 'none';
-            containerEl.style.display = 'block';
+
+            // Ẩn loading, hiện bảng
+            rankingLoading.classList.add('hidden');
+            rankingContainer.classList.add('visible');
         }
 
         window.addEventListener('load', () => {
