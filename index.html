@@ -597,7 +597,49 @@
                 return null;
             }
         }
-       
+       async function loadRanking() {
+            const loadingEl = document.getElementById('rankingLoading');
+            const containerEl = document.getElementById('rankingTableContainer');
+            const bodyEl = document.getElementById('rankingBody');
+        
+            // Xóa dữ liệu cũ
+            bodyEl.innerHTML = '';
+        
+            const results = await Promise.all(
+                students.map(async (s) => {
+                    const avg = await fetchStudentGrades(s.id);
+                    return { name: s.name, avg: avg ? parseFloat(avg) : null };
+                })
+            );
+        
+            // Lọc + sắp xếp + CHỈ LẤY TOP 10
+            const top10 = results
+                .filter(r => r.avg !== null)
+                .sort((a, b) => b.avg - a.avg)
+                .slice(0, 10); // CHỈ LẤY 10 NGƯỜI ĐẦU
+        
+            if (top10.length === 0) {
+                loadingEl.textContent = "Không thể tải điểm. Vui lòng thử lại.";
+                return;
+            }
+        
+            top10.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const rank = index + 1;
+                const badgeClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
+        
+                tr.innerHTML = `
+                    <td><span class="rank-badge ${badgeClass}">${rank}</span></td>
+                    <td class="student-name-rank" title="${item.name}">${item.name}</td>
+                    <td class="avg-score">${item.avg}</td>
+                `;
+                bodyEl.appendChild(tr);
+            });
+        
+            // Ẩn loading, hiện bảng
+            loadingEl.style.display = 'none';
+            containerEl.style.display = 'block';
+        }
         window.addEventListener('load', () => {
             setTimeout(loadRanking, 800);
         });
