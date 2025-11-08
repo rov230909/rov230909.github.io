@@ -559,26 +559,8 @@
         <div class="ranking-wrapper">
             <div class="ranking-title">BẢNG XẾP HẠNG</div>
             <div class="ranking-note">Bảng xếp hạng sẽ thay đổi khi điểm có sự thay đổi từ hệ thống VNedu!</div>
-
-            <!-- LOADING BXH -->
-            <div id="rankingLoading">
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;"> </p>
-                <div class="loader">  
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="line"></div>
-                </div>
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đợi một tí bro!</p>
-            </div>
-
-            <div class="ranking-table-container" id="rankingTableContainer">
+            <div id="rankingLoading" class="loading-rank">Đợi một tí bro!</div>
+            <div class="ranking-table-container" id="rankingTableContainer" style="display:none;">
                 <table class="ranking-table" id="rankingTable">
                     <thead>
                         <tr>
@@ -614,25 +596,8 @@
                 <button class="close-modal" id="closeModal">×</button>
             </div>
             <iframe class="modal-iframe" id="gradeIframe"></iframe>
-            <!-- Loading Overlay -->
-            <div class="modal-loading" id="modalLoading">
-                <div class="loader">
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="line"></div>
-                </div>
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đợi một tí bro...</p>
-            </div>
         </div>
     </div>
-
     <script>
         const audio = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('musicToggle');
@@ -682,7 +647,7 @@
             {name:"Lâm Kim Ngân",id:"5010453967"},{name:"Trịnh Khưu Mỹ Nghi",id:"5010453987"},
             {name:"Ong Thị Bảo Ngọc",id:"5010454007"},{name:"Phan Nguyễn Nhã Nguyên",id:"5010454027"},
             {name:"Lâm Đặng Phượng Quyên",id:"5010454047"},{name:"Nguyễn Thị Xuân Quỳnh",id:"5010454067"},
-            Girard:"Thạch Mô Ra",id:"5010454087"},{name:"Huỳnh Hoàng Tấn",id:"5010454107"},
+            {name:"Thạch Mô Ra",id:"5010454087"},{name:"Huỳnh Hoàng Tấn",id:"5010454107"},
             {name:"Nguyễn Tấn Thịnh",id:"5010454127"},{name:"Trần Thị Anh Thư",id:"5010454147"},
             {name:"Lâm Ngọc Hoài Thương",id:"5010454167"},{name:"Nguyễn Thị Ngọc Tiến",id:"5010454187"},
             {name:"Châu Thị Thủy Trúc",id:"5010454207"},{name:"Triệu Thanh Tú",id:"5010454227"},
@@ -701,7 +666,7 @@
                 </div>
                 <div class="heading">${s.name}</div>
                 <div class="icons">
-                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,112,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
+                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
                     <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
                     <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
                 </div>
@@ -714,36 +679,18 @@
         const iframe = document.getElementById('gradeIframe');
         const title = document.getElementById('modalTitle');
         const closeBtn = document.getElementById('closeModal');
-        const modalLoading = document.getElementById('modalLoading');
-        const rankingLoading = document.getElementById('rankingLoading');
-        const rankingContainer = document.getElementById('rankingTableContainer');
-
         function openGradeModal(studentName, url) {
             title.textContent = `Điểm của ${studentName}`;
-            iframe.src = '';
-            modalLoading.classList.remove('hidden');
+            iframe.src = url;
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-
-            iframe.src = url;
-            iframe.onload = () => {
-                setTimeout(() => {
-                    modalLoading.classList.add('hidden');
-                }, 300);
-            };
         }
-
         closeBtn.onclick = () => {
             modal.classList.remove('active');
             iframe.src = '';
-            modalLoading.classList.remove('hidden');
             document.body.style.overflow = '';
         };
-
-        modal.onclick = (e) => { 
-            if (e.target === modal) closeBtn.click(); 
-        };
-
+        modal.onclick = (e) => { if (e.target === modal) closeBtn.click(); };
         async function fetchStudentGrades(studentId) {
             const url = `${BASE_URL}${studentId}`;
             try {
@@ -772,33 +719,37 @@
                 return null;
             }
         }
-
-        async function loadRanking() {
+       async function loadRanking() {
+            const loadingEl = document.getElementById('rankingLoading');
+            const containerEl = document.getElementById('rankingTableContainer');
             const bodyEl = document.getElementById('rankingBody');
+        
+            // Xóa dữ liệu cũ
             bodyEl.innerHTML = '';
-
+        
             const results = await Promise.all(
                 students.map(async (s) => {
                     const avg = await fetchStudentGrades(s.id);
                     return { name: s.name, avg: avg ? parseFloat(avg) : null };
                 })
             );
-
+        
+            // Lọc + sắp xếp + CHỈ LẤY TOP 10
             const top10 = results
                 .filter(r => r.avg !== null)
                 .sort((a, b) => b.avg - a.avg)
-                .slice(0, 10);
-
+                .slice(0, 10); // CHỈ LẤY 10 NGƯỜI ĐẦU
+        
             if (top10.length === 0) {
-                rankingLoading.innerHTML = `<p style="color:#aaa; font-style:italic;">Không thể tải điểm. Vui lòng thử lại.</p>`;
+                loadingEl.textContent = "Không thể tải điểm. Vui lòng thử lại.";
                 return;
             }
-
+        
             top10.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 const rank = index + 1;
                 const badgeClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-
+        
                 tr.innerHTML = `
                     <td><span class="rank-badge ${badgeClass}">${rank}</span></td>
                     <td class="student-name-rank" title="${item.name}">${item.name}</td>
@@ -806,11 +757,11 @@
                 `;
                 bodyEl.appendChild(tr);
             });
-
-            rankingLoading.classList.add('hidden');
-            rankingContainer.classList.add('visible');
+        
+            // Ẩn loading, hiện bảng
+            loadingEl.style.display = 'none';
+            containerEl.style.display = 'block';
         }
-
         window.addEventListener('load', () => {
             setTimeout(loadRanking, 800);
         });
