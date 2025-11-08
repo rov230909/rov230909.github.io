@@ -19,52 +19,42 @@
     <style>
         :root{--card-w:19em;--card-h:25em}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+        /* ===== FIX HORIZONTAL SCROLL & CARD JITTER ===== */
         html {
+            overflow-x: hidden;
+            touch-action: pan-y;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
-            transform: translateZ(0);
-            will-change: transform;
             overscroll-behavior-y: none;
         }
         body {
-            transform: translateZ(0);
-            will-change: transform;
+            overflow-x: hidden;
+            touch-action: pan-y;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
         }
-        html, body, .container {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-y: auto;
-        }
-        html::-webkit-scrollbar,
-        body::-webkit-scrollbar,
-        .container::-webkit-scrollbar {
-            display: none !important;
-            width: 0 !important;
-            height: 0 !important;
-        }
-        html,body{height:100%;-webkit-tap-highlight-color:transparent}
-        body{
-            font-family:'Segoe UI',sans-serif;
-            background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-            color:#fff;
-        }
-        .container{
-            max-width:1400px;
-            margin:auto;
-            width:100%;
-            flex:1;
-            display:flex;
-            flex-direction:column;
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             padding: 0 15px 20px;
             position: relative;
             z-index: 1;
+            overflow-x: hidden;
         }
+
+        /* ===== LOẠI BỎ CÁC RULE THỪA GÂY LỖI SCROLL ===== */
+        /* ĐÃ XÓA: html,body,.container { overflow-y:auto; -ms-overflow-style:none; scrollbar-width:none; } */
+        /* ĐÃ XÓA: ::-webkit-scrollbar rules cho html/body/container */
+
         .header{
             text-align:center;
             padding:20px 15px 10px;
@@ -150,11 +140,10 @@
         .ranking-table-container {
             max-height: 400px;
             overflow-y: auto;
+            overflow-x: hidden;
             border-radius: 12px;
             scrollbar-width: thin;
             scrollbar-color: rgba(155, 64, 252, 0.3) transparent;
-            transform: translateZ(0);
-            will-change: transform, scroll-position;
             opacity: 0;
             transition: opacity 0.4s ease;
         }
@@ -195,7 +184,6 @@
             position: sticky;
             top: 0;
             z-index: 2;
-            transform: translateZ(0);
         }
         .ranking-table td {
             padding: 12px 10px;
@@ -377,9 +365,8 @@
             grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));
             gap:2em;
             justify-content:center;
-            scrollbar-width:none;
+            overflow-x: hidden;
         }
-        .grid::-webkit-scrollbar{display:none}
         .card{
             position:relative;
             width:var(--card-w);height:var(--card-h);
@@ -394,9 +381,8 @@
             row-gap:1em;
             transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow:0 10px 30px rgba(0,0,0,.5);
-            will-change: transform;
         }
-        .card:hover{transform: translateY(-12px) translateZ(0);}
+        .card:hover{transform: translateY(-12px);}
         .card img{
             width:12em;
             margin-right:1em;
@@ -460,7 +446,6 @@
             overflow: hidden;
             position: relative;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            transform: translateZ(0);
         }
         .modal-header {
             position: absolute;
@@ -647,6 +632,7 @@
             </div>
         </div>
     </div>
+
     <script>
         const audio = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('musicToggle');
@@ -696,7 +682,7 @@
             {name:"Lâm Kim Ngân",id:"5010453967"},{name:"Trịnh Khưu Mỹ Nghi",id:"5010453987"},
             {name:"Ong Thị Bảo Ngọc",id:"5010454007"},{name:"Phan Nguyễn Nhã Nguyên",id:"5010454027"},
             {name:"Lâm Đặng Phượng Quyên",id:"5010454047"},{name:"Nguyễn Thị Xuân Quỳnh",id:"5010454067"},
-            {name:"Thạch Mô Ra",id:"5010454087"},{name:"Huỳnh Hoàng Tấn",id:"5010454107"},
+            Girard:"Thạch Mô Ra",id:"5010454087"},{name:"Huỳnh Hoàng Tấn",id:"5010454107"},
             {name:"Nguyễn Tấn Thịnh",id:"5010454127"},{name:"Trần Thị Anh Thư",id:"5010454147"},
             {name:"Lâm Ngọc Hoài Thương",id:"5010454167"},{name:"Nguyễn Thị Ngọc Tiến",id:"5010454187"},
             {name:"Châu Thị Thủy Trúc",id:"5010454207"},{name:"Triệu Thanh Tú",id:"5010454227"},
@@ -821,7 +807,6 @@
                 bodyEl.appendChild(tr);
             });
 
-            // Ẩn loading, hiện bảng
             rankingLoading.classList.add('hidden');
             rankingContainer.classList.add('visible');
         }
