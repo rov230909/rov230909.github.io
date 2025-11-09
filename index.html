@@ -19,587 +19,104 @@
     <style>
         :root{--card-w:19em;--card-h:25em}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-        html {
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
-            transform: translateZ(0);
-            will-change: transform;
-            overscroll-behavior-y: none;
-        }
-        body {
-            transform: translateZ(0);
-            will-change: transform;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
-        }
-        html, body, .container {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-y: auto;
-        }
-        html::-webkit-scrollbar,
-        body::-webkit-scrollbar,
-        .container::-webkit-scrollbar {
-            display: none !important;
-            width: 0 !important;
-            height: 0 !important;
-        }
+        html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch;touch-action:pan-y;transform:translateZ(0);will-change:transform;overscroll-behavior-y:none}
+        body{transform:translateZ(0);will-change:transform;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;position:relative}
+        html,body,.container{-ms-overflow-style:none;scrollbar-width:none;overflow-y:auto}
+        html::-webkit-scrollbar,body::-webkit-scrollbar,.container::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
         html,body{height:100%;-webkit-tap-highlight-color:transparent}
-        body{
-            font-family:'Segoe UI',sans-serif;
-            background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-            color:#fff;
-        }
-        .container{
-            max-width:1400px;
-            margin:auto;
-            width:100%;
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            padding: 0 15px 20px;
-            position: relative;
-            z-index: 1;
-        }
-        .header{
-            text-align:center;
-            padding:20px 15px 10px;
-            flex-shrink:0;
-            z-index:10;
-        }
-        .header h1{
-            font-size:2.6em;margin-bottom:8px;
-            text-shadow:0 0 20px #9b40fc;
-        }
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff}
+        .container{max-width:1400px;margin:auto;width:100%;flex:1;display:flex;flex-direction:column;padding:0 15px 20px;position:relative;z-index:1}
+        .header{text-align:center;padding:20px 15px 10px;flex-shrink:0;z-index:10}
+        .header h1{font-size:2.6em;margin-bottom:8px;text-shadow:0 0 20px #9b40fc}
         .header p{font-size:1.1em;opacity:0.9}
-        .music-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: rgba(155, 64, 252, 0.3);
-            backdrop-filter: blur(10px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 9999;
-            box-shadow: 0 8px 25px rgba(155, 64, 252, 0.4);
-            transition: all 0.3s ease;
-            border: 2px solid rgba(155, 64, 252, 0.5);
-        }
-        .music-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(155, 64, 252, 0.5);
-        }
-        .music-toggle.playing {
-            animation: pulse 1.5s infinite;
-        }
-        .music-toggle svg {
-            width: 28px;
-            height: 28px;
-            fill: #fff;
-            transition: 0.3s;
-        }
-        .music-toggle.muted svg {
-            opacity: 0.5;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(155, 64, 252, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(155, 64, 252, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(155, 64, 252, 0); }
-        }
-        .ranking-wrapper {
-            margin: 20px 0;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(155, 64, 252, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            flex-shrink: 0;
-            max-width: 800px;
-            width: 100%;
-            align-self: center;
-            z-index: 5;
-            position: relative;
-        }
-        .ranking-title {
-            text-align: center;
-            font-size: 1.7em;
-            margin-bottom: 8px;
-            color: #9b40fc;
-            text-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
-            font-weight: bold;
-        }
-        .ranking-note {
-            text-align: center;
-            font-size: 0.85em;
-            color: #ccc;
-            font-style: italic;
-            margin-bottom: 15px;
-            opacity: 0.9;
-        }
-        .ranking-table-container {
-            max-height: 400px;
-            overflow-y: auto;
-            border-radius: 12px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(155, 64, 252, 0.3) transparent;
-            transform: translateZ(0);
-            will-change: transform, scroll-position;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        .ranking-table-container.visible {
-            opacity: 1;
-        }
-
-        .ranking-table-container::-webkit-scrollbar {
-            width: 10px;
-        }
-        .ranking-table-container::-webkit-scrollbar-track {
-            background: transparent;
-            border-radius: 10px;
-            margin: 4px 0;
-        }
-        .ranking-table-container::-webkit-scrollbar-thumb {
-            background: rgba(155, 64, 252, 0.3);
-            border-radius: 10px;
-            border: 2px solid transparent;
-            background-clip: content-box;
-            transition: all 0.3s ease;
-        }
-        .ranking-table-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(155, 64, 252, 0.6);
-            box-shadow: 0 0 10px rgba(155, 64, 252, 0.5);
-        }
-        .ranking-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95em;
-        }
-        .ranking-table th {
-            background: rgba(155, 64, 252, 0.3);
-            color: #fff;
-            padding: 14px 12px;
-            text-align: center;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            transform: translateZ(0);
-        }
-        .ranking-table td {
-            padding: 14px 12px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            vertical-align: middle;
-        }
-        .ranking-table tr:hover {
-            background: rgba(155, 64, 252, 0.15);
-            transition: 0.2s;
-        }
-        .rank-badge {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 0.95em;
-            color: white;
-        }
-
-        .rank-1 { background: linear-gradient(45deg, #ffd700, #ffaa00); box-shadow: 0 0 18px #ffd700; }
-        .rank-2 { background: linear-gradient(45deg, #c0c0c0, #aaaaaa); box-shadow: 0 0 15px #c0c0c0; }
-        .rank-3 { background: linear-gradient(45deg, #cd7f32, #a97142); box-shadow: 0 0 15px #cd7f32; }
-        .rank-other { background: rgba(155, 64, 252, 0.7); }
-        .student-name-rank {
-            font-weight: 600;
-            color: #e0e0ff;
-            max-width: 200px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .avg-score {
-            font-weight: bold;
-            color: #9b40fc;
-            font-size: 1.1em;
-        }
-
-        .loader {
-          --main-size: 4em;
-          --text-color: #ffffff;
-          --shine-color: #ffffff40;
-          --shadow-color: #aaaaaa;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          user-select: none;
-          position: relative;
-          font-size: var(--main-size);
-          font-weight: 900;
-          text-transform: uppercase;
-          color: var(--text-color);
-          width: 7.3em;
-          height: 1em;
-          filter: drop-shadow(0 0 0.05em var(--shine-color));
-        }
-
-        .loader .text {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          white-space: nowrap;
-          overflow: hidden;
-          position: absolute;
-        }
-
-        .loader .text:nth-child(1) { clip-path: polygon(0% 0%, 11.11% 0%, 11.11% 100%, 0% 100%); font-size: calc(var(--main-size) / 20); margin-left: -2.1em; opacity: 0.6; }
-        .loader .text:nth-child(2) { clip-path: polygon(11.11% 0%, 22.22% 0%, 22.22% 100%, 11.11% 100%); font-size: calc(var(--main-size) / 16); margin-left: -0.98em; opacity: 0.7; }
-        .loader .text:nth-child(3) { clip-path: polygon(22.22% 0%, 33.33% 0%, 33.33% 100%, 22.22% 100%); font-size: calc(var(--main-size) / 13); margin-left: -0.33em; opacity: 0.8; }
-        .loader .text:nth-child(4) { clip-path: polygon(33.33% 0%, 44.44% 0%, 44.44% 100%, 33.33% 100%); font-size: calc(var(--main-size) / 11); margin-left: -0.05em; opacity: 0.9; }
-        .loader .text:nth-child(5) { clip-path: polygon(44.44% 0%, 55.55% 0%, 55.55% 100%, 44.44% 100%); font-size: calc(var(--main-size) / 10); margin-left: 0em; opacity: 1; }
-        .loader .text:nth-child(6) { clip-path: polygon(55.55% 0%, 66.66% 0%, 66.66% 100%, 55.55% 100%); font-size: calc(var(--main-size) / 11); margin-left: 0.05em; opacity: 0.9; }
-        .loader .text:nth-child(7) { clip-path: polygon(66.66% 0%, 77.77% 0%, 77.77% 100%, 66.66% 100%); font-size: calc(var(--main-size) / 13); margin-left: 0.33em; opacity: 0.8; }
-        .loader .text:nth-child(8) { clip-path: polygon(77.77% 0%, 88.88% 0%, 88.88% 100%, 77.77% 100%); font-size: calc(var(--main-size) / 16); margin-left: 0.98em; opacity: 0.7; }
-        .loader .text:nth-child(9) { clip-path: polygon(88.88% 0%, 100% 0%, 100% 100%, 88.88% 100%); font-size: calc(var(--main-size) / 20); margin-left: 2.1em; opacity: 0.6; }
-
-        .loader .text span {
-          animation: scrolling 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite, shadow 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite;
-        }
-
-        .loader .text:nth-child(1) span { background: linear-gradient(to right, var(--text-color) 4%, var(--shadow-color) 7%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(2) span { background: linear-gradient(to right, var(--text-color) 9%, var(--shadow-color) 13%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(3) span { background: linear-gradient(to right, var(--text-color) 15%, var(--shadow-color) 18%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(4) span { background: linear-gradient(to right, var(--text-color) 20%, var(--shadow-color) 23%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(6) span { background: linear-gradient(to right, var(--shadow-color) 29%, var(--text-color) 32%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(7) span { background: linear-gradient(to right, var(--shadow-color) 34%, var(--text-color) 37%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(8) span { background: linear-gradient(to right, var(--shadow-color) 39%, var(--text-color) 42%); background-size: 200% auto; background-clip: text; color: transparent; }
-        .loader .text:nth-child(9) span { background: linear-gradient(to right, var(--shadow-color) 45%, var(--text-color) 48%); background-size: 200% auto; background-clip: text; color: transparent; }
-
-        .loader .line {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          height: 0.05em;
-          width: calc(var(--main-size) / 2);
-          margin-top: 0.9em;
-          border-radius: 0.05em;
-        }
-
-        .loader .line::before {
-          content: "";
-          position: absolute;
-          height: 100%;
-          width: 100%;
-          background-color: var(--text-color);
-          opacity: 0.3;
-        }
-
-        .loader .line::after {
-          content: "";
-          position: absolute;
-          height: 100%;
-          width: 100%;
-          background-color: var(--text-color);
-          border-radius: 0.05em;
-          transform: translateX(-90%);
-          animation: wobble 2s cubic-bezier(0.5, 0.8, 0.5, 0.2) infinite;
-        }
-
-        @keyframes wobble {
-          0% { transform: translateX(-90%); }
-          50% { transform: translateX(90%); }
-          100% { transform: translateX(-90%); }
-        }
-
-        @keyframes scrolling {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-
-        @keyframes shadow {
-          0% { background-position: -98% 0; }
-          100% { background-position: 102% 0; }
-        }
-
-        #rankingLoading {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            border-radius: 16px;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal-loading {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(17, 17, 17, 0.98);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal-loading.hidden,
-        #rankingLoading.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .grid{
-            padding: 20px 10px 30px;
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));
-            gap:2em;
-            justify-content:center;
-            scrollbar-width:none;
-        }
+        .music-toggle{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:rgba(155,64,252,0.3);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:9999;box-shadow:0 8px 25px rgba(155,64,252,0.4);transition:all .3s ease;border:2px solid rgba(155,64,252,0.5)}
+        .music-toggle:hover{transform:scale(1.1);background:rgba(155,64,252,0.5)}
+        .music-toggle.playing{animation:pulse 1.5s infinite}
+        .music-toggle svg{width:28px;height:28px;fill:#fff;transition:.3s}
+        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(155,64,252,.7)}70%{box-shadow:0 0 0 15px rgba(155,64,252,0)}100%{box-shadow:0 0 0 0 rgba(155,64,252,0)}}
+        .ranking-wrapper{margin:20px 0;background:rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:16px;padding:20px;border:1px solid rgba(155,64,252,.3);box-shadow:0 8px 32px rgba(0,0,0,.3);flex-shrink:0;max-width:800px;width:100%;align-self:center;z-index:5;position:relative}
+        .ranking-title{text-align:center;font-size:1.7em;margin-bottom:8px;color:#9b40fc;text-shadow:0 0 10px rgba(155,64,252,.5);font-weight:bold}
+        .ranking-note{text-align:center;font-size:.85em;color:#ccc;font-style:italic;margin-bottom:15px;opacity:.9}
+        .ranking-table-container{max-height:400px;overflow-y:auto;border-radius:12px;scrollbar-width:thin;scrollbar-color:rgba(155,64,252,.3) transparent;transform:translateZ(0);will-change:transform,scroll-position;opacity:0;transition:opacity .4s ease}
+        .ranking-table-container.visible{opacity:1}
+        .ranking-table-container::-webkit-scrollbar{width:10px}
+        .ranking-table-container::-webkit-scrollbar-track{background:transparent;border-radius:10px;margin:4px 0}
+        .ranking-table-container::-webkit-scrollbar-thumb{background:rgba(155,64,252,.3);border-radius:10px;border:2px solid transparent;background-clip:content-box;transition:all .3s ease}
+        .ranking-table-container::-webkit-scrollbar-thumb:hover{background:rgba(155,64,252,.6);box-shadow:0 0 10px rgba(155,64,252,.5)}
+        .ranking-table{width:100%;border-collapse:collapse;font-size:.95em}
+        .ranking-table th{background:rgba(155,64,252,.3);color:#fff;padding:14px 12px;text-align:center;font-weight:bold;position:sticky;top:0;z-index:2;transform:translateZ(0)}
+        .ranking-table td{padding:14px 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);vertical-align:middle}
+        .ranking-table tr:hover{background:rgba(155,64,252,.15);transition:.2s}
+        .rank-badge{display:inline-block;width:32px;height:32px;line-height:32px;border-radius:50%;font-weight:bold;font-size:.95em;color:white}
+        .rank-1{background:linear-gradient(45deg,#ffd700,#ffaa00);box-shadow:0 0 18px #ffd700}
+        .rank-2{background:linear-gradient(45deg,#c0c0c0,#aaa);box-shadow:0 0 15px #c0c0c0}
+        .rank-3{background:linear-gradient(45deg,#cd7f32,#a97142);box-shadow:0 0 15px #cd7f32}
+        .rank-other{background:rgba(155,64,252,.7)}
+        .student-name-rank{font-weight:600;color:#e0e0ff;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .avg-score{font-weight:bold;color:#9b40fc;font-size:1.1em}
+        .loader{--main-size:4em;--text-color:#fff;--shine-color:#fff4;--shadow-color:#aaa;display:flex;justify-content:center;align-items:center;overflow:hidden;user-select:none;position:relative;font-size:var(--main-size);font-weight:900;text-transform:uppercase;color:var(--text-color);width:7.3em;height:1em;filter:drop-shadow(0 0 .05em var(--shine-color))}
+        .loader .text{display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;overflow:hidden;position:absolute}
+        .loader .text:nth-child(1){clip-path:polygon(0% 0%,11.11% 0%,11.11% 100%,0% 100%);font-size:calc(var(--main-size)/20);margin-left:-2.1em;opacity:.6}
+        .loader .text:nth-child(2){clip-path:polygon(11.11% 0%,22.22% 0%,22.22% 100%,11.11% 100%);font-size:calc(var(--main-size)/16);margin-left:-.98em;opacity:.7}
+        .loader .text:nth-child(3){clip-path:polygon(22.22% 0%,33.33% 0%,33.33% 100%,22.22% 100%);font-size:calc(var(--main-size)/13);margin-left:-.33em;opacity:.8}
+        .loader .text:nth-child(4){clip-path:polygon(33.33% 0%,44.44% 0%,44.44% 100%,33.33% 100%);font-size:calc(var(--main-size)/11);margin-left:-.05em;opacity:.9}
+        .loader .text:nth-child(5){clip-path:polygon(44.44% 0%,55.55% 0%,55.55% 100%,44.44% 100%);font-size:calc(var(--main-size)/10);margin-left:0;opacity:1}
+        .loader .text:nth-child(6){clip-path:polygon(55.55% 0%,66.66% 0%,66.66% 100%,55.55% 100%);font-size:calc(var(--main-size)/11);margin-left:.05em;opacity:.9}
+        .loader .text:nth-child(7){clip-path:polygon(66.66% 0%,77.77% 0%,77.77% 100%,66.66% 100%);font-size:calc(var(--main-size)/13);margin-left:.33em;opacity:.8}
+        .loader .text:nth-child(8){clip-path:polygon(77.77% 0%,88.88% 0%,88.88% 100%,77.77% 100%);font-size:calc(var(--main-size)/16);margin-left:.98em;opacity:.7}
+        .loader .text:nth-child(9){clip-path:polygon(88.88% 0%,100% 0%,100% 100%,88.88% 100%);font-size:calc(var(--main-size)/20);margin-left:2.1em;opacity:.6}
+        .loader .text span{animation:scrolling 2s cubic-bezier(.1,.6,.9,.4) infinite,shadow 2s cubic-bezier(.1,.6,.9,.4) infinite}
+        .loader .text:nth-child(1) span{background:linear-gradient(to right,var(--text-color) 4%,var(--shadow-color) 7%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(2) span{background:linear-gradient(to right,var(--text-color) 9%,var(--shadow-color) 13%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(3) span{background:linear-gradient(to right,var(--text-color) 15%,var(--shadow-color) 18%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(4) span{background:linear-gradient(to right,var(--text-color) 20%,var(--shadow-color) 23%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(6) span{background:linear-gradient(to right,var(--shadow-color) 29%,var(--text-color) 32%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(7) span{background:linear-gradient(to right,var(--shadow-color) 34%,var(--text-color) 37%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(8) span{background:linear-gradient(to right,var(--shadow-color) 39%,var(--text-color) 42%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .text:nth-child(9) span{background:linear-gradient(to right,var(--shadow-color) 45%,var(--text-color) 48%);background-size:200% auto;background-clip:text;color:transparent}
+        .loader .line{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;height:.05em;width:calc(var(--main-size)/2);margin-top:.9em;border-radius:.05em}
+        .loader .line::before{content:"";position:absolute;height:100%;width:100%;background-color:var(--text-color);opacity:.3}
+        .loader .line::after{content:"";position:absolute;height:100%;width:100%;background-color:var(--text-color);border-radius:.05em;transform:translateX(-90%);animation:wobble 2s cubic-bezier(.5,.8,.5,.2) infinite}
+        @keyframes wobble{0%{transform:translateX(-90%)}50%{transform:translateX(90%)}100%{transform:translateX(-90%)}}
+        @keyframes scrolling{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+        @keyframes shadow{0%{background-position:-98% 0}100%{background-position:102% 0}}
+        #rankingLoading{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10;border-radius:16px;transition:opacity .4s ease}
+        .modal-loading{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(17,17,17,.98);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:999;transition:opacity .4s ease}
+        .modal-loading.hidden,#rankingLoading.hidden{opacity:0;pointer-events:none}
+        .grid{padding:20px 10px 30px;display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));gap:2em;justify-content:center;scrollbar-width:none}
         .grid::-webkit-scrollbar{display:none}
-        .card{
-            position:relative;
-            width:var(--card-w);height:var(--card-h);
-            margin:0 auto;
-            display:flex;flex-direction:column;
-            align-items:center;justify-content:center;
-            background:#171717;color:white;
-            font-family:Montserrat,sans-serif;font-weight:bold;
-            padding:1em 2em 1em 1em;
-            border-radius:20px;overflow:hidden;
-            cursor:pointer;z-index:1;
-            row-gap:1em;
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow:0 10px 30px rgba(0,0,0,.5);
-            will-change: transform;
-        }
-        .card:hover{transform: translateY(-12px) translateZ(0);}
-        .card img{
-            width:12em;
-            margin-right:1em;
-            animation:move 10s ease-in-out infinite;
-            z-index:5;
-            user-select:none;
-            pointer-events:none;
-        }
-
-        .heading{
-            z-index:2;
-            transition:letter-spacing .3s ease;
-            font-size:1.35em;
-            text-align:center;
-            text-shadow:0 2px 10px #000;
-        }
+        .card{position:relative;width:var(--card-w);height:var(--card-h);margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#171717;color:white;font-family:Montserrat,sans-serif;font-weight:bold;padding:1em 2em 1em 1em;border-radius:20px;overflow:hidden;cursor:pointer;z-index:1;row-gap:1em;transition:transform .4s cubic-bezier(.25,.8,.25,1);box-shadow:0 10px 30px rgba(0,0,0,.5);will-change:transform}
+        .card:hover{transform:translateY(-12px) translateZ(0)}
+        .card img{width:12em;margin-right:1em;animation:move 10s ease-in-out infinite;z-index:5;user-select:none;pointer-events:none}
+        .heading{z-index:2;transition:letter-spacing .3s ease;font-size:1.35em;text-align:center;text-shadow:0 2px 10px #000}
         .card:hover .heading{letter-spacing:.025em}
-        .heading::after{
-            content:"";
-            top:-8.5%;left:-8.5%;
-            position:absolute;
-            width:7.5em;height:7.5em;
-            border-radius:50%;
-            background:#f9f9fb;
-            box-shadow:0px 0px 100px rgba(193,119,241,.8),inset #9b40fc 0px 0px 40px -12px;
-            transition:box-shadow .4s ease;
-            z-index:-1;
-        }
-        .card:hover .heading::after{
-            box-shadow:0px 0px 200px rgba(193,119,241,1),inset #9b40fc 0px 0px 40px -12px;
-        }
-        .icons{
-            display:flex;align-items:center;justify-content:center;flex-direction:row;
-            column-gap:1em;z-index:1;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 9998;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .modal.active {
-            display: flex;
-            opacity: 1;
-        }
-        .modal-content {
-            width: 100%;
-            max-width: 1000px;
-            height: 90vh;
-            background: #111;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            transform: translateZ(0);
-        }
-        .modal-header {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 50px;
-            background: rgba(155, 64, 252, 0.3);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 10;
-            border-bottom: 1px solid rgba(155, 64, 252, 0.5);
-        }
-        .modal-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #fff;
-        }
-        .close-modal {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.8em;
-            cursor: pointer;
-            padding: 5px;
-            line-height: 1;
-            transition: 0.3s;
-        }
-        .close-modal:hover {
-            color: #ff5c5c;
-            transform: scale(1.1);
-        }
-        .modal-iframe {
-            width: 100%;
-            height: calc(100% - 50px);
-            border: none;
-            margin-top: 50px;
-            background: #fff;
-        }
-        .footer-wrapper {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            padding: 20px 15px 80px;
-        }
-        .info-box{
-            background:rgba(255,255,255,.1);
-            backdrop-filter:blur(10px);
-            padding:16px;
-            border-radius:15px;
-            max-width:500px;
-            width: 100%;
-            border-left:4px solid #9b40fc;
-            font-size:.95em;
-            text-align:center;
-        }
-        .stats{
-            display:flex;
-            justify-content:center;
-            gap:3em;
-            padding:15px 0;
-            background:rgba(0,0,0,.3);
-            border-radius: 15px;
-            flex-wrap:wrap;
-            max-width: 500px;
-            width: 100%;
-        }
-        .stat-number{
-            font-size:2.5em;font-weight:bold;color:#9b40fc;
-        }
-        @keyframes move{
-            0%,100%{transform:translate(0,0)}
-            25%{transform:translate(-1em,-1em) rotate(-10deg)}
-            50%{transform:translate(-1em,1em)}
-            75%{transform:translate(1em,-1.25em) rotate(10deg)}
-        }
-
-        .show-stats-btn {
-            background: rgba(155, 64, 252, 0.3);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(155, 64, 252, 0.5);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(155, 64, 252, 0.3);
-        }
-        .show-stats-btn:hover {
-            background: rgba(155, 64, 252, 0.6);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(155, 64, 252, 0.5);
-        }
-
-        #subjectStatsBody td {
-            min-width: 80px;
-            word-break: break-word;
-            line-height: 1.4;
-        }
-        #subjectStatsBody .subject-top-student {
-            font-weight: 600;
-            color: #e0f2ff;
-            white-space: normal;
-            max-width: 140px;
-        }
-        #subjectStatsBody .subject-score {
-            font-weight: bold;
-            color: #9b40fc;
-            font-size: 1.1em;
-        }
-
-        @media (max-width:480px){
-            :root{--card-w:17em;--card-h:23em}
-            .header h1{font-size:2.1em}
-            .grid{gap:1.5em;padding:10px 5px 20px}
-            .ranking-wrapper { margin: 15px 0; padding: 15px; }
-            .ranking-title { font-size: 1.4em; }
-            .ranking-note { font-size: 0.8em; }
-            .ranking-table th, .ranking-table td { padding: 10px 8px; font-size: 0.82em; }
-            .student-name-rank { max-width: 90px; }
-            .stats { gap: 20px; padding: 12px; }
-            .stat-number { font-size: 2em; }
-            .modal-content { height: 95vh; border-radius: 15px; }
-            .modal-header { height: 45px; padding: 0 15px; }
-            .modal-title { font-size: 1.1em; }
-            .music-toggle { width: 50px; height: 50px; bottom: 15px; right: 15px; }
-            .music-toggle svg { width: 22px; height: 22px; }
-            .show-stats-btn { padding: 10px 18px; font-size: 0.9em; }
-            #subjectStatsBody td { padding: 10px 6px; font-size: 0.8em; }
-        }
+        .heading::after{content:"";top:-8.5%;left:-8.5%;position:absolute;width:7.5em;height:7.5em;border-radius:50%;background:#f9f9fb;box-shadow:0 0 100px rgba(193,119,241,.8),inset #9b40fc 0 0 40px -12px;transition:box-shadow .4s ease;z-index:-1}
+        .card:hover .heading::after{box-shadow:0 0 200px rgba(193,119,241,1),inset #9b40fc 0 0 40px -12px}
+        .icons{display:flex;align-items:center;justify-content:center;flex-direction:row;column-gap:1em;z-index:1}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:9998;justify-content:center;align-items:center;padding:20px;box-sizing:border-box;opacity:0;transition:opacity .3s ease}
+        .modal.active{display:flex;opacity:1}
+        .modal-content{width:100%;max-width:1000px;height:90vh;background:#111;border-radius:20px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.8);transform:translateZ(0)}
+        .modal-header{position:absolute;top:0;left:0;right:0;height:50px;background:rgba(155,64,252,.3);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:10;border-bottom:1px solid rgba(155,64,252,.5)}
+        .modal-title{font-size:1.3em;font-weight:bold;color:#fff}
+        .close-modal{background:none;border:none;color:#fff;font-size:1.8em;cursor:pointer;padding:5px;line-height:1;transition:.3s}
+        .close-modal:hover{color:#ff5c5c;transform:scale(1.1)}
+        .modal-iframe{width:100%;height:calc(100% - 50px);border:none;margin-top:50px;background:#fff}
+        .footer-wrapper{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:15px;padding:20px 15px 80px}
+        .info-box{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);padding:16px;border-radius:15px;max-width:500px;width:100%;border-left:4px solid #9b40fc;font-size:.95em;text-align:center}
+        .stats{display:flex;justify-content:center;gap:3em;padding:15px 0;background:rgba(0,0,0,.3);border-radius:15px;flex-wrap:wrap;max-width:500px;width:100%}
+        .stat-number{font-size:2.5em;font-weight:bold;color:#9b40fc}
+        @keyframes move{0%,100%{transform:translate(0,0)}25%{transform:translate(-1em,-1em) rotate(-10deg)}50%{transform:translate(-1em,1em)}75%{transform:translate(1em,-1.25em) rotate(10deg)}}
+        .show-stats-btn{background:rgba(155,64,252,.3);backdrop-filter:blur(10px);border:2px solid rgba(155,64,252,.5);color:#fff;padding:12px 24px;border-radius:12px;font-weight:bold;font-size:1em;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(155,64,252,.3)}
+        .show-stats-btn:hover{background:rgba(155,64,252,.6);transform:translateY(-2px);box-shadow:0 6px 20px rgba(155,64,252,.5)}
+        #subjectStatsBody td{min-width:80px;word-break:break-word;line-height:1.4}
+        #subjectStatsBody .subject-top-student{font-weight:600;color:#e0f2ff;white-space:normal;max-width:140px}
+        #subjectStatsBody .subject-score{font-weight:bold;color:#9b40fc;font-size:1.1em}
+        @media (max-width:480px){:root{--card-w:17em;--card-h:23em}.header h1{font-size:2.1em}.grid{gap:1.5em;padding:10px 5px 20px}.ranking-wrapper{margin:15px 0;padding:15px}.ranking-title{font-size:1.4em}.ranking-note{font-size:.8em}.ranking-table th,.ranking-table td{padding:10px 8px;font-size:.82em}.student-name-rank{max-width:90px}.stats{gap:20px;padding:12px}.stat-number{font-size:2em}.modal-content{height:95vh;border-radius:15px}.modal-header{height:45px;padding:0 15px}.modal-title{font-size:1.1em}.music-toggle{width:50px;height:50px;bottom:15px;right:15px}.music-toggle svg{width:22px;height:22px}.show-stats-btn{padding:10px 18px;font-size:.9em}#subjectStatsBody td{padding:10px 6px;font-size:.8em}}
     </style>
 </head>
 <body>
     <audio id="bgMusic" loop preload="auto">
         <source src="vn.mp3" type="audio/mpeg">
-        Trình duyệt không hỗ trợ âm thanh.
     </audio>
 
     <div class="container">
@@ -612,20 +129,19 @@
             <div class="ranking-note">Bảng xếp hạng sẽ thay đổi khi điểm có sự thay đổi từ hệ thống VNedu!</div>
 
             <div id="rankingLoading">
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;"> </p>
-                <div class="loader">  
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="line"></div>
+                <div class="loader">
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="line"></div>
                 </div>
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đợi một tí bro!</p>
+                <p style="margin-top:20px;font-size:.9em;opacity:.7">Đợi một tí bro!</p>
             </div>
 
             <div class="ranking-table-container" id="rankingTableContainer">
@@ -641,9 +157,9 @@
                 </table>
             </div>
 
-            <div style="text-align: center; margin-top: 15px;">
+            <div style="text-align:center;margin-top:15px">
                 <button id="showSubjectStatsBtn" class="show-stats-btn">
-                    Xem thống kê top 1
+                    Xem thống kê top 1 (hòa điểm tính thường xuyên)
                 </button>
             </div>
         </div>
@@ -670,23 +186,23 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title" id="modalTitle">Đang tải...</div>
-                <button class="close-modal" id="closeModal">×</button>
+                <button class="close-modal" id="closeModal">x</button>
             </div>
             <iframe class="modal-iframe" id="gradeIframe"></iframe>
             <div class="modal-loading" id="modalLoading">
                 <div class="loader">
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="text"><span>Loading</span></div>
-                      <div class="line"></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="text"><span>Loading</span></div>
+                    <div class="line"></div>
                 </div>
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đợi một tí bro...</p>
+                <p style="margin-top:20px;font-size:.9em;opacity:.7">Đợi một tí bro...</p>
             </div>
         </div>
     </div>
@@ -695,9 +211,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">Top 1 Của Các Môn Học</div>
-                <button class="close-modal" id="closeSubjectStats">×</button>
+                <button class="close-modal" id="closeSubjectStats">x</button>
             </div>
-            <div class="modal-body" style="padding: 20px; overflow-y: auto; height: calc(100% - 50px);">
+            <div class="modal-body" style="padding:20px;overflow-y:auto;height:calc(100% - 50px)">
                 <div id="subjectStatsLoading" class="modal-loading">
                     <div class="loader">
                         <div class="text"><span>Loading</span></div>
@@ -711,17 +227,18 @@
                         <div class="text"><span>Loading</span></div>
                         <div class="line"></div>
                     </div>
-                    <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">Đang xử lí...</p>
+                    <p style="margin-top:20px;font-size:.9em;opacity:.7">Đang xử lí...</p>
                 </div>
                 <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">ㅤ</p>
+
                 <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">  </p>
-                <div id="subjectStatsContent" style="display: none;">
-                    <table class="ranking-table" style="width: 100%; margin-top: 10px;">
+                <div id="subjectStatsContent" style="display:none">
+                    <table class="ranking-table" style="width:100%;margin-top:10px">
                         <thead>
                             <tr>
-                                <th style="width: 38%;">Môn học</th>
-                                <th style="width: 38%;">Top 1</th>
-                                <th style="width: 24%;">Điểm</th>
+                                <th style="width:38%">Môn học</th>
+                                <th style="width:38%">Top 1</th>
+                                <th style="width:24%">Điểm</th>
                             </tr>
                         </thead>
                         <tbody id="subjectStatsBody"></tbody>
@@ -732,11 +249,11 @@
     </div>
 
     <script>
+        // === MUSIC TOGGLE ===
         const audio = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('musicToggle');
         const icon = document.getElementById('musicIcon');
-        let isPlaying = false;
-        let hasInteracted = false;
+        let isPlaying = false, hasInteracted = false;
 
         function tryPlayMusic() {
             if (!hasInteracted || isPlaying) return;
@@ -746,24 +263,11 @@
                 icon.innerHTML = `<path d="M3,12H7V10H3V12M3,16H7V14H3V16M3,8H7V6H3V8M9,12H21V10H9V12M9,16H21V14H9V16M9,6V8H21V6H9Z"/>`;
             }).catch(() => {});
         }
-        toggleBtn.onclick = (e) => {
-            e.stopPropagation();
-            hasInteracted = true;
-            if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-                toggleBtn.classList.remove('playing');
-                icon.innerHTML = `<path d="M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z"/>`;
-            } else {
-                tryPlayMusic();
-            }
-        };
-        document.onclick = () => {
-            hasInteracted = true;
-            tryPlayMusic();
-        };
+        toggleBtn.onclick = e => { e.stopPropagation(); hasInteracted = true; isPlaying ? (audio.pause(), isPlaying = false, toggleBtn.classList.remove('playing'), icon.innerHTML = `<path d="M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z"/>`) : tryPlayMusic(); };
+        document.onclick = () => { hasInteracted = true; tryPlayMusic(); };
         audio.loop = true;
 
+        // === DATA ===
         const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=1&hoc_sinh_id=";
         const students = [
             {name:"Lại Quế Anh",id:"5010453507"},{name:"Lý Ngọc Lan Anh",id:"5010453527"},
@@ -789,28 +293,20 @@
             {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"}
         ];
 
+        // === GRID ===
         const grid = document.getElementById('studentGrid');
         document.getElementById('totalStudents').textContent = students.length;
         const frag = document.createDocumentFragment();
         students.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `
-                <div class="image">
-                    <img src="anh11d1.jpg" alt="11D1" loading="lazy">
-                </div>
-                <div class="heading">${s.name}</div>
-                <div class="icons">
-                    <div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,112,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div>
-                    <div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div>
-                    <div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div>
-                </div>
-            `;
+            card.innerHTML = `<div class="image"><img src="anh11d1.jpg" alt="11D1" loading="lazy"></div><div class="heading">${s.name}</div><div class="icons"><div class="instagram"><svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg></div><div class="x"><svg viewBox="0 0 24 24"><path d="M18.9,1.15H5.1A4.1,4.1 0 0,0 1,5.25V18.75A4.1,4.1 0 0,0 5.1,22.85H18.9A4.1,4.1 0 0,0 23,18.75V5.25A4.1,4.1 0 0,0 18.9,1.15M17.35,9.61L12.5,14.68L7.65,9.61L5.85,11.41L10.7,16.28L5.85,21.15L7.65,22.95L12.5,18.08L17.35,22.95L19.15,21.15L14.3,16.28L19.15,11.41L17.35,9.61Z"/></svg></div><div class="discord"><svg viewBox="0 0 24 24"><path d="M20.22 8.43A13.86 13.86 0 0,0 16.56 6.3 13.47 13.47 0 0,0 15.89 4L15.65 3.5A14.13 14.13 0 0,0 12 3.2 14.13 14.13 0 0,0 8.35 3.5L8.11 4A13.47 13.47 0 0,0 7.44 6.3 13.86 13.86 0 0,0 3.78 8.43 14.05 14.05 0 0,0 2 14.9A14.4 14.4 0 0,0 8.13 18.5L8.6 17.8A10.08 10.08 0 0,1 6.5 15.7L7.2 15.3A9.85 9.85 0 0,0 12 16.5A9.85 9.85 0 0,0 16.8 15.3L17.5 15.7A10.08 10.08 0 0,1 15.4 17.8L15.87 18.5A14.4 14.4 0 0,0 22 14.9A14.05 14.05 0 0,0 20.22 8.43M8.5 14C7.67 14 7 13.33 7 12.5S7.67 11 8.5 11 10 11.67 10 12.5 9.33 14 8.5 14M15.5 14C14.67 14 14 13.33 14 12.5S14.67 11 15.5 11 17 11.67 17 12.5 16.33 14 15.5 14Z"/></svg></div></div>`;
             card.onclick = () => openGradeModal(s.name, BASE_URL + s.id);
             frag.appendChild(card);
         });
         grid.appendChild(frag);
 
+        // === MODAL ===
         const modal = document.getElementById('gradeModal');
         const iframe = document.getElementById('gradeIframe');
         const title = document.getElementById('modalTitle');
@@ -819,249 +315,128 @@
         const rankingLoading = document.getElementById('rankingLoading');
         const rankingContainer = document.getElementById('rankingTableContainer');
 
-        function openGradeModal(studentName, url) {
-            title.textContent = `Điểm của ${studentName}`;
-            iframe.src = '';
-            modalLoading.classList.remove('hidden');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
+        function openGradeModal(name, url) {
+            title.textContent = `Điểm của ${name}`;
+            iframe.src = ''; modalLoading.classList.remove('hidden');
+            modal.classList.add('active'); document.body.style.overflow = 'hidden';
             iframe.src = url;
-            iframe.onload = () => {
-                setTimeout(() => {
-                    modalLoading.classList.add('hidden');
-                }, 300);
-            };
+            iframe.onload = () => setTimeout(() => modalLoading.classList.add('hidden'), 300);
         }
+        closeBtn.onclick = () => { modal.classList.remove('active'); iframe.src = ''; modalLoading.classList.remove('hidden'); document.body.style.overflow = ''; };
+        modal.onclick = e => { if (e.target === modal) closeBtn.click(); };
 
-        closeBtn.onclick = () => {
-            modal.classList.remove('active');
-            iframe.src = '';
-            modalLoading.classList.remove('hidden');
-            document.body.style.overflow = '';
-        };
-
-        modal.onclick = (e) => { 
-            if (e.target === modal) closeBtn.click(); 
-        };
-
-        async function fetchStudentGrades(studentId) {
-            const url = `${BASE_URL}${studentId}`;
+        // === BXH TỔNG ===
+        async function fetchStudentGrades(id) {
             try {
-                const response = await fetch(url, { method: 'GET', credentials: 'omit' });
-                if (!response.ok) return null;
-                const text = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(text, 'text/html');
-
-                let avg = 0, count = 0;
-                const tbmCells = doc.querySelectorAll('.table-point-content .table tbody th.text-center');
-                tbmCells.forEach(cell => {
-                    const score = parseFloat(cell.textContent.trim());
-                    if (!isNaN(score)) { avg += score; count++; }
+                const res = await fetch(`${BASE_URL}${id}`, { credentials: 'omit' });
+                if (!res.ok) return null;
+                const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+                let sum = 0, cnt = 0;
+                doc.querySelectorAll('.table-point-content .table tbody th.text-center').forEach(c => {
+                    const v = parseFloat(c.textContent.trim());
+                    if (!isNaN(v)) { sum += v; cnt++; }
                 });
-                if (count === 0) {
-                    const gkCells = doc.querySelectorAll('span.border-custom');
-                    gkCells.forEach(cell => {
-                        const score = parseFloat(cell.textContent.trim());
-                        if (!isNaN(score)) { avg += score; count++; }
-                    });
-                }
-                return count > 0 ? (avg / count).toFixed(2) : null;
-            } catch (err) {
-                console.warn(`Lỗi HS ${studentId}:`, err);
-                return null;
-            }
+                return cnt > 0 ? (sum / cnt).toFixed(2) : null;
+            } catch { return null; }
         }
 
         async function loadRanking() {
-            const bodyEl = document.getElementById('rankingBody');
-            bodyEl.innerHTML = '';
-
-            const results = await Promise.all(
-                students.map(async (s) => {
-                    const avg = await fetchStudentGrades(s.id);
-                    return { name: s.name, avg: avg ? parseFloat(avg) : null };
-                })
-            );
-
-            const top10 = results
-                .filter(r => r.avg !== null)
-                .sort((a, b) => b.avg - a.avg)
-                .slice(0, 10);
-
-            if (top10.length === 0) {
-                rankingLoading.innerHTML = `<p style="color:#aaa; font-style:italic;">Không thể tải điểm. Vui lòng thử lại.</p>`;
-                return;
-            }
-
-            top10.forEach((item, index) => {
+            const body = document.getElementById('rankingBody'); body.innerHTML = '';
+            const results = await Promise.all(students.map(async s => ({ name: s.name, avg: await fetchStudentGrades(s.id) })));
+            const top10 = results.filter(r => r.avg).map(r => ({ ...r, avg: parseFloat(r.avg) })).sort((a,b) => b.avg - a.avg).slice(0,10);
+            if (!top10.length) { rankingLoading.innerHTML = `<p style="color:#aaa;font-style:italic">Không thể tải điểm.</p>`; return; }
+            top10.forEach((item,i) => {
                 const tr = document.createElement('tr');
-                const rank = index + 1;
-                const badgeClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
-
-                tr.innerHTML = `
-                    <td><span class="rank-badge ${badgeClass}">${rank}</span></td>
-                    <td class="student-name-rank" title="${item.name}">${item.name}</td>
-                    <td class="avg-score">${item.avg}</td>
-                `;
-                bodyEl.appendChild(tr);
+                const cls = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+                tr.innerHTML = `<td><span class="rank-badge ${cls}">${i+1}</span></td><td class="student-name-rank" title="${item.name}">${item.name}</td><td class="avg-score">${item.avg}</td>`;
+                body.appendChild(tr);
             });
-
-            rankingLoading.classList.add('hidden');
-            rankingContainer.classList.add('visible');
+            rankingLoading.classList.add('hidden'); rankingContainer.classList.add('visible');
         }
 
-        const MAIN_SUBJECTS = [
-            "Toán học", "Vật lí", "Tin học", "Ngữ văn",
-            "Lịch sử", "Địa lí", "Ngoại ngữ",
-            "Giáo dục quốc phòng và an ninh", "Giáo dục kinh tế và pháp luật"
-        ];
+        // === THỐNG KÊ MÔN - ĐÃ SỬA LỖI ===
+        const MAIN_SUBJECTS = ["Toán học","Vật lí","Tin học","Ngữ văn","Lịch sử","Địa lí","Ngoại ngữ","Giáo dục quốc phòng và an ninh","Giáo dục kinh tế và pháp luật"];
 
-        async function fetchSubjectGrades(studentId) {
-            const url = `${BASE_URL}${studentId}`;
+        async function fetchSubjectGrades(id) {
             try {
-                const response = await fetch(url, { credentials: 'omit' });
-                if (!response.ok) return null;
-                const text = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(text, 'text/html');
-
-                const subjectMap = {};
+                const res = await fetch(`${BASE_URL}${id}`, { credentials: 'omit' });
+                if (!res.ok) return null;
+                const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
                 const table = doc.querySelector('.table-point-content .table');
                 if (!table) return null;
 
                 const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
                 const rows = table.querySelectorAll('tbody tr');
-
-                let gkIndex = headers.findIndex(h => h.includes('GK') || h.includes('Giữa'));
-                let ckIndex = headers.findIndex(h => h.includes('CK') || h.includes('Cuối'));
-
-                if (gkIndex === -1 && ckIndex === -1) return null;
+                const map = {};
 
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td, th');
                     if (cells.length < 2) return;
-                    let subjectName = cells[0].textContent.trim();
-                    if (!subjectName || subjectName.includes('TB') || subjectName.includes('Trung bình')) return;
+                    let subj = cells[0].textContent.trim();
+                    if (!subj || subj.includes('TB') || subj.includes('Trung bình')) return;
 
-                    // Chuẩn hóa tên môn
-                    if (subjectName.includes('Giáo dục quốc phòng')) subjectName = "Giáo dục quốc phòng và an ninh";
-                    if (subjectName.includes('Giáo dục kinh tế')) subjectName = "Giáo dục kinh tế và pháp luật";
+                    if (subj.includes('quốc phòng')) subj = "Giáo dục quốc phòng và an ninh";
+                    if (subj.includes('kinh tế')) subj = "Giáo dục kinh tế và pháp luật";
+                    if (!MAIN_SUBJECTS.includes(subj)) return;
 
-                    if (!MAIN_SUBJECTS.includes(subjectName)) return;
+                    let gk = null, ck = null, txSum = 0, txCnt = 0;
 
-                    let gk = null, ck = null;
-
-                    if (gkIndex !== -1 && cells[gkIndex]) {
-                        const val = cells[gkIndex].textContent.trim();
-                        gk = parseFloat(val);
-                        if (isNaN(gk)) gk = null;
-                    }
-                    if (ckIndex !== -1 && cells[ckIndex]) {
-                        const val = cells[ckIndex].textContent.trim();
-                        ck = parseFloat(val);
-                        if (isNaN(ck)) ck = null;
+                    for (let i = 1; i < cells.length; i++) {
+                        const h = headers[i] || '';
+                        const val = parseFloat(cells[i].textContent.trim());
+                        if (isNaN(val)) continue;
+                        if (h.includes('GK') || h.includes('Giữa')) gk = val;
+                        else if (h.includes('CK') || h.includes('Cuối')) ck = val;
+                        else if (!h.includes('TB') && !h.includes('Trung bình')) { txSum += val; txCnt++; }
                     }
 
                     if (gk !== null || ck !== null) {
-                        let avg;
-                        if (gk !== null && ck !== null) {
-                            avg = ((gk + ck * 2) / 3).toFixed(2);
-                        } else if (gk !== null) {
-                            avg = gk.toFixed(2);
-                        } else {
-                            avg = ck.toFixed(2);
-                        }
-                        subjectMap[subjectName] = avg;
+                        let avg = ck !== null && gk !== null ? ((gk + ck * 2) / 3).toFixed(2) : (gk ?? ck).toFixed(2);
+                        const txAvg = txCnt > 0 ? (txSum / txCnt).toFixed(2) : '0.00';
+                        map[subj] = { avg: parseFloat(avg), tx: parseFloat(txAvg) };
                     }
                 });
-
-                return subjectMap;
-            } catch (err) {
-                console.warn(`Lỗi môn HS ${studentId}:`, err);
-                return null;
-            }
+                return map;
+            } catch { return null; }
         }
 
-        // === THỐNG KÊ MÔN HỌC ===
         const subjectStatsModal = document.getElementById('subjectStatsModal');
-        const showSubjectStatsBtn = document.getElementById('showSubjectStatsBtn');
-        const closeSubjectStats = document.getElementById('closeSubjectStats');
-        const subjectStatsLoading = document.getElementById('subjectStatsLoading');
-        const subjectStatsContent = document.getElementById('subjectStatsContent');
-        const subjectStatsBody = document.getElementById('subjectStatsBody');
+        const showBtn = document.getElementById('showSubjectStatsBtn');
+        const closeStats = document.getElementById('closeSubjectStats');
+        const loading = document.getElementById('subjectStatsLoading');
+        const content = document.getElementById('subjectStatsContent');
+        const tbody = document.getElementById('subjectStatsBody');
 
-        showSubjectStatsBtn.onclick = () => {
-            subjectStatsModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            loadSubjectStats();
-        };
-
-        closeSubjectStats.onclick = () => {
-            subjectStatsModal.classList.remove('active');
-            document.body.style.overflow = '';
-        };
-
-        subjectStatsModal.onclick = (e) => {
-            if (e.target === subjectStatsModal) closeSubjectStats.click();
-        };
+        showBtn.onclick = () => { subjectStatsModal.classList.add('active'); document.body.style.overflow = 'hidden'; loadSubjectStats(); };
+        closeStats.onclick = () => { subjectStatsModal.classList.remove('active'); document.body.style.overflow = ''; };
+        subjectStatsModal.onclick = e => { if (e.target === subjectStatsModal) closeStats.click(); };
 
         async function loadSubjectStats() {
-            subjectStatsLoading.style.display = 'flex';
-            subjectStatsContent.style.display = 'none';
-            subjectStatsBody.innerHTML = '';
+            loading.style.display = 'flex'; content.style.display = 'none'; tbody.innerHTML = '';
+            const all = await Promise.all(students.map(async s => ({ name: s.name, data: await fetchSubjectGrades(s.id) || {} })));
+            const top = {};
 
-            const allResults = await Promise.all(
-                students.map(async (s) => {
-                    const subjects = await fetchSubjectGrades(s.id);
-                    return { name: s.name, subjects: subjects || {} };
-                })
-            );
-
-            const subjectTop = {};
-
-            allResults.forEach(({ name, subjects }) => {
-                Object.keys(subjects).forEach(subj => {
-                    const score = parseFloat(subjects[subj]);
-                    if (!subjectTop[subj] || score > subjectTop[subj].score) {
-                        subjectTop[subj] = { name, score: score.toFixed(2) };
+            all.forEach(({ name, data }) => {
+                Object.keys(data).forEach(subj => {
+                    const { avg, tx } = data[subj];
+                    if (!top[subj] || avg > top[subj].avg || (avg === top[subj].avg && tx > top[subj].tx)) {
+                        top[subj] = { name, avg, tx };
                     }
                 });
             });
 
-            if (Object.keys(subjectTop).length === 0) {
-                subjectStatsBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#aaa; padding:20px;">Không có dữ liệu.</td></tr>`;
-            } else {
-                MAIN_SUBJECTS.forEach(subj => {
-                    const data = subjectTop[subj];
-                    const tr = document.createElement('tr');
-                    if (data) {
-                        tr.innerHTML = `
-                            <td>${subj}</td>
-                            <td class="subject-top-student">${data.name}</td>
-                            <td class="subject-score">${data.score}</td>
-                        `;
-                    } else {
-                        tr.innerHTML = `
-                            <td>${subj}</td>
-                            <td class="subject-top-student">Chưa có</td>
-                            <td class="subject-score">-</td>
-                        `;
-                    }
-                    subjectStatsBody.appendChild(tr);
-                });
-            }
+            MAIN_SUBJECTS.forEach(subj => {
+                const d = top[subj];
+                const tr = document.createElement('tr');
+                tr.innerHTML = d ? `<td>${subj}</td><td class="subject-top-student">${d.name}</td><td class="subject-score">${d.avg.toFixed(2)}</td>` :
+                                  `<td>${subj}</td><td class="subject-top-student">Chưa có</td><td class="subject-score">-</td>`;
+                tbody.appendChild(tr);
+            });
 
-            setTimeout(() => {
-                subjectStatsLoading.style.display = 'none';
-                subjectStatsContent.style.display = 'block';
-            }, 400);
+            setTimeout(() => { loading.style.display = 'none'; content.style.display = 'block'; }, 400);
         }
 
-        window.addEventListener('load', () => {
-            setTimeout(loadRanking, 800);
-        });
+        window.addEventListener('load', () => setTimeout(loadRanking, 800));
     </script>
 </body>
 </html>
