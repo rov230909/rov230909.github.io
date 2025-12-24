@@ -3,13 +3,531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xem Note Như Web</title>
+    <title>Đặt Áo Bóng Chuyền - Lớp 11D1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { margin:0; background:#333; }
-        iframe { width:100%; height:100vh; border:none; }
+        :root{--card-w:19em;--card-h:25em; --primary:#9b40fc;}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;min-height:100vh;display:flex;flex-direction:column;}
+        .container{max-width:1400px;margin:auto;width:100%;flex:1;padding:20px 15px;}
+        .header{text-align:center;padding:20px 0;}
+        .header h1{font-size:2.8em;text-shadow:0 0 20px var(--primary);}
+        .header p{font-size:1.2em;opacity:0.9;}
+        .stats-summary{text-align:center;margin:20px 0;padding:20px;background:rgba(255,255,255,.1);border-radius:16px;}
+        .stats-summary h2{font-size:1.8em;color:var(--primary);margin-bottom:10px;}
+        .stats-numbers{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
+        .stat-item{font-size:1.2em;}
+        .stat-number{font-size:2.5em;font-weight:bold;color:var(--primary);}
+        .orders-list{margin:30px 0;background:rgba(255,255,255,.1);padding:20px;border-radius:16px;}
+        .orders-list h2{text-align:center;margin-bottom:20px;color:var(--primary);}
+        table{width:100%;border-collapse:collapse;margin-bottom:30px;}
+        table th, table td{padding:12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);}
+        table th{background:rgba(var(--primary),.3);}
+        table td button.edit-btn{background:var(--primary);border:none;padding:6px 12px;border-radius:8px;color:#fff;cursor:pointer;margin:0 4px;}
+        table td button.delete-btn{background:#ff4444;border:none;padding:6px 12px;border-radius:8px;color:#fff;cursor:pointer;margin:0 4px;}
+        .no-orders{text-align:center;color:#aaa;font-style:italic;margin:20px 0;}
+        .not-ordered{margin:40px 0;background:rgba(255,255,255,.1);padding:20px;border-radius:16px;}
+        .not-ordered h2{text-align:center;margin-bottom:20px;color:var(--primary);}
+        .not-ordered-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px;}
+        .not-ordered-item{background:rgba(255,255,255,.05);padding:12px;border-radius:12px;text-align:center;font-size:1.1em;transition:.3s;}
+        .not-ordered-item:hover{background:rgba(255,255,255,.15);transform:scale(1.05);}
+        .all-ordered{text-align:center;font-size:1.5em;color:#9b40fc;font-weight:bold;padding:40px;}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));gap:2em;justify-content:center;padding:20px 0;}
+        .card{position:relative;width:var(--card-w);height:var(--card-h);background:#171717;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .4s;}
+        .card:hover{transform:translateY(-12px);}
+        .card img{width:100%;height:70%;object-fit:cover;}
+        .card .name{text-align:center;padding:10px;font-size:1.2em;font-weight:bold;}
+        .card.ordered{opacity:0.7;border:3px solid var(--primary);}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:999;justify-content:center;align-items:center;}
+        .modal.active{display:flex;}
+        .modal-content{background:#111;padding:30px;border-radius:20px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+        .modal-header{text-align:center;margin-bottom:20px;}
+        .modal-header h2{font-size:1.8em;color:var(--primary);}
+        form label{display:block;margin:15px 0 5px;font-weight:bold;}
+        form input, form select{width:100%;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:1em;}
+        form select option{color:#000;}
+        form button{margin-top:20px;width:100%;padding:14px;background:var(--primary);border:none;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
+        form button:hover{background:#7a32c7;transform:scale(1.02);}
+        .close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:#fff;font-size:2em;cursor:pointer;}
+        .github-status{text-align:center;margin:10px 0;font-size:0.9em;}
+        .github-status.success{color:#0f0;}
+        .github-status.error{color:#f00;}
+        @media (max-width:480px){.header h1{font-size:2.2em;}.grid{gap:1.5em;}.stats-numbers{gap:20px;}.stat-number{font-size:2em;}.not-ordered-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}}
     </style>
 </head>
 <body>
-    <iframe src="https://anotepad.com/note/read/bqgbc9q2"></iframe>
+    <div class="container">
+        <div class="header">
+            <h1>ĐẶT ÁO BÓNG CHUYỀN</h1>
+            <p>Lớp 11D1 - Năm Học 2025</p>
+            <div class="github-status" id="githubStatus">Đang tải dữ liệu từ GitHub...</div>
+        </div>
+
+        <div class="stats-summary">
+            <h2>THỐNG KÊ ĐẶT ÁO</h2>
+            <div class="stats-numbers">
+                <div class="stat-item">Đã đặt: <span class="stat-number" id="orderedCount">0</span></div>
+                <div class="stat-item">Chưa đặt: <span class="stat-number" id="notOrderedCount">0</span></div>
+                <div class="stat-item">Tổng: <span class="stat-number" id="totalCount">0</span></div>
+            </div>
+        </div>
+
+        <div class="orders-list">
+            <h2>DANH SÁCH ĐÃ ĐẶT ÁO</h2>
+            
+            <div style="text-align: right; margin-bottom: 15px;">
+                <button id="exportTxtBtn" style="padding: 10px 20px; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: bold; cursor: pointer;">
+                    Xuất danh sách ra file .txt
+                </button>
+            </div>
+
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>Họ tên</th>
+                        <th>Tên in trên lưng (nếu có)</th>
+                        <th>Size</th>
+                        <th>Số áo</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody"></tbody>
+            </table>
+            <p id="noOrders" class="no-orders">Chưa có ai đặt áo.</p>
+        </div>
+
+        <div class="not-ordered">
+            <h2>THÀNH VIÊN CHƯA ĐẶT ÁO</h2>
+            <div id="notOrderedGrid" class="not-ordered-grid"></div>
+            <div id="allOrdered" class="all-ordered" style="display:none;">Tất cả thành viên đã đặt áo xong! 🎉🏐</div>
+        </div>
+
+        <div class="grid" id="studentGrid"></div>
+    </div>
+
+    <!-- Modal đặt áo mới -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Đặt áo cho ...</h2>
+            </div>
+            <form id="orderForm">
+                <label for="backName">Tên in trên lưng áo (tùy chọn):</label>
+                <input type="text" id="backName" placeholder="Ví dụ: Thạch Mô Ra hoặc để trống">
+
+                <label for="size">Size áo:</label>
+                <select id="size" required>
+                    <option value="">Chọn size</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                </select>
+
+                <label for="number">Số áo (00-99):</label>
+                <input type="number" id="number" min="0" max="99" required placeholder="Ví dụ: 23">
+
+                <button type="submit">XÁC NHẬN ĐẶT ÁO</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal chỉnh sửa -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <div class="modal-header">
+                <h2>Chỉnh sửa đơn đặt áo</h2>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editIndex">
+                <label for="editBackName">Tên in trên lưng áo (tùy chọn):</label>
+                <input type="text" id="editBackName" placeholder="Ví dụ: Thạch Mô Ra hoặc để trống">
+
+                <label for="editSize">Size áo:</label>
+                <select id="editSize" required>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                </select>
+
+                <label for="editNumber">Số áo (00-99):</label>
+                <input type="number" id="editNumber" min="0" max="99" required>
+
+                <button type="submit">LƯU THAY ĐỔI</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // === CẤU HÌNH ===
+        const GITHUB_OWNER = 'rov230909';
+        const GITHUB_REPO  = 'rov230909.github.io';
+        const GITHUB_PATH  = 'dataobc/volleyball_orders.json';
+        const TOKEN_NOTE_URL = 'https://anotepad.com/note/read/dj4gxwk2';
+        const GITHUB_BRANCH = 'main';
+
+        const students = [ 
+            {name:"Lại Quế Anh"},{name:"Lý Ngọc Lan Anh"},
+            {name:"Nguyễn Thị Ngọc Anh"},{name:"Thạch Kim Anh"},
+            {name:"Huỳnh Tuyết Băng"},{name:"Ông Thị Tuyết Chi"},
+            {name:"Lê Phong Dân"},{name:"Trần Thị Hồng Diệp"},
+            {name:"Lâm Trường Duy"},{name:"Nguyễn Lâm Nhật Duy"},
+            {name:"Tăng Phước Đại"},{name:"Mai Lan Em"},
+            {name:"Phạm Tấn Đạt"},{name:"Huỳnh Ngọc Giao"},
+            {name:"Lưu Gia Hân"},{name:"Nguyễn Ngọc Gia Hân"},
+            {name:"Huỳnh Văn Hóa"},{name:"Du Lý Gia Khang"},
+            {name:"Lưu Vỹ Khang (Anh Hai)"},{name:"Nguyễn Thanh Lâm"},
+            {name:"Trần Lâm"},{name:"Triệu Thị Ngọc Linh"},
+            {name:"Hứa Kim Lượng"},{name:"Quách Thảo My"},
+            {name:"Lâm Kim Ngân"},{name:"Trịnh Khưu Mỹ Nghi"},
+            {name:"Ong Thị Bảo Ngọc"},{name:"Phan Nguyễn Nhã Nguyên"},
+            {name:"Lâm Đặng Phượng Quyên"},{name:"Nguyễn Thị Xuân Quỳnh"},
+            {name:"Thạch Mô Ra"},{name:"Huỳnh Hoàng Tấn"},
+            {name:"Nguyễn Tấn Thịnh"},{name:"Trần Thị Anh Thư"},
+            {name:"Lâm Ngọc Hoài Thương"},{name:"Nguyễn Thị Ngọc Tiến"},
+            {name:"Châu Thị Thủy Trúc"},{name:"Triệu Thanh Tú"},
+            {name:"Dương Thị Bích Tuyền"},{name:"Trần Văn Tý"},{name:"Huỳnh Công Vinh"},
+            {name:"Dương Thị Ngọc Vy"},{name:"Trịnh Thị Kim Yến"}
+        ];
+
+        const grid = document.getElementById('studentGrid');
+        const modal = document.getElementById('orderModal');
+        const editModal = document.getElementById('editModal');
+        const closeBtns = document.querySelectorAll('.close-modal');
+        const form = document.getElementById('orderForm');
+        const editForm = document.getElementById('editForm');
+        const title = document.getElementById('modalTitle');
+        const ordersBody = document.getElementById('ordersBody');
+        const noOrders = document.getElementById('noOrders');
+        const notOrderedGrid = document.getElementById('notOrderedGrid');
+        const allOrdered = document.getElementById('allOrdered');
+        const orderedCountEl = document.getElementById('orderedCount');
+        const notOrderedCountEl = document.getElementById('notOrderedCount');
+        const totalCountEl = document.getElementById('totalCount');
+        const githubStatus = document.getElementById('githubStatus');
+
+        let orders = [];
+        let currentSha = null;
+        let currentStudent = '';
+        let GITHUB_TOKEN = '';
+        const totalStudents = students.length;
+        totalCountEl.textContent = totalStudents;
+
+        // === HÀM FETCH TOKEN ĐÃ FIX HOÀN TOÀN ===
+        async function fetchToken() {
+            try {
+                const response = await fetch(TOKEN_NOTE_URL);
+                if (!response.ok) throw new Error('Network error');
+                const text = await response.text();
+
+                // Tìm tất cả token classic (ghp_ + 36 ký tự)
+                const tokenRegex = /ghp_[a-zA-Z0-9]{36}/g;
+                const matches = text.match(tokenRegex);
+
+                if (matches && matches.length > 0) {
+                    GITHUB_TOKEN = matches[0];  // Lấy token đầu tiên tìm thấy
+                    githubStatus.textContent = 'Đã lấy token từ note thành công ✔️';
+                    githubStatus.className = 'github-status success';
+                } else {
+                    throw new Error('Không tìm thấy token hợp lệ trong note');
+                }
+            } catch (err) {
+                console.error('Fetch token error:', err);
+                githubStatus.textContent = 'Lỗi lấy token từ note, dùng localStorage';
+                githubStatus.className = 'github-status error';
+                GITHUB_TOKEN = '';
+            }
+        }
+
+        async function loadFromGitHub() {
+            if (!GITHUB_TOKEN) {
+                orders = JSON.parse(localStorage.getItem('volleyballOrders') || '[]');
+                renderAll();
+                return;
+            }
+
+            githubStatus.textContent = 'Đang tải dữ liệu từ GitHub...';
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}?ref=${GITHUB_BRANCH}`, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    orders = JSON.parse(atob(data.content));
+                    currentSha = data.sha;
+                    githubStatus.textContent = 'Dữ liệu tải thành công từ GitHub ✔️';
+                    githubStatus.className = 'github-status success';
+                } else if (response.status === 404) {
+                    orders = [];
+                    currentSha = null;
+                    githubStatus.textContent = 'File dữ liệu chưa tồn tại, bắt đầu mới';
+                } else {
+                    throw new Error(`GitHub error: ${response.status}`);
+                }
+            } catch (err) {
+                console.error(err);
+                githubStatus.textContent = 'Lỗi kết nối GitHub, dùng dữ liệu local';
+                githubStatus.className = 'github-status error';
+                orders = JSON.parse(localStorage.getItem('volleyballOrders') || '[]');
+            }
+            renderAll();
+        }
+
+        async function saveToGitHub() {
+            if (!GITHUB_TOKEN) {
+                localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+                githubStatus.textContent = 'Không có token, chỉ lưu local';
+                return;
+            }
+
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
+            const body = {
+                message: `Cập nhật đặt áo - ${new Date().toLocaleString('vi-VN')}`,
+                content: content,
+                branch: GITHUB_BRANCH
+            };
+            if (currentSha) body.sha = currentSha;
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' },
+                    body: JSON.stringify(body)
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    currentSha = data.content.sha;
+                    githubStatus.textContent = 'Đã lưu lên GitHub ✔️';
+                    githubStatus.className = 'github-status success';
+                    localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+            } catch (err) {
+                console.error(err);
+                githubStatus.textContent = 'Lỗi lưu GitHub (token hết hạn?), dữ liệu lưu local';
+                githubStatus.className = 'github-status error';
+                localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+            }
+        }
+
+        function updateStats() {
+            const ordered = orders.length;
+            const notOrdered = totalStudents - ordered;
+            orderedCountEl.textContent = ordered;
+            notOrderedCountEl.textContent = notOrdered;
+
+            notOrderedGrid.innerHTML = '';
+            const orderedNames = orders.map(o => o.name);
+            const notOrderedNames = students.filter(s => !orderedNames.includes(s.name));
+
+            if (notOrderedNames.length === 0) {
+                allOrdered.style.display = 'block';
+                notOrderedGrid.style.display = 'none';
+            } else {
+                allOrdered.style.display = 'none';
+                notOrderedGrid.style.display = 'grid';
+                notOrderedNames.forEach(s => {
+                    const item = document.createElement('div');
+                    item.className = 'not-ordered-item';
+                    item.textContent = s.name;
+                    notOrderedGrid.appendChild(item);
+                });
+            }
+        }
+
+        function renderOrders() {
+            ordersBody.innerHTML = '';
+            if (orders.length === 0) {
+                noOrders.style.display = 'block';
+                return;
+            }
+            noOrders.style.display = 'none';
+            orders.forEach((order, index) => {
+                const tr = document.createElement('tr');
+                const backNameDisplay = order.backName || '(Không in tên)';
+                tr.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${backNameDisplay}</td>
+                    <td>${order.size}</td>
+                    <td>${order.number}</td>
+                    <td>
+                        <button class="edit-btn" data-index="${index}">Sửa</button>
+                        <button class="delete-btn" data-index="${index}">Xóa</button>
+                    </td>`;
+                ordersBody.appendChild(tr);
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.onclick = () => openEditModal(parseInt(btn.dataset.index));
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    if (confirm('Xóa đơn đặt áo của ' + orders[parseInt(btn.dataset.index)].name + '?')) {
+                        orders.splice(parseInt(btn.dataset.index), 1);
+                        await saveToGitHub();
+                        renderAll();
+                    }
+                };
+            });
+        }
+
+        function openEditModal(index) {
+            const order = orders[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editBackName').value = order.backName || '';
+            document.getElementById('editSize').value = order.size;
+            document.getElementById('editNumber').value = parseInt(order.number);
+            editModal.classList.add('active');
+        }
+
+        function updateCardStyles() {
+            document.querySelectorAll('.card').forEach(card => {
+                const name = card.querySelector('.name').textContent;
+                if (orders.some(o => o.name === name)) {
+                    card.classList.add('ordered');
+                } else {
+                    card.classList.remove('ordered');
+                }
+            });
+        }
+
+        function renderAll() {
+            updateStats();
+            renderOrders();
+            updateCardStyles();
+        }
+
+        students.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Áo bóng chuyền" loading="lazy">
+                <div class="name">${s.name}</div>
+            `;
+            card.onclick = () => {
+                if (orders.some(o => o.name === s.name)) {
+                    alert('Bạn này đã đặt áo rồi! Nếu muốn thay đổi, sửa trong bảng danh sách.');
+                    return;
+                }
+                currentStudent = s.name;
+                title.textContent = `Đặt áo cho ${s.name}`;
+                modal.classList.add('active');
+            };
+            grid.appendChild(card);
+        });
+
+        closeBtns.forEach(btn => {
+            btn.onclick = () => {
+                modal.classList.remove('active');
+                editModal.classList.remove('active');
+                form.reset();
+                editForm.reset();
+            };
+        });
+        window.onclick = e => {
+            if (e.target === modal || e.target === editModal) {
+                modal.classList.remove('active');
+                editModal.classList.remove('active');
+            }
+        };
+
+        form.onsubmit = async e => {
+            e.preventDefault();
+            let backName = document.getElementById('backName').value.trim();
+            const size = document.getElementById('size').value;
+            const numberRaw = document.getElementById('number').value;
+            const number = numberRaw.toString().padStart(2, '0');
+
+            if (!size || !numberRaw) return;
+            if (backName === '') backName = null;
+
+            if (orders.some(o => o.number === number && o.name !== currentStudent)) {
+                alert('Số áo ' + number + ' đã có người đặt!');
+                return;
+            }
+
+            const order = { name: currentStudent, backName: backName || null, size, number };
+            orders.push(order);
+            await saveToGitHub();
+            renderAll();
+            alert('Đặt áo thành công!');
+            modal.classList.remove('active');
+            form.reset();
+        };
+
+        editForm.onsubmit = async e => {
+            e.preventDefault();
+            const index = parseInt(document.getElementById('editIndex').value);
+            let backName = document.getElementById('editBackName').value.trim();
+            const size = document.getElementById('editSize').value;
+            const numberRaw = document.getElementById('editNumber').value;
+            const number = numberRaw.toString().padStart(2, '0');
+
+            if (backName === '') backName = null;
+
+            if (orders.some((o, i) => o.number === number && i !== index)) {
+                alert('Số áo ' + number + ' đã có người khác đặt!');
+                return;
+            }
+
+            orders[index] = { ...orders[index], backName: backName || null, size, number };
+            await saveToGitHub();
+            renderAll();
+            alert('Chỉnh sửa thành công!');
+            editModal.classList.remove('active');
+        };
+
+        // Xuất TXT
+        document.getElementById('exportTxtBtn').onclick = () => {
+            if (orders.length === 0) {
+                alert('Chưa có dữ liệu để xuất!');
+                return;
+            }
+
+            let txtContent = 'DANH SÁCH ĐẶT ÁO BÓNG CHUYỀN - LỚP 11D1\n';
+            txtContent += 'Năm học: 2025\n';
+            txtContent += 'Ngày xuất: ' + new Date().toLocaleDateString('vi-VN') + '\n';
+            txtContent += 'Tổng số đã đặt: ' + orders.length + '/' + totalStudents + '\n';
+            txtContent += '='.repeat(50) + '\n\n';
+
+            txtContent += 'STT'.padEnd(5) + 'HỌ TÊN'.padEnd(30) + 'TÊN IN LƯNG'.padEnd(25) + 'SIZE'.padEnd(8) + 'SỐ ÁO\n';
+            txtContent += '-'.repeat(80) + '\n';
+
+            orders.forEach((order, index) => {
+                const stt = (index + 1).toString().padEnd(4);
+                const hoTen = order.name.padEnd(29);
+                const tenIn = (order.backName || '(Không in)').padEnd(24);
+                const size = order.size.padEnd(7);
+                const soAo = order.number;
+
+                txtContent += `${stt} ${hoTen} ${tenIn} ${size} ${soAo}\n`;
+            });
+
+            txtContent += '\n\n--- Kết thúc danh sách ---';
+
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Danh_sach_dat_ao_11D1_${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        // Khởi chạy
+        (async () => {
+            await fetchToken();
+            await loadFromGitHub();
+        })();
+    </script>
 </body>
 </html>
