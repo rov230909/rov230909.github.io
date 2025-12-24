@@ -70,6 +70,14 @@
 
         <div class="orders-list">
             <h2>DANH SÁCH ĐÃ ĐẶT ÁO</h2>
+            
+            <!-- Nút xuất file TXT -->
+            <div style="text-align: right; margin-bottom: 15px;">
+                <button id="exportTxtBtn" style="padding: 10px 20px; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: bold; cursor: pointer;">
+                    Xuất danh sách ra file
+                </button>
+            </div>
+
             <table id="ordersTable">
                 <thead>
                     <tr>
@@ -153,7 +161,7 @@
     </div>
 
     <script>
-        const students = [ /* danh sách giữ nguyên như cũ */ 
+        const students = [ 
             {name:"Lại Quế Anh"},{name:"Lý Ngọc Lan Anh"},
             {name:"Nguyễn Thị Ngọc Anh"},{name:"Thạch Kim Anh"},
             {name:"Huỳnh Tuyết Băng"},{name:"Ông Thị Tuyết Chi"},
@@ -268,7 +276,7 @@
         function openEditModal(index) {
             const order = orders[index];
             document.getElementById('editIndex').value = index;
-            document.getElementById('editBackName').value = order.backName;
+            document.getElementById('editBackName').value = order.backName || '';
             document.getElementById('editSize').value = order.size;
             document.getElementById('editNumber').value = parseInt(order.number);
             editModal.classList.add('active');
@@ -286,12 +294,12 @@
             });
         }
 
-        // Tạo grid học sinh (ảnh áo đẹp hơn)
+        // Tạo grid học sinh
         students.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Áo bóng chuyền" loading="lazy">
+                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Hình Ảnh Chỉ Mang Tính Chất Minh Họa" loading="lazy">
                 <div class="name">${s.name}</div>
             `;
             card.onclick = () => {
@@ -361,7 +369,6 @@
 
             if (backName === '') backName = '';
 
-            // Kiểm tra trùng số áo (ngoại trừ chính nó)
             if (orders.some((o, i) => o.number === number && i !== index)) {
                 alert('Số áo ' + number + ' đã có người khác đặt!');
                 return;
@@ -375,6 +382,47 @@
             updateCardStyles();
             alert('Chỉnh sửa thành công!');
             editModal.classList.remove('active');
+        };
+
+        // Xuất file TXT
+        document.getElementById('exportTxtBtn').onclick = () => {
+            if (orders.length === 0) {
+                alert('Chưa có dữ liệu để xuất!');
+                return;
+            }
+
+            let txtContent = 'DANH SÁCH ĐẶT ÁO BÓNG CHUYỀN - LỚP 11D1\n';
+            txtContent += 'Năm học: 2025\n';
+            txtContent += 'Ngày xuất: ' + new Date().toLocaleDateString('vi-VN') + '\n';
+            txtContent += 'Tổng số đã đặt: ' + orders.length + '/' + totalStudents + '\n';
+            txtContent += '='.repeat(50) + '\n\n';
+
+            txtContent += 'STT'.padEnd(5) + 'HỌ TÊN'.padEnd(30) + 'TÊN IN LƯNG'.padEnd(25) + 'SIZE'.padEnd(8) + 'SỐ ÁO\n';
+            txtContent += '-'.repeat(80) + '\n';
+
+            orders.forEach((order, index) => {
+                const stt = (index + 1).toString().padEnd(4);
+                const hoTen = order.name.padEnd(29);
+                const tenIn = (order.backName || '(Không in)').padEnd(24);
+                const size = order.size.padEnd(7);
+                const soAo = order.number;
+
+                txtContent += `${stt} ${hoTen} ${tenIn} ${size} ${soAo}\n`;
+            });
+
+            txtContent += '\n\n--- Kết thúc danh sách ---';
+
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Danh_sach_dat_ao_11D1_${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert('Đã xuất file thành công! File sẽ được tải về tự động.');
         };
 
         // Khởi tạo
