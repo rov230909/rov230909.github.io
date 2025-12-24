@@ -23,6 +23,8 @@
         table{width:100%;border-collapse:collapse;margin-bottom:30px;}
         table th, table td{padding:12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);}
         table th{background:rgba(var(--primary),.3);}
+        table td button.edit-btn{background:var(--primary);border:none;padding:6px 12px;border-radius:8px;color:#fff;cursor:pointer;margin:0 4px;}
+        table td button.delete-btn{background:#ff4444;border:none;padding:6px 12px;border-radius:8px;color:#fff;cursor:pointer;margin:0 4px;}
         .no-orders{text-align:center;color:#aaa;font-style:italic;margin:20px 0;}
         .not-ordered{margin:40px 0;background:rgba(255,255,255,.1);padding:20px;border-radius:16px;}
         .not-ordered h2{text-align:center;margin-bottom:20px;color:var(--primary);}
@@ -75,6 +77,7 @@
                         <th>Tên in trên lưng (nếu có)</th>
                         <th>Size</th>
                         <th>Số áo</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody id="ordersBody"></tbody>
@@ -91,6 +94,7 @@
         <div class="grid" id="studentGrid"></div>
     </div>
 
+    <!-- Modal đặt áo mới -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <button class="close-modal">×</button>
@@ -119,8 +123,37 @@
         </div>
     </div>
 
+    <!-- Modal chỉnh sửa -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeEditModal">×</button>
+            <div class="modal-header">
+                <h2>Chỉnh sửa đơn đặt áo</h2>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editIndex">
+                <label for="editBackName">Tên in trên lưng áo (tùy chọn):</label>
+                <input type="text" id="editBackName" placeholder="Ví dụ: Thạch Mô Ra hoặc để trống">
+
+                <label for="editSize">Size áo:</label>
+                <select id="editSize" required>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                </select>
+
+                <label for="editNumber">Số áo (00-99):</label>
+                <input type="number" id="editNumber" min="0" max="99" required>
+
+                <button type="submit">LƯU THAY ĐỔI</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const students = [
+        const students = [ /* danh sách giữ nguyên như cũ */ 
             {name:"Lại Quế Anh"},{name:"Lý Ngọc Lan Anh"},
             {name:"Nguyễn Thị Ngọc Anh"},{name:"Thạch Kim Anh"},
             {name:"Huỳnh Tuyết Băng"},{name:"Ông Thị Tuyết Chi"},
@@ -144,10 +177,13 @@
             {name:"Dương Thị Ngọc Vy"},{name:"Trịnh Thị Kim Yến"}
         ];
 
+        // Các elements
         const grid = document.getElementById('studentGrid');
         const modal = document.getElementById('orderModal');
-        const closeBtn = document.querySelector('.close-modal');
+        const editModal = document.getElementById('editModal');
+        const closeBtns = document.querySelectorAll('.close-modal');
         const form = document.getElementById('orderForm');
+        const editForm = document.getElementById('editForm');
         const title = document.getElementById('modalTitle');
         const ordersBody = document.getElementById('ordersBody');
         const noOrders = document.getElementById('noOrders');
@@ -162,13 +198,13 @@
         const totalStudents = students.length;
         totalCountEl.textContent = totalStudents;
 
+        // Cập nhật thống kê & danh sách chưa đặt
         function updateStats() {
             const ordered = orders.length;
             const notOrdered = totalStudents - ordered;
             orderedCountEl.textContent = ordered;
             notOrderedCountEl.textContent = notOrdered;
 
-            // Danh sách chưa đặt - dạng grid card đẹp
             notOrderedGrid.innerHTML = '';
             const orderedNames = orders.map(o => o.name);
             const notOrderedNames = students.filter(s => !orderedNames.includes(s.name));
@@ -188,6 +224,7 @@
             }
         }
 
+        // Render bảng đã đặt + nút sửa/xóa
         function renderOrders() {
             ordersBody.innerHTML = '';
             if (orders.length === 0) {
@@ -195,14 +232,49 @@
                 return;
             }
             noOrders.style.display = 'none';
-            orders.forEach(order => {
+            orders.forEach((order, index) => {
                 const tr = document.createElement('tr');
                 const backNameDisplay = order.backName || '(Không in tên)';
-                tr.innerHTML = `<td>${order.name}</td><td>${backNameDisplay}</td><td>${order.size}</td><td>${order.number}</td>`;
+                tr.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${backNameDisplay}</td>
+                    <td>${order.size}</td>
+                    <td>${order.number}</td>
+                    <td>
+                        <button class="edit-btn" data-index="${index}">Sửa</button>
+                        <button class="delete-btn" data-index="${index}">Xóa</button>
+                    </td>`;
                 ordersBody.appendChild(tr);
+            });
+
+            // Gắn event cho nút sửa/xóa
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.onclick = () => openEditModal(parseInt(btn.dataset.index));
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = () => {
+                    if (confirm('Xóa đơn đặt áo của ' + orders[parseInt(btn.dataset.index)].name + '?')) {
+                        orders.splice(parseInt(btn.dataset.index), 1);
+                        localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+                        renderOrders();
+                        updateStats();
+                        updateCardStyles();
+                    }
+                };
             });
         }
 
+        // Mở modal chỉnh sửa
+        function openEditModal(index) {
+            const order = orders[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editBackName').value = order.backName;
+            document.getElementById('editSize').value = order.size;
+            document.getElementById('editNumber').value = parseInt(order.number);
+            editModal.classList.add('active');
+        }
+
+        // Cập nhật card đã đặt
         function updateCardStyles() {
             document.querySelectorAll('.card').forEach(card => {
                 const name = card.querySelector('.name').textContent;
@@ -214,17 +286,17 @@
             });
         }
 
-        // Create grid (cập nhật ảnh áo đẹp hơn)
+        // Tạo grid học sinh (ảnh áo đẹp hơn)
         students.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Áo bóng chuyền" loading="lazy">
+                <img src="https://img.freepik.com/premium-psd/soccer-team-uniform-mockup-purple-jersey-shorts_845119-1495.jpg" alt="Áo bóng chuyền mẫu" loading="lazy">
                 <div class="name">${s.name}</div>
             `;
             card.onclick = () => {
                 if (orders.some(o => o.name === s.name)) {
-                    alert('Bạn này đã đặt áo rồi nhé!');
+                    alert('Bạn này đã đặt áo rồi! Nếu muốn thay đổi, sửa trong bảng danh sách.');
                     return;
                 }
                 currentStudent = s.name;
@@ -234,11 +306,23 @@
             grid.appendChild(card);
         });
 
-        // Modal controls
-        closeBtn.onclick = () => { modal.classList.remove('active'); form.reset(); };
-        window.onclick = e => { if (e.target === modal) closeBtn.click(); };
+        // Đóng modal
+        closeBtns.forEach(btn => {
+            btn.onclick = () => {
+                modal.classList.remove('active');
+                editModal.classList.remove('active');
+                form.reset();
+                editForm.reset();
+            };
+        });
+        window.onclick = e => {
+            if (e.target === modal || e.target === editModal) {
+                modal.classList.remove('active');
+                editModal.classList.remove('active');
+            }
+        };
 
-        // Form submit
+        // Đặt áo mới
         form.onsubmit = e => {
             e.preventDefault();
             let backName = document.getElementById('backName').value.trim();
@@ -247,11 +331,10 @@
             const number = numberRaw.padStart(2, '0');
 
             if (!size || !numberRaw) return;
-
             if (backName === '') backName = '';
 
-            if (orders.some(o => o.number === number)) {
-                alert('Số áo ' + number + ' đã có người đặt! Chọn số khác đi bro.');
+            if (orders.some(o => o.number === number && o.name !== currentStudent)) {
+                alert('Số áo ' + number + ' đã có người đặt!');
                 return;
             }
 
@@ -262,13 +345,39 @@
             renderOrders();
             updateStats();
             updateCardStyles();
-
-            alert('Đặt áo thành công cho ' + currentStudent + '!');
+            alert('Đặt áo thành công!');
             modal.classList.remove('active');
             form.reset();
         };
 
-        // Init
+        // Lưu chỉnh sửa
+        editForm.onsubmit = e => {
+            e.preventDefault();
+            const index = parseInt(document.getElementById('editIndex').value);
+            let backName = document.getElementById('editBackName').value.trim();
+            const size = document.getElementById('editSize').value;
+            const numberRaw = document.getElementById('editNumber').value;
+            const number = numberRaw.padStart(2, '0');
+
+            if (backName === '') backName = '';
+
+            // Kiểm tra trùng số áo (ngoại trừ chính nó)
+            if (orders.some((o, i) => o.number === number && i !== index)) {
+                alert('Số áo ' + number + ' đã có người khác đặt!');
+                return;
+            }
+
+            orders[index] = { ...orders[index], backName, size, number };
+            localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+
+            renderOrders();
+            updateStats();
+            updateCardStyles();
+            alert('Chỉnh sửa thành công!');
+            editModal.classList.remove('active');
+        };
+
+        // Khởi tạo
         renderOrders();
         updateStats();
         updateCardStyles();
