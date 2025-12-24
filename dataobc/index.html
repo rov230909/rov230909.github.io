@@ -49,6 +49,9 @@
         form button{margin-top:20px;width:100%;padding:14px;background:var(--primary);border:none;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
         form button:hover{background:#7a32c7;transform:scale(1.02);}
         .close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:#fff;font-size:2em;cursor:pointer;}
+        .github-status{text-align:center;margin:10px 0;font-size:0.9em;}
+        .github-status.success{color:#0f0;}
+        .github-status.error{color:#f00;}
         @media (max-width:480px){.header h1{font-size:2.2em;}.grid{gap:1.5em;}.stats-numbers{gap:20px;}.stat-number{font-size:2em;}.not-ordered-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}}
     </style>
 </head>
@@ -57,6 +60,7 @@
         <div class="header">
             <h1>ĐẶT ÁO BÓNG CHUYỀN</h1>
             <p>Lớp 11D1 - Năm Học 2025</p>
+            <div class="github-status" id="githubStatus">Đang tải dữ liệu từ GitHub...</div>
         </div>
 
         <div class="stats-summary">
@@ -71,10 +75,9 @@
         <div class="orders-list">
             <h2>DANH SÁCH ĐÃ ĐẶT ÁO</h2>
             
-            <!-- Nút xuất file TXT -->
             <div style="text-align: right; margin-bottom: 15px;">
                 <button id="exportTxtBtn" style="padding: 10px 20px; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: bold; cursor: pointer;">
-                    Xuất danh sách ra file
+                    Xuất danh sách ra file .txt
                 </button>
             </div>
 
@@ -134,7 +137,7 @@
     <!-- Modal chỉnh sửa -->
     <div class="modal" id="editModal">
         <div class="modal-content">
-            <button class="close-modal" id="closeEditModal">×</button>
+            <button class="close-modal">×</button>
             <div class="modal-header">
                 <h2>Chỉnh sửa đơn đặt áo</h2>
             </div>
@@ -161,6 +164,13 @@
     </div>
 
     <script>
+        // === CẤU HÌNH GITHUB ===
+        const GITHUB_OWNER = 'rov230909';
+        const GITHUB_REPO  = 'rov230909.github.io';
+        const GITHUB_PATH  = 'dataobc/volleyball_orders.json';  // File lưu dữ liệu
+        const GITHUB_TOKEN = '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';
+        const GITHUB_BRANCH = 'main';
+
         const students = [ 
             {name:"Lại Quế Anh"},{name:"Lý Ngọc Lan Anh"},
             {name:"Nguyễn Thị Ngọc Anh"},{name:"Thạch Kim Anh"},
@@ -185,7 +195,6 @@
             {name:"Dương Thị Ngọc Vy"},{name:"Trịnh Thị Kim Yến"}
         ];
 
-        // Các elements
         const grid = document.getElementById('studentGrid');
         const modal = document.getElementById('orderModal');
         const editModal = document.getElementById('editModal');
@@ -200,13 +209,73 @@
         const orderedCountEl = document.getElementById('orderedCount');
         const notOrderedCountEl = document.getElementById('notOrderedCount');
         const totalCountEl = document.getElementById('totalCount');
+        const githubStatus = document.getElementById('githubStatus');
 
-        let orders = JSON.parse(localStorage.getItem('volleyballOrders') || '[]');
+        let orders = [];
+        let currentSha = null;
         let currentStudent = '';
         const totalStudents = students.length;
         totalCountEl.textContent = totalStudents;
 
-        // Cập nhật thống kê & danh sách chưa đặt
+        async function loadFromGitHub() {
+            githubStatus.textContent = 'Đang tải dữ liệu từ GitHub...';
+            githubStatus.className = 'github-status';
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}?ref=${GITHUB_BRANCH}`, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    orders = JSON.parse(atob(data.content));
+                    currentSha = data.sha;
+                    githubStatus.textContent = 'Dữ liệu tải thành công từ GitHub ✔️';
+                    githubStatus.className = 'github-status success';
+                } else if (response.status === 404) {
+                    orders = [];
+                    currentSha = null;
+                    githubStatus.textContent = 'File dữ liệu chưa tồn tại, bắt đầu mới';
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                githubStatus.textContent = 'Lỗi kết nối GitHub, dùng dữ liệu local';
+                githubStatus.className = 'github-status error';
+                orders = JSON.parse(localStorage.getItem('volleyballOrders') || '[]');
+            }
+            renderAll();
+        }
+
+        async function saveToGitHub() {
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
+            const body = {
+                message: `Cập nhật đặt áo - ${new Date().toLocaleString('vi-VN')}`,
+                content: content,
+                branch: GITHUB_BRANCH
+            };
+            if (currentSha) body.sha = currentSha;
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' },
+                    body: JSON.stringify(body)
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    currentSha = data.content.sha;
+                    githubStatus.textContent = 'Đã lưu lên GitHub ✔️';
+                    githubStatus.className = 'github-status success';
+                    localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                githubStatus.textContent = 'Lỗi lưu GitHub, dữ liệu chỉ lưu local';
+                githubStatus.className = 'github-status error';
+                localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+            }
+        }
+
         function updateStats() {
             const ordered = orders.length;
             const notOrdered = totalStudents - ordered;
@@ -232,7 +301,6 @@
             }
         }
 
-        // Render bảng đã đặt + nút sửa/xóa
         function renderOrders() {
             ordersBody.innerHTML = '';
             if (orders.length === 0) {
@@ -255,24 +323,20 @@
                 ordersBody.appendChild(tr);
             });
 
-            // Gắn event cho nút sửa/xóa
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.onclick = () => openEditModal(parseInt(btn.dataset.index));
             });
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.onclick = () => {
+                btn.onclick = async () => {
                     if (confirm('Xóa đơn đặt áo của ' + orders[parseInt(btn.dataset.index)].name + '?')) {
                         orders.splice(parseInt(btn.dataset.index), 1);
-                        localStorage.setItem('volleyballOrders', JSON.stringify(orders));
-                        renderOrders();
-                        updateStats();
-                        updateCardStyles();
+                        await saveToGitHub();
+                        renderAll();
                     }
                 };
             });
         }
 
-        // Mở modal chỉnh sửa
         function openEditModal(index) {
             const order = orders[index];
             document.getElementById('editIndex').value = index;
@@ -282,7 +346,6 @@
             editModal.classList.add('active');
         }
 
-        // Cập nhật card đã đặt
         function updateCardStyles() {
             document.querySelectorAll('.card').forEach(card => {
                 const name = card.querySelector('.name').textContent;
@@ -294,12 +357,17 @@
             });
         }
 
-        // Tạo grid học sinh
+        function renderAll() {
+            updateStats();
+            renderOrders();
+            updateCardStyles();
+        }
+
         students.forEach(s => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Hình Ảnh Chỉ Mang Tính Chất Minh Họa" loading="lazy">
+                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Áo bóng chuyền" loading="lazy">
                 <div class="name">${s.name}</div>
             `;
             card.onclick = () => {
@@ -314,7 +382,6 @@
             grid.appendChild(card);
         });
 
-        // Đóng modal
         closeBtns.forEach(btn => {
             btn.onclick = () => {
                 modal.classList.remove('active');
@@ -330,61 +397,53 @@
             }
         };
 
-        // Đặt áo mới
-        form.onsubmit = e => {
+        form.onsubmit = async e => {
             e.preventDefault();
             let backName = document.getElementById('backName').value.trim();
             const size = document.getElementById('size').value;
             const numberRaw = document.getElementById('number').value;
-            const number = numberRaw.padStart(2, '0');
+            const number = numberRaw.toString().padStart(2, '0');
 
             if (!size || !numberRaw) return;
-            if (backName === '') backName = '';
+            if (backName === '') backName = null;
 
             if (orders.some(o => o.number === number && o.name !== currentStudent)) {
                 alert('Số áo ' + number + ' đã có người đặt!');
                 return;
             }
 
-            const order = { name: currentStudent, backName, size, number };
+            const order = { name: currentStudent, backName: backName || null, size, number };
             orders.push(order);
-            localStorage.setItem('volleyballOrders', JSON.stringify(orders));
-
-            renderOrders();
-            updateStats();
-            updateCardStyles();
+            await saveToGitHub();
+            renderAll();
             alert('Đặt áo thành công!');
             modal.classList.remove('active');
             form.reset();
         };
 
-        // Lưu chỉnh sửa
-        editForm.onsubmit = e => {
+        editForm.onsubmit = async e => {
             e.preventDefault();
             const index = parseInt(document.getElementById('editIndex').value);
             let backName = document.getElementById('editBackName').value.trim();
             const size = document.getElementById('editSize').value;
             const numberRaw = document.getElementById('editNumber').value;
-            const number = numberRaw.padStart(2, '0');
+            const number = numberRaw.toString().padStart(2, '0');
 
-            if (backName === '') backName = '';
+            if (backName === '') backName = null;
 
             if (orders.some((o, i) => o.number === number && i !== index)) {
                 alert('Số áo ' + number + ' đã có người khác đặt!');
                 return;
             }
 
-            orders[index] = { ...orders[index], backName, size, number };
-            localStorage.setItem('volleyballOrders', JSON.stringify(orders));
-
-            renderOrders();
-            updateStats();
-            updateCardStyles();
+            orders[index] = { ...orders[index], backName: backName || null, size, number };
+            await saveToGitHub();
+            renderAll();
             alert('Chỉnh sửa thành công!');
             editModal.classList.remove('active');
         };
 
-        // Xuất file TXT
+        // Xuất TXT
         document.getElementById('exportTxtBtn').onclick = () => {
             if (orders.length === 0) {
                 alert('Chưa có dữ liệu để xuất!');
@@ -421,14 +480,10 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
-            alert('Đã xuất file thành công! File sẽ được tải về tự động.');
         };
 
-        // Khởi tạo
-        renderOrders();
-        updateStats();
-        updateCardStyles();
+        // Khởi chạy
+        loadFromGitHub();
     </script>
 </body>
 </html>
