@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Áo Bóng Chuyền - Lớp 11D1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root{--card-w:19em;--card-h:25em; --primary:#9b40fc;}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;min-height:100vh;display:flex;flex-direction:column;}
+        .container{max-width:1400px;margin:auto;width:100%;flex:1;padding:20px 15px;}
+        .header{text-align:center;padding:20px 0;}
+        .header h1{font-size:2.8em;text-shadow:0 0 20px var(--primary);}
+        .header p{font-size:1.2em;opacity:0.9;}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));gap:2em;justify-content:center;padding:20px 0;}
+        .card{position:relative;width:var(--card-w);height:var(--card-h);background:#171717;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .4s;}
+        .card:hover{transform:translateY(-12px);}
+        .card img{width:100%;height:70%;object-fit:cover;}
+        .card .name{text-align:center;padding:10px;font-size:1.2em;font-weight:bold;}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:999;justify-content:center;align-items:center;}
+        .modal.active{display:flex;}
+        .modal-content{background:#111;padding:30px;border-radius:20px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+        .modal-header{text-align:center;margin-bottom:20px;}
+        .modal-header h2{font-size:1.8em;color:var(--primary);}
+        form label{display:block;margin:15px 0 5px;font-weight:bold;}
+        form input, form select{width:100%;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:1em;}
+        form button{margin-top:20px;width:100%;padding:14px;background:var(--primary);border:none;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
+        form button:hover{background:#7a32c7;transform:scale(1.02);}
+        .close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:#fff;font-size:2em;cursor:pointer;}
+        .orders-list{margin-top:40px;background:rgba(255,255,255,.1);padding:20px;border-radius:16px;}
+        .orders-list h2{text-align:center;margin-bottom:20px;color:var(--primary);}
+        table{width:100%;border-collapse:collapse;}
+        table th, table td{padding:12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);}
+        table th{background:rgba(var(--primary),.3);}
+        .no-orders{text-align:center;color:#aaa;font-style:italic;}
+        @media (max-width:480px){.header h1{font-size:2.2em;}.grid{gap:1.5em;}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ĐẶT ÁO BÓNG CHUYỀN</h1>
+            <p>Lớp 11D1 - Chọn thành viên và đặt áo ngay!</p>
+        </div>
+        <div class="grid" id="studentGrid"></div>
+
+        <div class="orders-list">
+            <h2>DANH SÁCH ĐƠN ĐẶT ÁO</h2>
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>Họ tên</th>
+                        <th>Tên in trên áo</th>
+                        <th>Size</th>
+                        <th>Số áo</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody"></tbody>
+            </table>
+            <p id="noOrders" class="no-orders">Chưa có đơn đặt nào.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <button class="close-modal">×</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Đặt áo cho ...</h2>
+            </div>
+            <form id="orderForm">
+                <label for="backName">Tên in trên lưng áo:</label>
+                <input type="text" id="backName" required placeholder="Ví dụ: THACH MO RA">
+
+                <label for="size">Size áo:</label>
+                <select id="size" required>
+                    <option value="">Chọn size</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                </select>
+
+                <label for="number">Số áo (00-99):</label>
+                <input type="number" id="number" min="0" max="99" required placeholder="Ví dụ: 23">
+
+                <button type="submit">XÁC NHẬN ĐẶT ÁO</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const students = [
+            {name:"Lại Quế Anh"},{name:"Lý Ngọc Lan Anh"},
+            {name:"Nguyễn Thị Ngọc Anh"},{name:"Thạch Kim Anh"},
+            {name:"Huỳnh Tuyết Băng"},{name:"Ông Thị Tuyết Chi"},
+            {name:"Lê Phong Dân"},{name:"Trần Thị Hồng Diệp"},
+            {name:"Lâm Trường Duy"},{name:"Nguyễn Lâm Nhật Duy"},
+            {name:"Tăng Phước Đại"},{name:"Mai Lan Em"},
+            {name:"Phạm Tấn Đạt"},{name:"Huỳnh Ngọc Giao"},
+            {name:"Lưu Gia Hân"},{name:"Nguyễn Ngọc Gia Hân"},
+            {name:"Huỳnh Văn Hóa"},{name:"Du Lý Gia Khang"},
+            {name:"Lưu Vỹ Khang (Anh Hai)"},{name:"Nguyễn Thanh Lâm"},
+            {name:"Trần Lâm"},{name:"Triệu Thị Ngọc Linh"},
+            {name:"Hứa Kim Lượng"},{name:"Quách Thảo My"},
+            {name:"Lâm Kim Ngân"},{name:"Trịnh Khưu Mỹ Nghi"},
+            {name:"Ong Thị Bảo Ngọc"},{name:"Phan Nguyễn Nhã Nguyên"},
+            {name:"Lâm Đặng Phượng Quyên"},{name:"Nguyễn Thị Xuân Quỳnh"},
+            {name:"Thạch Mô Ra"},{name:"Huỳnh Hoàng Tấn"},
+            {name:"Nguyễn Tấn Thịnh"},{name:"Trần Thị Anh Thư"},
+            {name:"Lâm Ngọc Hoài Thương"},{name:"Nguyễn Thị Ngọc Tiến"},
+            {name:"Châu Thị Thủy Trúc"},{name:"Triệu Thanh Tú"},
+            {name:"Dương Thị Bích Tuyền"},{name:"Trần Văn Tý"},{name:"Huỳnh Công Vinh"},
+            {name:"Dương Thị Ngọc Vy"},{name:"Trịnh Thị Kim Yến"}
+        ];
+
+        const grid = document.getElementById('studentGrid');
+        const modal = document.getElementById('orderModal');
+        const closeBtn = document.querySelector('.close-modal');
+        const form = document.getElementById('orderForm');
+        const title = document.getElementById('modalTitle');
+        const ordersBody = document.getElementById('ordersBody');
+        const noOrders = document.getElementById('noOrders');
+
+        let currentStudent = '';
+
+        // Load orders from localStorage
+        let orders = JSON.parse(localStorage.getItem('volleyballOrders') || '[]');
+        function renderOrders() {
+            ordersBody.innerHTML = '';
+            if (orders.length === 0) {
+                noOrders.style.display = 'block';
+                return;
+            }
+            noOrders.style.display = 'none';
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${order.name}</td><td>${order.backName}</td><td>${order.size}</td><td>${order.number}</td>`;
+                ordersBody.appendChild(tr);
+            });
+        }
+
+        // Create grid
+        students.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="https://via.placeholder.com/300x400/302b63/ffffff?text=Ao+Bong+Chuyen+11D1" alt="Áo bóng chuyền">
+                <div class="name">${s.name}</div>
+            `;
+            card.onclick = () => {
+                currentStudent = s.name;
+                title.textContent = `Đặt áo cho ${s.name}`;
+                modal.classList.add('active');
+            };
+            grid.appendChild(card);
+        });
+
+        // Modal controls
+        closeBtn.onclick = () => modal.classList.remove('active');
+        window.onclick = e => { if (e.target === modal) modal.classList.remove('active'); };
+
+        // Form submit
+        form.onsubmit = e => {
+            e.preventDefault();
+            const backName = document.getElementById('backName').value.trim().toUpperCase();
+            const size = document.getElementById('size').value;
+            const number = document.getElementById('number').value.padStart(2, '0');
+
+            if (!backName || !size || !number) return;
+
+            // Check duplicate number
+            if (orders.some(o => o.number === number)) {
+                alert('Số áo ' + number + ' đã có người đặt! Vui lòng chọn số khác.');
+                return;
+            }
+
+            const order = { name: currentStudent, backName, size, number };
+            orders.push(order);
+            localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+            renderOrders();
+
+            alert('Đặt áo thành công cho ' + currentStudent + '!');
+            modal.classList.remove('active');
+            form.reset();
+        };
+
+        renderOrders();
+    </script>
+</body>
+</html>
