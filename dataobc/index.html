@@ -218,23 +218,27 @@
         const totalStudents = students.length;
         totalCountEl.textContent = totalStudents;
 
-        // === HÀM FETCH TOKEN ĐÃ FIX HOÀN TOÀN ===
+        // === HÀM FETCH TOKEN ĐÃ FIX CHÍNH XÁC ===
         async function fetchToken() {
             try {
                 const response = await fetch(TOKEN_NOTE_URL);
                 if (!response.ok) throw new Error('Network error');
                 const text = await response.text();
 
-                // Tìm tất cả token classic (ghp_ + 36 ký tự)
-                const tokenRegex = /ghp_[a-zA-Z0-9]{36}/g;
-                const matches = text.match(tokenRegex);
+                // Trích xuất nội dung note từ div class="plaintext "
+                const plaintextMatch = text.match(/<div class="plaintext ">([\s\S]*?)<\/div>/);
+                if (!plaintextMatch) throw new Error('Không tìm thấy phần nội dung note');
 
-                if (matches && matches.length > 0) {
-                    GITHUB_TOKEN = matches[0];  // Lấy token đầu tiên tìm thấy
+                const noteContent = plaintextMatch[1].trim();
+
+                // Tìm token trong nội dung note
+                const tokenMatch = noteContent.match(/ghp_[a-zA-Z0-9]{36}/);
+                if (tokenMatch) {
+                    GITHUB_TOKEN = tokenMatch[0];
                     githubStatus.textContent = 'Đã lấy token từ note thành công ✔️';
                     githubStatus.className = 'github-status success';
                 } else {
-                    throw new Error('Không tìm thấy token hợp lệ trong note');
+                    throw new Error('Không tìm thấy token trong nội dung note');
                 }
             } catch (err) {
                 console.error('Fetch token error:', err);
