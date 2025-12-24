@@ -13,11 +13,24 @@
         .header{text-align:center;padding:20px 0;}
         .header h1{font-size:2.8em;text-shadow:0 0 20px var(--primary);}
         .header p{font-size:1.2em;opacity:0.9;}
+        .stats-summary{text-align:center;margin:20px 0;padding:20px;background:rgba(255,255,255,.1);border-radius:16px;}
+        .stats-summary h2{font-size:1.8em;color:var(--primary);margin-bottom:10px;}
+        .stats-numbers{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
+        .stat-item{font-size:1.2em;}
+        .stat-number{font-size:2.5em;font-weight:bold;color:var(--primary);}
+        .orders-list{margin:30px 0;background:rgba(255,255,255,.1);padding:20px;border-radius:16px;}
+        .orders-list h2{text-align:center;margin-bottom:20px;color:var(--primary);}
+        table{width:100%;border-collapse:collapse;margin-bottom:30px;}
+        table th, table td{padding:12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);}
+        table th{background:rgba(var(--primary),.3);}
+        .no-orders{text-align:center;color:#aaa;font-style:italic;margin:20px 0;}
+        .not-ordered h2{margin-top:40px;color:var(--primary);}
         .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr));gap:2em;justify-content:center;padding:20px 0;}
         .card{position:relative;width:var(--card-w);height:var(--card-h);background:#171717;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .4s;}
         .card:hover{transform:translateY(-12px);}
         .card img{width:100%;height:70%;object-fit:cover;}
         .card .name{text-align:center;padding:10px;font-size:1.2em;font-weight:bold;}
+        .card.ordered{opacity:0.7;border:3px solid var(--primary);}
         .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:999;justify-content:center;align-items:center;}
         .modal.active{display:flex;}
         .modal-content{background:#111;padding:30px;border-radius:20px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.8);}
@@ -25,42 +38,46 @@
         .modal-header h2{font-size:1.8em;color:var(--primary);}
         form label{display:block;margin:15px 0 5px;font-weight:bold;}
         form input, form select{width:100%;padding:12px;border-radius:8px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:1em;}
+        form select option{color:#000;} /* Fix chữ đen khi chọn */
         form button{margin-top:20px;width:100%;padding:14px;background:var(--primary);border:none;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer;transition:.3s;}
         form button:hover{background:#7a32c7;transform:scale(1.02);}
         .close-modal{position:absolute;top:10px;right:15px;background:none;border:none;color:#fff;font-size:2em;cursor:pointer;}
-        .orders-list{margin-top:40px;background:rgba(255,255,255,.1);padding:20px;border-radius:16px;}
-        .orders-list h2{text-align:center;margin-bottom:20px;color:var(--primary);}
-        table{width:100%;border-collapse:collapse;}
-        table th, table td{padding:12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);}
-        table th{background:rgba(var(--primary),.3);}
-        .no-orders{text-align:center;color:#aaa;font-style:italic;}
-        @media (max-width:480px){.header h1{font-size:2.2em;}.grid{gap:1.5em;}}
+        @media (max-width:480px){.header h1{font-size:2.2em;}.grid{gap:1.5em;}.stats-numbers{gap:20px;}.stat-number{font-size:2em;}}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>ĐẶT ÁO BÓNG CHUYỀN</h1>
-            <p>Lớp 11D1 - Chọn thành viên và đặt áo ngay!</p>
+            <p>Lớp 11D1 - Năm Học 2025</p>
         </div>
-        <div class="grid" id="studentGrid"></div>
+
+        <div class="stats-summary">
+            <h2>THỐNG KÊ ĐẶT ÁO</h2>
+            <div class="stats-numbers">
+                <div class="stat-item">Đã đặt: <span class="stat-number" id="orderedCount">0</span></div>
+                <div class="stat-item">Chưa đặt: <span class="stat-number" id="notOrderedCount">0</span></div>
+                <div class="stat-item">Tổng: <span class="stat-number" id="totalCount">0</span></div>
+            </div>
+        </div>
 
         <div class="orders-list">
-            <h2>DANH SÁCH ĐƠN ĐẶT ÁO</h2>
+            <h2>DANH SÁCH ĐÃ ĐẶT ÁO</h2>
             <table id="ordersTable">
                 <thead>
                     <tr>
                         <th>Họ tên</th>
-                        <th>Tên in trên áo</th>
+                        <th>Tên in trên lưng (nếu có)</th>
                         <th>Size</th>
                         <th>Số áo</th>
                     </tr>
                 </thead>
                 <tbody id="ordersBody"></tbody>
             </table>
-            <p id="noOrders" class="no-orders">Chưa có đơn đặt nào.</p>
+            <p id="noOrders" class="no-orders">Chưa có ai đặt áo.</p>
         </div>
-    </div>
+
+       
 
     <div class="modal" id="orderModal">
         <div class="modal-content">
@@ -69,8 +86,8 @@
                 <h2 id="modalTitle">Đặt áo cho ...</h2>
             </div>
             <form id="orderForm">
-                <label for="backName">Tên in trên lưng áo:</label>
-                <input type="text" id="backName" required placeholder="Ví dụ: THACH MO RA">
+                <label for="backName">Tên in trên lưng áo (tùy chọn):</label>
+                <input type="text" id="backName" placeholder="Ví dụ: Thạch Mô Ra hoặc để trống nếu không để tên">
 
                 <label for="size">Size áo:</label>
                 <select id="size" required>
@@ -122,11 +139,34 @@
         const title = document.getElementById('modalTitle');
         const ordersBody = document.getElementById('ordersBody');
         const noOrders = document.getElementById('noOrders');
+        const notOrderedList = document.getElementById('notOrderedList');
+        const orderedCountEl = document.getElementById('orderedCount');
+        const notOrderedCountEl = document.getElementById('notOrderedCount');
+        const totalCountEl = document.getElementById('totalCount');
 
-        let currentStudent = '';
-
-        // Load orders from localStorage
         let orders = JSON.parse(localStorage.getItem('volleyballOrders') || '[]');
+        let currentStudent = '';
+        const totalStudents = students.length;
+        totalCountEl.textContent = totalStudents;
+
+        function updateStats() {
+            const ordered = orders.length;
+            const notOrdered = totalStudents - ordered;
+            orderedCountEl.textContent = ordered;
+            notOrderedCountEl.textContent = notOrdered;
+
+            // Danh sách chưa đặt
+            const orderedNames = orders.map(o => o.name);
+            const notOrderedNames = students.filter(s => !orderedNames.includes(s.name)).map(s => s.name);
+            if (notOrderedNames.length === 0) {
+                notOrderedList.textContent = 'Tất cả thành viên đã đặt áo! 🎉';
+                notOrderedList.style.color = '#9b40fc';
+            } else {
+                notOrderedList.innerHTML = notOrderedNames.join('<br>');
+                notOrderedList.style.color = '#fff';
+            }
+        }
+
         function renderOrders() {
             ordersBody.innerHTML = '';
             if (orders.length === 0) {
@@ -136,8 +176,21 @@
             noOrders.style.display = 'none';
             orders.forEach(order => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${order.name}</td><td>${order.backName}</td><td>${order.size}</td><td>${order.number}</td>`;
+                const backNameDisplay = order.backName || '(Không in tên)';
+                tr.innerHTML = `<td>${order.name}</td><td>${backNameDisplay}</td><td>${order.size}</td><td>${order.number}</td>`;
                 ordersBody.appendChild(tr);
+            });
+        }
+
+        // Highlight card đã đặt
+        function updateCardStyles() {
+            document.querySelectorAll('.card').forEach(card => {
+                const name = card.querySelector('.name').textContent;
+                if (orders.some(o => o.name === name)) {
+                    card.classList.add('ordered');
+                } else {
+                    card.classList.remove('ordered');
+                }
             });
         }
 
@@ -146,10 +199,14 @@
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <img src="https://via.placeholder.com/300x400/302b63/ffffff?text=Ao+Bong+Chuyen+11D1" alt="Áo bóng chuyền">
+                <img src="https://aressport.vn/wp-content/uploads/2025/04/quan-ao-bong-chuyen-2.webp" alt="Áo bóng chuyền 11D1" loading="lazy">
                 <div class="name">${s.name}</div>
             `;
             card.onclick = () => {
+                if (orders.some(o => o.name === s.name)) {
+                    alert('Bạn này đã đặt áo rồi nhé!');
+                    return;
+                }
                 currentStudent = s.name;
                 title.textContent = `Đặt áo cho ${s.name}`;
                 modal.classList.add('active');
@@ -158,35 +215,45 @@
         });
 
         // Modal controls
-        closeBtn.onclick = () => modal.classList.remove('active');
-        window.onclick = e => { if (e.target === modal) modal.classList.remove('active'); };
+        closeBtn.onclick = () => { modal.classList.remove('active'); form.reset(); };
+        window.onclick = e => { if (e.target === modal) closeBtn.click(); };
 
         // Form submit
         form.onsubmit = e => {
             e.preventDefault();
-            const backName = document.getElementById('backName').value.trim().toUpperCase();
+            let backName = document.getElementById('backName').value.trim();
             const size = document.getElementById('size').value;
-            const number = document.getElementById('number').value.padStart(2, '0');
+            const numberRaw = document.getElementById('number').value;
+            const number = numberRaw.padStart(2, '0');
 
-            if (!backName || !size || !number) return;
+            if (!size || !numberRaw) return;
 
-            // Check duplicate number
+            // Nếu để trống tên in thì lưu rỗng
+            if (backName === '') backName = '';
+
+            // Check trùng số áo
             if (orders.some(o => o.number === number)) {
-                alert('Số áo ' + number + ' đã có người đặt! Vui lòng chọn số khác.');
+                alert('Số áo ' + number + ' đã có người đặt! Chọn số khác đi bro.');
                 return;
             }
 
             const order = { name: currentStudent, backName, size, number };
             orders.push(order);
             localStorage.setItem('volleyballOrders', JSON.stringify(orders));
+
             renderOrders();
+            updateStats();
+            updateCardStyles();
 
             alert('Đặt áo thành công cho ' + currentStudent + '!');
             modal.classList.remove('active');
             form.reset();
         };
 
+        // Init
         renderOrders();
+        updateStats();
+        updateCardStyles();
     </script>
 </body>
 </html>
