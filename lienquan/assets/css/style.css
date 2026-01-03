@@ -27,7 +27,7 @@ body{
     letter-spacing:0.5px;
 }
 
-/* ===== NAV (NÃ‚NG Cáº¤P) ===== */
+/* ===== NAV (NÂNG CẤP) ===== */
 .nav{
     background:#60a5fa;
     text-align:center;
@@ -47,12 +47,12 @@ body{
     transition:color .25s ease;
 }
 
-/* HOVER Äá»”I MÃ€U NHáº¸ */
+/* HOVER ĐỔI MÀU NHẸ */
 .nav a:hover{
     color:#e0f2fe;
 }
 
-/* Gáº CH CHÃ‚N Äá»˜NG */
+/* GẠCH CHÂN ĐỘNG */
 .nav a::after{
     content:'';
     position:absolute;
@@ -66,14 +66,14 @@ body{
     border-radius:2px;
 }
 
-/* HOVER HIá»†N Gáº CH */
+/* HOVER HIỆN GẠCH */
 .nav a:hover::after{
     width:100%;
 }
 
-/* ===== TRANG ÄANG ACTIVE â€“ CHá»® SÃNG + BLUR ===== */
+/* ===== TRANG ĐANG ACTIVE – CHỮ SÁNG + BLUR ===== */
 .nav a.active{
-    color:#ffffff; /* tráº¯ng hÆ¡n */
+    color:#ffffff; /* trắng hơn */
     text-shadow:
         0 0 6px rgba(255,255,255,0.9),
         0 0 12px rgba(255,255,255,0.6);
@@ -190,7 +190,7 @@ body{
     box-shadow:0 6px 16px rgba(37,99,235,0.4);
 }
 
-/* ===== GRID (TRANG MáºªU Gá»ŒN) ===== */
+/* ===== GRID (TRANG MẪU GỌN) ===== */
 .grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -224,8 +224,8 @@ body{
 }
 .detail-links{
     display:flex;
-    flex-direction:column;   /* ðŸ”¥ Xáº¾P Dá»ŒC */
-    align-items:center;      /* CÄ‚N GIá»®A */
+    flex-direction:column;   /* 🔥 XẾP DỌC */
+    align-items:center;      /* CĂN GIỮA */
     gap:12px;
     margin-bottom:30px;
 }
@@ -250,7 +250,7 @@ body{
     padding:0 10px;
     cursor:pointer;
 }
-/* ===== TRANG MáºªU (Gá»ŒN) ===== */
+/* ===== TRANG MẪU (GỌN) ===== */
 .mau-grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
@@ -294,10 +294,10 @@ body{
     font-size:13px;
 }
 
-/* ðŸ”¥ Ã‰P LINK Äá»’NG MÃ€U Vá»šI FOOTER */
+/* 🔥 ÉP LINK ĐỒNG MÀU VỚI FOOTER */
 .footer-admin{
-    color:inherit;          /* â† Äƒn mÃ u chá»¯ footer */
-    text-decoration:none;   /* bá» gáº¡ch chÃ¢n */
+    color:inherit;          /* ← ăn màu chữ footer */
+    text-decoration:none;   /* bỏ gạch chân */
     font-weight:600;
 }
 .container{
@@ -371,7 +371,7 @@ body{
     padding: 20px;
     transition: .3s;
     z-index: 1001;
-    overflow-y: auto; /* âœ… thÃªm Ä‘á»ƒ nhiá»u link váº«n cuá»™n */
+    overflow-y: auto; /* ✅ thêm để nhiều link vẫn cuộn */
 }
 
 .side-menu.active {
@@ -382,7 +382,7 @@ body{
 .side-menu h3 {
     margin: 16px 0 10px;
     font-size: 15px;
-    color: #facc15; /* vÃ ng nháº¹ phÃ¢n nhÃ³m */
+    color: #facc15; /* vàng nhẹ phân nhóm */
 }
 
 /* ===== LINK ===== */
@@ -399,7 +399,7 @@ body{
     text-decoration: underline;
 }
 
-/* ===== DIVIDER (gáº¡ch ngang) ===== */
+/* ===== DIVIDER (gạch ngang) ===== */
 .menu-divider {
     height: 1px;
     background: rgba(255,255,255,.25);
@@ -420,9 +420,9 @@ body{
     opacity:1;
     pointer-events:auto;
 }
-/* ===== MENU BUTTON ÄI THEO SIDEBAR ===== */
+/* ===== MENU BUTTON ĐI THEO SIDEBAR ===== */
 .menu-btn{
-    z-index:1100; /* cao hÆ¡n side-menu */
+    z-index:1100; /* cao hơn side-menu */
 }
 
 .menu-btn.active{
@@ -450,8 +450,8 @@ body{
 .banner-item img{
     width:100%;
     height:auto;
-    object-fit:contain;   /* âœ… hiá»‡n FULL áº£nh */
-    background:#000;      /* hoáº·c mÃ u ná»n báº¡n muá»‘n */
+    object-fit:contain;   /* ✅ hiện FULL ảnh */
+    background:#000;      /* hoặc màu nền bạn muốn */
     display:block;
 }
 /* ===== FOOTER ===== */
@@ -493,7 +493,7 @@ body{
     color:#cbd5f5;
 }
 
-/* Link admin áº©n */
+/* Link admin ẩn */
 .footer-admin{
     color:inherit;
     text-decoration:none;
@@ -545,7 +545,7 @@ body{
     border-radius:999px;
 }
 
-/* NÃšT TÃŒM KIáº¾M */
+/* NÚT TÌM KIẾM */
 .search-btn{
     border:none;
     background:#3b82f6;
@@ -591,7 +591,7 @@ body{
   align-items: center;
 }
 
-/* ===== DANH SÃCH ===== */
+/* ===== DANH SÁCH ===== */
 .quick-tools-line {
   display: flex;
   gap: 10px;
@@ -599,14 +599,14 @@ body{
   overflow-x: auto;
   overflow-y: hidden;
 
-  padding: 6px 30px; /* chá»«a chá»— cho nÃºt */
+  padding: 6px 30px; /* chừa chỗ cho nút */
   white-space: nowrap;
 
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 
-/* áº¨n scrollbar */
+/* Ẩn scrollbar */
 .quick-tools-line::-webkit-scrollbar { height: 0; }
 .quick-tools-line { scrollbar-width: none; }
 
@@ -637,7 +637,7 @@ body{
   transform: translateY(-2px);
 }
 
-/* ===== NÃšT MÅ¨I TÃŠN ===== */
+/* ===== NÚT MŨI TÊN ===== */
 .scroll-btn {
   position: absolute;
   top: 50%;
@@ -707,7 +707,7 @@ body{
       padding:6px 8px;
   }
 
-  /* ===== TRANG Táº O KHUNG ===== */
+  /* ===== TRANG TẠO KHUNG ===== */
   .tao-wrapper{
       flex-direction:column;
       gap:16px;
@@ -765,14 +765,14 @@ body{
     gap:12px;
   }
 
-  /* label gá»n hÆ¡n */
+  /* label gọn hơn */
   .profile-controls label,
   .tao-controls label{
     font-size:14px;
     margin-bottom:0;
   }
 
-  /* input/select full Ã´ */
+  /* input/select full ô */
   .profile-controls input,
   .profile-controls select,
   .tao-controls input,
@@ -781,7 +781,7 @@ body{
     font-size:15px;
   }
 
-  /* cÃ¡c khá»‘i báº¯t buá»™c full hÃ ng */
+  /* các khối bắt buộc full hàng */
   .avatar-box,
   .switch-line,
   #createBtn,
@@ -791,7 +791,7 @@ body{
   }
 }
 
-/* Android nhá» / mÃ¡y yáº¿u */
+/* Android nhỏ / máy yếu */
 @media (max-width:420px){
   .profile-controls,
   .tao-controls{
@@ -803,18 +803,18 @@ body{
 ========================= */
 @media (max-width:768px){
 
-  /* Trang Táº O PROFILE: giá»¯ viá»n Ä‘áº¹p */
+  /* Trang TẠO PROFILE: giữ viền đẹp */
   .profile-wrapper{
     max-width:100%;
     margin:12px auto;
-    padding:0 12px;        /* ðŸ‘ˆ Táº O KHOáº¢NG THá»ž 2 BÃŠN */
+    padding:0 12px;        /* 👈 TẠO KHOẢNG THỞ 2 BÊN */
   }
 
   .profile-controls{
     border-radius:20px;
   }
 
-  /* Trang Táº O KHUNG: váº«n full */
+  /* Trang TẠO KHUNG: vẫn full */
   .tao-wrapper{
     max-width:100%;
     margin:0;
