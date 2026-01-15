@@ -704,9 +704,9 @@
     });
 
     const types = [
-        { key: 'hsg', label: 'Học sinh giỏi', icon: '', color: '#ffd700', note: 'ĐTB ≥ 8.0 & không môn nào dưới 6.5' },
-        { key: 'hsk', label: 'Học sinh khá', icon: '', color: '#c0c0c0', note: 'ĐTB ≥ 6.5 & không môn nào dưới 5.0' },
-        { key: 'hstb', label: 'Học sinh trung bình', icon: '', color: '#cd7f32', note: 'ĐTB ≥ 5.0' }
+        { key: 'hsg', label: 'Học sinh giỏi', color: '#ffd700', note: 'ĐTB ≥ 8.0 & không môn nào dưới 6.5' },
+        { key: 'hsk', label: 'Học sinh khá', color: '#c0c0c0', note: 'ĐTB ≥ 6.5 & không môn nào dưới 5.0' },
+        { key: 'hstb', label: 'Học sinh trung bình', color: '#cd7f32', note: 'ĐTB ≥ 5.0' }
     ];
 
 
@@ -715,7 +715,6 @@
     const card = document.createElement('div');
     card.className = 'classification-card';
     card.innerHTML = `
-        <div class="classification-icon" style="color:${t.color}">${t.icon}</div>
         <div class="classification-info">
             <div class="classification-title" style="color:${t.color}">${t.label}</div>
             <div class="classification-count">${list.length}</div>
