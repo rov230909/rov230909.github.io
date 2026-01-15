@@ -106,12 +106,97 @@
         .stats{display:flex;justify-content:center;gap:3em;padding:15px 0;background:rgba(0,0,0,.3);border-radius:15px;flex-wrap:wrap;max-width:500px;width:100%}
         .stat-number{font-size:2.5em;font-weight:bold;color:#9b40fc}
         @keyframes move{0%,100%{transform:translate(0,0)}25%{transform:translate(-1em,-1em) rotate(-10deg)}50%{transform:translate(-1em,1em)}75%{transform:translate(1em,-1.25em) rotate(10deg)}}
-        .show-stats-btn{background:rgba(155,64,252,.3);backdrop-filter:blur(10px);border:2px solid rgba(155,64,252,.5);color:#fff;padding:12px 24px;border-radius:12px;font-weight:bold;font-size:1em;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(155,64,252,.3)}
+        .show-stats-btn{background:rgba(155,64,252,.3);backdrop-filter:blur(10px);border:2px solid rgba(155,64,252,.5);color:#fff;padding:12px 24px;border-radius:12px;font-weight:bold;font-size:1em;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(155,64,252,.3);margin:0 5px}
         .show-stats-btn:hover{background:rgba(155,64,252,.6);transform:translateY(-2px);box-shadow:0 6px 20px rgba(155,64,252,.5)}
         #subjectStatsBody td{min-width:80px;word-break:break-word;line-height:1.4}
         #subjectStatsBody .subject-top-student{font-weight:600;color:#e0f2ff;white-space:normal;max-width:140px}
         #subjectStatsBody .subject-score{font-weight:bold;color:#9b40fc;font-size:1.1em}
         @media (max-width:480px){:root{--card-w:17em;--card-h:23em}.header h1{font-size:2.1em}.grid{gap:1.5em;padding:10px 5px 20px}.ranking-wrapper{margin:15px 0;padding:15px}.ranking-title{font-size:1.4em}.ranking-note{font-size:.8em}.ranking-table th,.ranking-table td{padding:10px 8px;font-size:.82em}.student-name-rank{max-width:90px}.stats{gap:20px;padding:12px}.stat-number{font-size:2em}.modal-content{height:95vh;border-radius:15px}.modal-header{height:45px;padding:0 15px}.modal-title{font-size:1.1em}.music-toggle{width:50px;height:50px;bottom:15px;right:15px}.music-toggle svg{width:22px;height:22px}.show-stats-btn{padding:10px 18px;font-size:.9em}#subjectStatsBody td{padding:10px 6px;font-size:.8em}}
+
+        /* CSS cho modal xếp loại đẹp hơn */
+        .classification-card {
+            background: linear-gradient(135deg, rgba(30,30,60,0.75), rgba(20,20,50,0.75));
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 18px 20px;
+            border: 1px solid rgba(155,64,252,0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.45);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .classification-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(155,64,252,0.35);
+            border-color: rgba(155,64,252,0.6);
+        }
+        .classification-icon {
+            font-size: 2.6em;
+            min-width: 60px;
+            text-align: center;
+            line-height: 1;
+        }
+        .classification-info {
+            flex: 1;
+        }
+        .classification-title {
+            font-size: 1.35em;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .classification-count {
+            font-size: 2.4em;
+            font-weight: 800;
+            color: #9b40fc;
+            margin-bottom: 6px;
+        }
+        .classification-list {
+    font-size: 0.92em;
+    color: #e0e0ff;
+    line-height: 1.55;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px 12px;
+    max-height: 140px;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-top: 8px;
+}
+
+.classification-list .student-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(155,64,252,0.08);
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(155,64,252,0.15);
+    transition: all 0.2s;
+}
+
+.classification-list .student-name:hover {
+    background: rgba(155,64,252,0.2);
+    border-color: rgba(155,64,252,0.4);
+}
+
+.classification-list::-webkit-scrollbar {
+    width: 5px;
+}
+.classification-list::-webkit-scrollbar-thumb {
+    background: rgba(155,64,252,0.5);
+    border-radius: 5px;
+}
+
+/* Mobile: xếp 1 cột */
+@media (max-width: 480px) {
+    .classification-list {
+        grid-template-columns: 1fr;
+        max-height: 160px;
+        gap: 8px;
+    }
+
+        }
     </style>
 </head>
 <body>
@@ -122,11 +207,11 @@
     <div class="container">
         <div class="header">
             <h1>11D1</h1>
-            <p>Lớp 11D1 - Năm Học 2025 - Học Kỳ 1</p>
+            <p>Lớp 11D1 - Năm Học 2026 - Học Kỳ 1</p>
         </div>
         <div class="ranking-wrapper">
             <div class="ranking-title">BẢNG XẾP HẠNG</div>
-            <div class="ranking-note">Bảng xếp hạng sẽ thay đổi khi điểm có sự thay đổi từ hệ thống VNedu!</div>
+            <div class="ranking-note">Xếp hạng dựa trên trung bình các điểm TB môn (theo VNedu). Cập nhật tự động khi có điểm mới.</div>
 
             <div id="rankingLoading">
                 <div class="loader">
@@ -141,7 +226,7 @@
                     <div class="text"><span>Loading</span></div>
                     <div class="line"></div>
                 </div>
-                <p style="margin-top:20px;font-size:.9em;opacity:.7">Đợi một tí bro!</p>
+                <p style="margin-top:20px;font-size:.9em;opacity:.7">Đang tải bảng xếp hạng...</p>
             </div>
 
             <div class="ranking-table-container" id="rankingTableContainer">
@@ -150,17 +235,16 @@
                         <tr>
                             <th>Hạng</th>
                             <th>Họ và tên</th>
-                            <th>Điểm</th>
+                            <th>Điểm TB</th>
                         </tr>
                     </thead>
                     <tbody id="rankingBody"></tbody>
                 </table>
             </div>
 
-            <div style="text-align:center;margin-top:15px">
-                <button id="showSubjectStatsBtn" class="show-stats-btn">
-                    Xem thống kê top 1
-                </button>
+            <div style="text-align:center;margin:20px 0 10px">
+                <button id="showSubjectStatsBtn" class="show-stats-btn">Xem top 1 từng môn</button>
+                <button id="showClassificationBtn" class="show-stats-btn">Xem thống kê xếp loại HS</button>
             </div>
         </div>
 
@@ -182,11 +266,12 @@
         </svg>
     </div>
 
+    <!-- Modal xem điểm cá nhân -->
     <div class="modal" id="gradeModal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title" id="modalTitle">Đang tải...</div>
-                <button class="close-modal" id="closeModal">x</button>
+                <button class="close-modal" id="closeModal">×</button>
             </div>
             <iframe class="modal-iframe" id="gradeIframe"></iframe>
             <div class="modal-loading" id="modalLoading">
@@ -207,11 +292,13 @@
         </div>
     </div>
 
+    <!-- Modal top 1 từng môn -->
     <div class="modal" id="subjectStatsModal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">Top 1 Của Các Môn Học</div>
-                <button class="close-modal" id="closeSubjectStats">x</button>
+                
+                <button class="close-modal" id="closeSubjectStats">×</button>
             </div>
             <div class="modal-body" style="padding:20px;overflow-y:auto;height:calc(100% - 50px)">
                 <div id="subjectStatsLoading" class="modal-loading">
@@ -229,16 +316,21 @@
                     </div>
                     <p style="margin-top:20px;font-size:.9em;opacity:.7">Đang xử lí...</p>
                 </div>
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">ㅤ</p>
 
-                <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.7;">  </p>
                 <div id="subjectStatsContent" style="display:none">
+                    <p style="text-align:center; font-size:0.97em; opacity:0.8; margin: 0 0 24px; color:#ccc;">
+                        .
+.
+.
+.<br>
+                        <small></small>
+                    </p>
                     <table class="ranking-table" style="width:100%;margin-top:10px">
                         <thead>
                             <tr>
                                 <th style="width:38%">Môn học</th>
                                 <th style="width:38%">Top 1</th>
-                                <th style="width:24%">Điểm</th>
+                                <th style="width:24%">Điểm TB môn</th>
                             </tr>
                         </thead>
                         <tbody id="subjectStatsBody"></tbody>
@@ -248,7 +340,47 @@
         </div>
     </div>
 
+    <!-- Modal thống kê xếp loại HS - giao diện card đẹp -->
+    <div class="modal" id="classificationModal">
+        <div class="modal-content" style="max-width: 920px;">
+            <div class="modal-header">
+                <div class="modal-title">Thống Kê Xếp Loại Học Sinh HK1</div>
+                <button class="close-modal" id="closeClassification">×</button>
+            </div>
+            <div class="modal-body" style="padding: 24px; overflow-y: auto; height: calc(100% - 50px); background: #0d0d1a;">
+                <div id="classificationLoading" class="modal-loading">
+                    <div class="loader">
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="text"><span>Loading</span></div>
+                        <div class="line"></div>
+                    </div>
+                    <p style="margin-top:24px;font-size:1.05em;opacity:0.85">Đang tính toán xếp loại...</p>
+                </div>
+
+                <div id="classificationContent" style="display:none">
+                    <p style="text-align:center; font-size:0.97em; opacity:0.8; margin: 0 0 24px; color:#ccc;">
+                        .
+.
+.
+.<br>
+                        <small></small>
+                    </p>
+
+                    <div id="classificationCards" style="display: flex; flex-direction: column; gap: 18px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // === Phần music và data giữ nguyên ===
         const audio = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('musicToggle');
         const icon = document.getElementById('musicIcon');
@@ -266,7 +398,6 @@
         document.onclick = () => { hasInteracted = true; tryPlayMusic(); };
         audio.loop = true;
 
-        // === DATA ===
         const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=1&hoc_sinh_id=";
         const students = [
             {name:"Lại Quế Anh",id:"5010453507"},{name:"Lý Ngọc Lan Anh",id:"5010453527"},
@@ -305,14 +436,12 @@
         });
         grid.appendChild(frag);
 
-        // === MODAL ===
+        // === Modal xem điểm cá nhân ===
         const modal = document.getElementById('gradeModal');
         const iframe = document.getElementById('gradeIframe');
         const title = document.getElementById('modalTitle');
         const closeBtn = document.getElementById('closeModal');
         const modalLoading = document.getElementById('modalLoading');
-        const rankingLoading = document.getElementById('rankingLoading');
-        const rankingContainer = document.getElementById('rankingTableContainer');
 
         function openGradeModal(name, url) {
             title.textContent = `Điểm của ${name}`;
@@ -324,36 +453,119 @@
         closeBtn.onclick = () => { modal.classList.remove('active'); iframe.src = ''; modalLoading.classList.remove('hidden'); document.body.style.overflow = ''; };
         modal.onclick = e => { if (e.target === modal) closeBtn.click(); };
 
-        // === BXH TỔNG ===
+        // === BXH tổng ===
         async function fetchStudentGrades(id) {
-            try {
-                const res = await fetch(`${BASE_URL}${id}`, { credentials: 'omit' });
-                if (!res.ok) return null;
-                const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-                let sum = 0, cnt = 0;
-                doc.querySelectorAll('.table-point-content .table tbody th.text-center').forEach(c => {
-                    const v = parseFloat(c.textContent.trim());
-                    if (!isNaN(v)) { sum += v; cnt++; }
-                });
-                return cnt > 0 ? (sum / cnt).toFixed(2) : null;
-            } catch { return null; }
+    try {
+        const res = await fetch(`${BASE_URL}${id}`, { credentials: 'omit' });
+        if (!res.ok) {
+            console.warn(`Fetch lỗi ${res.status} cho ID ${id}`);
+            return null;
         }
+        const text = await res.text();
+        const doc = new DOMParser().parseFromString(text, 'text/html');
+
+        const table = doc.querySelector('.table-point-content .table') || doc.querySelector('.table');
+        if (!table) {
+            console.warn(`Không tìm thấy bảng điểm cho ID ${id}`);
+            return null;
+        }
+
+        let sumTBM = 0;
+        let countTBM = 0;
+        let subjectScores = [];
+        let foundTBMColumn = false;
+
+        const rows = table.querySelectorAll('tbody tr');
+        const headers = Array.from(table.querySelectorAll('thead th, thead td')).map(th => th.textContent.trim().toLowerCase());
+
+        // Tìm index cột TB môn (linh hoạt hơn)
+        let tbmColumnIndex = -1;
+        headers.forEach((h, idx) => {
+            if (h.includes('tb') || h.includes('trung bình') || h.includes('điểm tb') || h.includes('tổng kết')) {
+                tbmColumnIndex = idx;
+                foundTBMColumn = true;
+            }
+        });
+        // Nếu không tìm thấy qua header, mặc định cột cuối (thường là TB môn)
+        if (tbmColumnIndex === -1) {
+            tbmColumnIndex = headers.length - 1;
+        }
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td, th');
+            if (cells.length <= tbmColumnIndex) return;
+
+            const subjectCell = cells[0].textContent.trim();
+            if (!subjectCell || subjectCell.includes('TB') || subjectCell.includes('Trung bình') || subjectCell === '' || subjectCell.includes('Tổng') || subjectCell.includes('Học kỳ')) {
+                return;
+            }
+
+            const tbmCell = cells[tbmColumnIndex];
+            const valStr = tbmCell ? tbmCell.textContent.trim() : '';
+            const val = parseFloat(valStr.replace(/[^0-9.]/g, '')); // loại bỏ ký tự thừa
+
+            if (!isNaN(val) && val >= 0 && val <= 10) {
+                sumTBM += val;
+                countTBM++;
+                subjectScores.push(val);
+            } else if (valStr && valStr !== '-' && valStr !== '') {
+                console.log(`Điểm không hợp lệ môn "${subjectCell}" cho ID ${id}: "${valStr}"`);
+            }
+        });
+
+        if (countTBM === 0) {
+            console.warn(`Không tìm thấy điểm TBM nào cho ID ${id} (cột TB: ${tbmColumnIndex + 1})`);
+            return null;
+        }
+
+        const avg = (sumTBM / countTBM).toFixed(2);
+        const minScore = subjectScores.length > 0 ? Math.min(...subjectScores) : 0;
+
+        return { avg: parseFloat(avg), minScore, subjectCount: countTBM };
+    } catch (err) {
+        console.error(`Lỗi fetch ID ${id}:`, err);
+        return null;
+    }
+}
 
         async function loadRanking() {
-            const body = document.getElementById('rankingBody'); body.innerHTML = '';
-            const results = await Promise.all(students.map(async s => ({ name: s.name, avg: await fetchStudentGrades(s.id) })));
-            const top10 = results.filter(r => r.avg).map(r => ({ ...r, avg: parseFloat(r.avg) })).sort((a,b) => b.avg - a.avg).slice(0,10);
-            if (!top10.length) { rankingLoading.innerHTML = `<p style="color:#aaa;font-style:italic">Không thể tải điểm.</p>`; return; }
-            top10.forEach((item,i) => {
-                const tr = document.createElement('tr');
-                const cls = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
-                tr.innerHTML = `<td><span class="rank-badge ${cls}">${i+1}</span></td><td class="student-name-rank" title="${item.name}">${item.name}</td><td class="avg-score">${item.avg}</td>`;
-                body.appendChild(tr);
-            });
-            rankingLoading.classList.add('hidden'); rankingContainer.classList.add('visible');
-        }
+    const body = document.getElementById('rankingBody');
+    body.innerHTML = '';
 
-        // === THỐNG KÊ MÔN - ĐÃ SỬA LỖI ===
+    const results = await Promise.all(
+        students.map(async s => {
+            const data = await fetchStudentGrades(s.id);
+            return { name: s.name, data };
+        })
+    );
+
+    const valid = results
+        .filter(r => r.data && typeof r.data.avg === 'number')
+        .map(r => ({ name: r.name, avg: r.data.avg }))
+        .sort((a, b) => b.avg - a.avg);
+
+    if (valid.length === 0) {
+        document.getElementById('rankingLoading').innerHTML = 
+            '<p style="color:#ff6b6b;font-style:italic">Không tải được điểm nào. Kiểm tra token hoặc mạng.</p>';
+        return;
+    }
+
+    valid.slice(0, 10).forEach((item, i) => {
+        const tr = document.createElement('tr');
+        const cls = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+        tr.innerHTML = `
+            <td><span class="rank-badge ${cls}">${i+1}</span></td>
+            <td class="student-name-rank" title="${item.name}">${item.name}</td>
+            <td class="avg-score">${item.avg.toFixed(2)}</td>
+        `;
+        body.appendChild(tr);
+    });
+
+    document.getElementById('rankingLoading').classList.add('hidden');
+    document.getElementById('rankingTableContainer').classList.add('visible');
+}
+
+        // === Top 1 từng môn (giữ nguyên) ===
         const MAIN_SUBJECTS = ["Toán học","Vật lí","Tin học","Ngữ văn","Lịch sử","Địa lí","Ngoại ngữ","Giáo dục quốc phòng và an ninh","Giáo dục kinh tế và pháp luật"];
 
         async function fetchSubjectGrades(id) {
@@ -373,67 +585,158 @@
                     if (cells.length < 2) return;
                     let subj = cells[0].textContent.trim();
                     if (!subj || subj.includes('TB') || subj.includes('Trung bình')) return;
-
                     if (subj.includes('quốc phòng')) subj = "Giáo dục quốc phòng và an ninh";
                     if (subj.includes('kinh tế')) subj = "Giáo dục kinh tế và pháp luật";
                     if (!MAIN_SUBJECTS.includes(subj)) return;
 
-                    let gk = null, ck = null, txSum = 0, txCnt = 0;
-
-                    for (let i = 1; i < cells.length; i++) {
-                        const h = headers[i] || '';
-                        const val = parseFloat(cells[i].textContent.trim());
-                        if (isNaN(val)) continue;
-                        if (h.includes('GK') || h.includes('Giữa')) gk = val;
-                        else if (h.includes('CK') || h.includes('Cuối')) ck = val;
-                        else if (!h.includes('TB') && !h.includes('Trung bình')) { txSum += val; txCnt++; }
+                    let tbm = null;
+                    for (let i = cells.length - 1; i >= 1; i--) {
+                        const valStr = cells[i].textContent.trim();
+                        const val = parseFloat(valStr);
+                        if (!isNaN(val) && val >= 0 && val <= 10) {
+                            const header = headers[i] || '';
+                            if (header.toLowerCase().includes('tb') || header.toLowerCase().includes('trung bình') || i === cells.length - 1) {
+                                tbm = val;
+                                break;
+                            }
+                        }
                     }
-
-                    if (gk !== null || ck !== null) {
-                        let avg = ck !== null && gk !== null ? ((gk + ck * 2) / 3).toFixed(2) : (gk ?? ck).toFixed(2);
-                        const txAvg = txCnt > 0 ? (txSum / txCnt).toFixed(2) : '0.00';
-                        map[subj] = { avg: parseFloat(avg), tx: parseFloat(txAvg) };
-                    }
+                    if (tbm !== null) map[subj] = {avg: tbm};
                 });
                 return map;
             } catch { return null; }
         }
 
+        // === Modal top 1 môn ===
         const subjectStatsModal = document.getElementById('subjectStatsModal');
-        const showBtn = document.getElementById('showSubjectStatsBtn');
-        const closeStats = document.getElementById('closeSubjectStats');
-        const loading = document.getElementById('subjectStatsLoading');
-        const content = document.getElementById('subjectStatsContent');
-        const tbody = document.getElementById('subjectStatsBody');
+        const showSubjectStatsBtn = document.getElementById('showSubjectStatsBtn');
+        const closeSubjectStats = document.getElementById('closeSubjectStats');
+        const subjectStatsLoading = document.getElementById('subjectStatsLoading');
+        const subjectStatsContent = document.getElementById('subjectStatsContent');
+        const subjectStatsBody = document.getElementById('subjectStatsBody');
 
-        showBtn.onclick = () => { subjectStatsModal.classList.add('active'); document.body.style.overflow = 'hidden'; loadSubjectStats(); };
-        closeStats.onclick = () => { subjectStatsModal.classList.remove('active'); document.body.style.overflow = ''; };
-        subjectStatsModal.onclick = e => { if (e.target === subjectStatsModal) closeStats.click(); };
+        showSubjectStatsBtn.onclick = () => { subjectStatsModal.classList.add('active'); document.body.style.overflow = 'hidden'; loadSubjectStats(); };
+        closeSubjectStats.onclick = () => { subjectStatsModal.classList.remove('active'); document.body.style.overflow = ''; };
+        subjectStatsModal.onclick = e => { if (e.target === subjectStatsModal) closeSubjectStats.click(); };
 
         async function loadSubjectStats() {
-            loading.style.display = 'flex'; content.style.display = 'none'; tbody.innerHTML = '';
-            const all = await Promise.all(students.map(async s => ({ name: s.name, data: await fetchSubjectGrades(s.id) || {} })));
+            subjectStatsLoading.style.display = 'flex'; subjectStatsContent.style.display = 'none'; subjectStatsBody.innerHTML = '';
+            const all = await Promise.all(students.map(async s => ({name: s.name, data: await fetchSubjectGrades(s.id) || {}})));
             const top = {};
-
-            all.forEach(({ name, data }) => {
+            all.forEach(({name, data}) => {
                 Object.keys(data).forEach(subj => {
-                    const { avg, tx } = data[subj];
-                    if (!top[subj] || avg > top[subj].avg || (avg === top[subj].avg && tx > top[subj].tx)) {
-                        top[subj] = { name, avg, tx };
-                    }
+                    const score = data[subj].avg;
+                    if (!top[subj] || score > top[subj].score) top[subj] = {name, score};
                 });
             });
-
             MAIN_SUBJECTS.forEach(subj => {
                 const d = top[subj];
                 const tr = document.createElement('tr');
-                tr.innerHTML = d ? `<td>${subj}</td><td class="subject-top-student">${d.name}</td><td class="subject-score">${d.avg.toFixed(2)}</td>` :
-                                  `<td>${subj}</td><td class="subject-top-student">Chưa có</td><td class="subject-score">-</td>`;
-                tbody.appendChild(tr);
+                tr.innerHTML = d ? `<td>${subj}</td><td class="subject-top-student">${d.name}</td><td class="subject-score">${d.score.toFixed(2)}</td>` : `<td>${subj}</td><td class="subject-top-student">Chưa có</td><td class="subject-score">-</td>`;
+                subjectStatsBody.appendChild(tr);
             });
-
-            setTimeout(() => { loading.style.display = 'none'; content.style.display = 'block'; }, 400);
+            setTimeout(() => { subjectStatsLoading.style.display = 'none'; subjectStatsContent.style.display = 'block'; }, 400);
         }
+
+        // === Modal xếp loại HS - đẹp ===
+        const classificationModal = document.getElementById('classificationModal');
+        const closeClassification = document.getElementById('closeClassification');
+        const classificationLoading = document.getElementById('classificationLoading');
+        const classificationContent = document.getElementById('classificationContent');
+        const classificationCards = document.getElementById('classificationCards');
+        const showClassificationBtn = document.getElementById('showClassificationBtn');
+
+        showClassificationBtn.onclick = () => {
+            classificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loadClassification();
+        };
+
+        closeClassification.onclick = () => {
+            classificationModal.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        classificationModal.onclick = e => {
+            if (e.target === classificationModal) closeClassification.click();
+        };
+
+        async function loadClassification() {
+    classificationLoading.style.display = 'flex';
+    classificationContent.style.display = 'none';
+    classificationCards.innerHTML = '';
+
+    const results = await Promise.all(
+        students.map(async s => {
+            const data = await fetchStudentGrades(s.id);
+            return { name: s.name, ...data };
+        })
+    );
+
+    const classified = {
+        hsg: [],    // Học sinh giỏi
+        hsk: [],    // Học sinh khá
+        hstb: [],   // Học sinh trung bình
+        hsy: [],    // Học sinh yếu
+        hskem: []   // Học sinh kém (hoặc chưa đủ dữ liệu)
+    };
+
+    results.forEach(r => {
+        if (!r || !r.avg) {
+            classified.hskem.push(r.name + " (chưa có điểm)");
+            return;
+        }
+
+        const avg = r.avg;
+        const min = r.minScore;
+
+        if (avg >= 8.0 && min >= 6.5) {
+            classified.hsg.push(r.name);
+        } else if (avg >= 6.5 && min >= 5.0) {
+            classified.hsk.push(r.name);
+        } else if (avg >= 5.0) {
+            classified.hstb.push(r.name);
+        } else if (avg >= 3.5) {
+            classified.hsy.push(r.name);
+        } else {
+            classified.hskem.push(r.name);
+        }
+    });
+
+    const types = [
+        { key: 'hsg', label: 'Học sinh giỏi', icon: '', color: '#ffd700', note: 'ĐTB ≥ 8.0 & không môn nào dưới 6.5' },
+        { key: 'hsk', label: 'Học sinh khá', icon: '', color: '#c0c0c0', note: 'ĐTB ≥ 6.5 & không môn nào dưới 5.0' },
+        { key: 'hstb', label: 'Học sinh trung bình', icon: '', color: '#cd7f32', note: 'ĐTB ≥ 5.0' }
+    ];
+
+
+    types.forEach(t => {
+    const list = classified[t.key];
+    const card = document.createElement('div');
+    card.className = 'classification-card';
+    card.innerHTML = `
+        <div class="classification-icon" style="color:${t.color}">${t.icon}</div>
+        <div class="classification-info">
+            <div class="classification-title" style="color:${t.color}">${t.label}</div>
+            <div class="classification-count">${list.length}</div>
+            <div style="font-size:0.85em; opacity:0.8; margin:4px 0 8px;">${t.note}</div>
+            
+            <div class="classification-list">
+                ${list.length > 0 
+                    ? list.map(name => `<div class="student-name">${name}</div>`).join('')
+                    : '<div style="opacity:0.7; text-align:center; padding:20px 0;">Chưa có học sinh nào</div>'
+                }
+            </div>
+        </div>
+    `;
+    classificationCards.appendChild(card);
+});
+
+    setTimeout(() => {
+        classificationLoading.style.display = 'none';
+        classificationContent.style.display = 'block';
+    }, 400);
+}
 
         window.addEventListener('load', () => setTimeout(loadRanking, 800));
     </script>
