@@ -45,7 +45,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            padding-bottom: 100px; /* Space for footer/music */
+            padding-bottom: 100px;
         }
 
         /* --- Header --- */
@@ -70,7 +70,7 @@
             font-weight: 300;
         }
 
-        /* --- Stats Cards (Dashboard) --- */
+        /* --- Stats Cards --- */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -205,7 +205,16 @@
             font-size: 1.8rem; font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative; z-index: 1;
+            color: white;
+            overflow: hidden; 
         }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            border-radius: 50%;
+        }
+
         .st-name {
             font-size: 0.95rem;
             font-weight: 600;
@@ -253,7 +262,6 @@
             flex: 1; padding: 20px; overflow-y: auto; position: relative;
         }
 
-        /* Specifics for Content Modals */
         .list-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px; margin-bottom: 10px;
@@ -272,7 +280,6 @@
             border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(155, 64, 252, 0.3);
         }
 
-        /* Iframe Modal */
         iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
         /* --- Music Toggle --- */
@@ -310,7 +317,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(155,64,252,0.7); } 70% { box-shadow: 0 0 0 15px rgba(155,64,252,0); } 100% { box-shadow: 0 0 0 0 rgba(155,64,252,0); } }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .class-title { font-size: 2.5rem; }
             .modal-box { width: 100%; height: 100%; border-radius: 0; }
@@ -394,7 +400,7 @@
         </footer>
     </div>
 
-    <!-- 1. Modal Xem Điểm Cá Nhân (Iframe) -->
+    <!-- Modals -->
     <div class="modal-overlay" id="modalGrades">
         <div class="modal-box">
             <div class="modal-header">
@@ -410,29 +416,23 @@
         </div>
     </div>
 
-    <!-- 2. Modal Top 1 Từng Môn -->
     <div class="modal-overlay" id="modalSubject">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title">Top 1 Các Môn Học</div>
                 <button class="close-btn" onclick="closeModal('modalSubject')">×</button>
             </div>
-            <div class="modal-body" id="subjectList">
-                <!-- Javascript will populate this -->
-            </div>
+            <div class="modal-body" id="subjectList"></div>
         </div>
     </div>
 
-    <!-- 3. Modal Thống Kê Xếp Loại -->
     <div class="modal-overlay" id="modalClassification">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title">Thống Kê Xếp Loại</div>
                 <button class="close-btn" onclick="closeModal('modalClassification')">×</button>
             </div>
-            <div class="modal-body" id="classList">
-                <!-- Javascript will populate this -->
-            </div>
+            <div class="modal-body" id="classList"></div>
         </div>
     </div>
 
@@ -463,15 +463,13 @@
             {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"}
         ];
 
-        // Danh sách môn học chính để thống kê
         const MAIN_SUBJECTS = ["Toán học","Vật lí","Tin học","Ngữ văn","Lịch sử","Địa lí","Ngoại ngữ","Giáo dục quốc phòng và an ninh","Giáo dục kinh tế và pháp luật"];
-
-        // Biến toàn bộ lưu trữ dữ liệu đã xử lý
+        
         let studentsData = [];
+        let avatarMap = {}; // Lưu trữ dữ liệu avatar từ JSON
 
-        // === LOGIC CHÍNH ===
+        // === LOGIC TẢI DỮ LIỆU ===
 
-        // 1. Hàm fetch và parse điểm từ Vnedu (Gộp chung)
         async function fetchStudentData(student) {
             try {
                 const res = await fetch(`${BASE_URL}${student.id}`, { credentials: 'omit' });
@@ -485,25 +483,21 @@
 
                 const rows = table.querySelectorAll('tbody tr');
                 const headers = Array.from(table.querySelectorAll('thead th, thead td')).map(th => th.textContent.trim().toLowerCase());
-                
-                // Tìm cột điểm trung bình môn
                 let tbmColIndex = headers.findIndex(h => h.includes('tb') || h.includes('trung bình'));
                 if (tbmColIndex === -1) tbmColIndex = headers.length - 1;
 
                 let totalScore = 0;
                 let subjectCount = 0;
                 let minScore = 10;
-                let subjectScores = {}; // Lưu điểm từng môn
+                let subjectScores = {};
 
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td, th');
                     if (cells.length <= tbmColIndex) return;
 
                     const subjName = cells[0].textContent.trim();
-                    // Bỏ qua dòng tổng hợp
                     if (!subjName || subjName.includes('TB') || subjName.includes('Trung bình') || subjName.includes('Tổng') || subjName.includes('Học kỳ')) return;
 
-                    // Chuẩn hóa tên môn
                     let cleanSubj = subjName;
                     if (subjName.includes('quốc phòng')) cleanSubj = "Giáo dục quốc phòng và an ninh";
                     if (subjName.includes('kinh tế')) cleanSubj = "Giáo dục kinh tế và pháp luật";
@@ -515,7 +509,6 @@
                         totalScore += val;
                         subjectCount++;
                         if (val < minScore) minScore = val;
-                        // Chỉ lưu các môn chính
                         if (MAIN_SUBJECTS.includes(cleanSubj)) {
                             subjectScores[cleanSubj] = val;
                         }
@@ -538,26 +531,38 @@
             }
         }
 
-        // 2. Khởi tạo ứng dụng
+        // === KHỞI TẠO APP (CẬP NHẬT) ===
         async function initApp() {
-            renderGrid(); // Render grid trước (UI nhanh)
+            try {
+                // 1. Tải file avt.json trước
+                const avtRes = await fetch('avt.json');
+                if (avtRes.ok) {
+                    avatarMap = await avtRes.json();
+                    console.log("Đã tải danh sách avatar:", avatarMap);
+                } else {
+                    console.warn("Không tìm thấy file avt.json");
+                }
+            } catch (e) {
+                console.error("Lỗi khi tải avt.json:", e);
+            }
+
+            // 2. Render Grid (Sẽ dùng avatarMap đã tải ở trên)
+            renderGrid();
             
-            // Fetch dữ liệu song song
+            // 3. Fetch điểm số
             const promises = students.map(s => fetchStudentData(s));
             const results = await Promise.all(promises);
             
-            // Lọc các bản ghi hợp lệ
             studentsData = results.filter(r => !r.error);
 
             updateStats();
             renderRanking();
             
-            // Hiển thị bảng xếp hạng
             document.getElementById('rankingLoading').style.display = 'none';
             document.getElementById('rankingTable').style.display = 'table';
         }
 
-        // 3. Render Grid (Danh sách học sinh)
+        // === RENDER GRID (CẬP NHẬT LOGIC ẢNH) ===
         function renderGrid() {
             document.getElementById('totalStudents').textContent = students.length;
             const grid = document.getElementById('studentGrid');
@@ -566,13 +571,23 @@
             students.forEach((s, index) => {
                 const card = document.createElement('div');
                 card.className = 'student-card';
-                // Lấy chữ cái đầu tên làm avatar
-                const initial = s.name.charAt(0).toUpperCase();
-                // Hiệu ứng delay khi load
-                card.style.animationDelay = `${index * 0.05}s`;
                 
+                // Kiểm tra trong avatarMap xem tên này có ảnh không
+                const avatarPath = avatarMap[s.name];
+                let avatarContent;
+
+                if (avatarPath) {
+                    // Có ảnh trong file JSON
+                    avatarContent = `<img src="${avatarPath}" alt="${s.name}" loading="lazy">`;
+                } else {
+                    // Không có ảnh, dùng chữ cái đầu
+                    const initial = s.name.charAt(0).toUpperCase();
+                    avatarContent = initial;
+                }
+
+                card.style.animationDelay = `${index * 0.05}s`;
                 card.innerHTML = `
-                    <div class="avatar">${initial}</div>
+                    <div class="avatar">${avatarContent}</div>
                     <div class="st-name">${s.name}</div>
                 `;
                 card.onclick = () => openGradeModal(s.name, BASE_URL + s.id);
@@ -581,32 +596,23 @@
             grid.appendChild(frag);
         }
 
-        // 4. Cập nhật Stats Header
+        // === CÁC HÀM KHÁC (GIỮ NGUYÊN) ===
         function updateStats() {
             if (studentsData.length === 0) return;
-
-            // Tính TB cả lớp
             const totalAvg = studentsData.reduce((sum, s) => sum + s.avg, 0);
             const classAvg = (totalAvg / studentsData.length).toFixed(2);
-            
             document.getElementById('avgClassScore').textContent = classAvg;
-            
-            // Tìm Top 1
             const top = studentsData.reduce((prev, current) => (prev.avg > current.avg) ? prev : current);
             document.getElementById('topStudentName').textContent = top.name;
-            document.getElementById('topStudentName').style.fontSize = "1.5rem"; // Adjust size if name is short
+            document.getElementById('topStudentName').style.fontSize = "1.5rem";
         }
 
-        // 5. Render BXH
         function renderRanking() {
-            // Sắp xếp theo điểm giảm dần
             const sorted = [...studentsData].sort((a, b) => b.avg - a.avg);
             const tbody = document.getElementById('rankingBody');
-            
             sorted.forEach((s, i) => {
                 const tr = document.createElement('tr');
                 tr.style.animationDelay = `${i * 0.05}s`;
-                
                 let rankClass = 'rank-other';
                 if (i === 0) rankClass = 'rank-1';
                 else if (i === 1) rankClass = 'rank-2';
@@ -624,167 +630,96 @@
             });
         }
 
-        // 6. Render Top 1 Môn
         function renderTopSubjects() {
             const container = document.getElementById('subjectList');
             container.innerHTML = '';
-
             MAIN_SUBJECTS.forEach(subj => {
-                // Tìm người có điểm cao nhất môn này
-                let topStudent = null;
-                let maxScore = -1;
-
+                let topStudent = null; let maxScore = -1;
                 studentsData.forEach(s => {
                     if (s.subjectScores[subj] !== undefined && s.subjectScores[subj] > maxScore) {
-                        maxScore = s.subjectScores[subj];
-                        topStudent = s;
+                        maxScore = s.subjectScores[subj]; topStudent = s;
                     }
                 });
-
                 const item = document.createElement('div');
                 item.className = 'list-item';
                 item.innerHTML = `
-                    <div>
-                        <div style="font-weight:600; color:#fff">${subj}</div>
-                        <div style="font-size:0.85rem; color:var(--text-muted)">Nhất môn</div>
-                    </div>
-                    <div style="text-align:right">
-                        <div class="score-highlight">${topStudent ? maxScore.toFixed(1) : '-'}</div>
-                        <div style="font-size:0.9rem">${topStudent ? topStudent.name : 'Chưa có dữ liệu'}</div>
-                    </div>
+                    <div><div style="font-weight:600; color:#fff">${subj}</div><div style="font-size:0.85rem; color:var(--text-muted)">Nhất môn</div></div>
+                    <div style="text-align:right"><div class="score-highlight">${topStudent ? maxScore.toFixed(1) : '-'}</div><div style="font-size:0.9rem">${topStudent ? topStudent.name : 'Chưa có dữ liệu'}</div></div>
                 `;
                 container.appendChild(item);
             });
         }
 
-        // 7. Render Xếp Loại
         function renderClassification() {
             const container = document.getElementById('classList');
             container.innerHTML = '';
-
-            const categories = {
-                'Giỏi': [],
-                'Khá': [],
-                'Trung Bình': [],
-                'Yếu': []
-            };
-
+            const categories = { 'Giỏi': [], 'Khá': [], 'Trung Bình': [], 'Yếu': [] };
             studentsData.forEach(s => {
-                const avg = s.avg;
-                const min = s.minScore;
-                
-                // Logic xếp loại (có thể tùy chỉnh theo quy định nhà trường)
+                const avg = s.avg; const min = s.minScore;
                 if (avg >= 8.0 && min >= 6.5) categories['Giỏi'].push(s.name);
                 else if (avg >= 6.5 && min >= 5.0) categories['Khá'].push(s.name);
                 else if (avg >= 5.0) categories['Trung Bình'].push(s.name);
                 else categories['Yếu'].push(s.name);
             });
-
             Object.keys(categories).forEach(type => {
-                const list = categories[type];
-                const group = document.createElement('div');
-                group.className = 'class-group';
-                
-                let color = '#fff';
-                if(type === 'Giỏi') color = '#ffd700';
-                if(type === 'Khá') color = '#00d2ff';
-                
-                group.innerHTML = `
-                    <div class="class-group-title" style="color:${color}">${type} (${list.length})</div>
-                    <div class="student-tags">
-                        ${list.length > 0 
-                            ? list.map(name => `<span class="tag">${name}</span>`).join('') 
-                            : '<span style="color:var(--text-muted); font-size:0.9rem">Trống</span>'}
-                    </div>
-                `;
+                const list = categories[type]; const group = document.createElement('div'); group.className = 'class-group';
+                let color = '#fff'; if(type === 'Giỏi') color = '#ffd700'; if(type === 'Khá') color = '#00d2ff';
+                group.innerHTML = `<div class="class-group-title" style="color:${color}">${type} (${list.length})</div><div class="student-tags">${list.length > 0 ? list.map(name => `<span class="tag">${name}</span>`).join('') : '<span style="color:var(--text-muted); font-size:0.9rem">Trống</span>'}</div>`;
                 container.appendChild(group);
             });
         }
 
-        // === MODAL FUNCTIONS ===
+        // === MODAL & MUSIC ===
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
             document.body.style.overflow = 'hidden';
-
             if (modalId === 'modalSubject') renderTopSubjects();
             if (modalId === 'modalClassification') renderClassification();
         }
-
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
             document.body.style.overflow = '';
-            
             if (modalId === 'modalGrades') {
                 document.getElementById('gradeIframe').src = '';
                 document.getElementById('gradeIframe').style.opacity = '0';
                 document.getElementById('iframeLoader').style.display = 'flex';
             }
         }
-
         function openGradeModal(name, url) {
             document.getElementById('gradeModalTitle').textContent = name;
             document.getElementById('iframeLoader').style.display = 'flex';
             document.getElementById('gradeIframe').style.opacity = '0';
-            
             const iframe = document.getElementById('gradeIframe');
             openModal('modalGrades');
-            
             iframe.src = url;
-            iframe.onload = () => {
-                iframe.style.opacity = '1';
-                document.getElementById('iframeLoader').style.display = 'none';
-            };
+            iframe.onload = () => { iframe.style.opacity = '1'; document.getElementById('iframeLoader').style.display = 'none'; };
         }
-
-        // Đóng modal khi click ra ngoài
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    overlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                    if(overlay.id === 'modalGrades') closeModal('modalGrades');
-                }
+                if (e.target === overlay) { overlay.classList.remove('active'); document.body.style.overflow = ''; if(overlay.id === 'modalGrades') closeModal('modalGrades'); }
             });
         });
 
-        // === MUSIC PLAYER ===
         const audio = document.getElementById('bgMusic');
         const toggleBtn = document.getElementById('musicToggle');
         const musicIcon = document.getElementById('musicIcon');
-        let isPlaying = false;
-        let hasInteracted = false;
+        let isPlaying = false; let hasInteracted = false;
 
         function toggleMusic() {
             hasInteracted = true;
             if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-                toggleBtn.classList.remove('playing');
-                musicIcon.setAttribute('d', "M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z"); // Pause icon path
+                audio.pause(); isPlaying = false; toggleBtn.classList.remove('playing');
+                musicIcon.setAttribute('d', "M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z");
             } else {
                 audio.play().then(() => {
-                    isPlaying = true;
-                    toggleBtn.classList.add('playing');
-                    musicIcon.setAttribute('d', "M3,12H7V10H3V12M3,16H7V14H3V16M3,8H7V6H3V8M9,12H21V10H9V12M9,16H21V14H9V16M9,6V8H21V6H9Z"); // Music note playing path (simplified bars or notes)
+                    isPlaying = true; toggleBtn.classList.add('playing');
+                    musicIcon.setAttribute('d', "M3,12H7V10H3V12M3,16H7V14H3V16M3,8H7V6H3V8M9,12H21V10H9V12M9,16H21V14H9V16M9,6V8H21V6H9Z");
                 }).catch(e => console.log("Audio play failed until interaction"));
             }
         }
-        
-        // Try play on first click anywhere
-        document.body.addEventListener('click', () => {
-            if (!hasInteracted) toggleMusic(); // Optional: Auto play on first click
-        }, {once:true});
-
-        toggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent body click trigger
-            toggleMusic();
-        });
-
-        // Start
-        window.addEventListener('load', () => {
-            initApp();
-        });
-
+        document.body.addEventListener('click', () => { if (!hasInteracted) toggleMusic(); }, {once:true});
+        toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMusic(); });
+        window.addEventListener('load', () => { initApp(); });
     </script>
 </body>
 </html>
