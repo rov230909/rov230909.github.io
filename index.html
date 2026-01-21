@@ -70,7 +70,7 @@
             font-weight: 300;
         }
 
-        /* --- Term Switcher (HK1/HK2/Cả Năm) --- */
+        /* --- Term Switcher --- */
         .term-switcher {
             display: flex;
             justify-content: center;
@@ -503,14 +503,14 @@
 
         const MAIN_SUBJECTS = ["Toán học","Vật lí","Tin học","Ngữ văn","Lịch sử","Địa lí","Ngoại ngữ","Giáo dục quốc phòng và an ninh","Giáo dục kinh tế và pháp luật"];
         
-        let currentTerm = 1; // Mặc định là HK1
+        let currentTerm = 1; 
         let studentsData = [];
+        let avatarMap = {};
 
         // === LOGIC CHỌN HỌC KỲ ===
         function switchTerm(term) {
             currentTerm = term;
             
-            // Cập nhật UI các nút
             document.querySelectorAll('.term-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.innerText.toLowerCase().includes(term === 0 ? 'cả năm' : (term === 1 ? 'hk1' : 'hk2'))) {
@@ -518,7 +518,6 @@
                 }
             });
 
-            // Reset lại UI và tải lại dữ liệu
             document.getElementById('rankingLoading').style.display = 'flex';
             document.getElementById('rankingTable').style.display = 'none';
             document.getElementById('rankingBody').innerHTML = '';
@@ -526,11 +525,10 @@
             initApp();
         }
 
-        // === LOGIC TẢI DỮ LIỆU (CẬP NHẬT LẤY AVATAR) ===
+        // === LOGIC TẢI DỮ LIỆU ĐIỂM ===
 
         async function fetchStudentData(student) {
             try {
-                // Tạo URL động theo học kỳ đang chọn
                 const url = `${BASE_API}&hoc_ky_id=${currentTerm}&hoc_sinh_id=${student.id}`;
                 
                 const res = await fetch(url, { credentials: 'omit' });
@@ -540,16 +538,7 @@
                 const doc = new DOMParser().parseFromString(text, 'text/html');
                 const table = doc.querySelector('.table-point-content .table') || doc.querySelector('.table');
 
-                // --- LẤY AVATAR ---
-                // Cố gắng tìm ảnh học sinh trong trang điểm
-                let avatarUrl = null;
-                // Thử tìm các class phổ biến chứa ảnh
-                const avatarImg = doc.querySelector('img[src*="student"], .info-student img, .avatar img, .img-student img');
-                if (avatarImg) {
-                    avatarUrl = avatarImg.src;
-                }
-
-                if (!table) return { ...student, error: true, avatar: avatarUrl };
+                if (!table) return { ...student, error: true };
 
                 const rows = table.querySelectorAll('tbody tr');
                 const headers = Array.from(table.querySelectorAll('thead th, thead td')).map(th => th.textContent.trim().toLowerCase());
@@ -585,15 +574,14 @@
                     }
                 });
 
-                if (subjectCount === 0) return { ...student, error: true, avatar: avatarUrl };
+                if (subjectCount === 0) return { ...student, error: true };
 
                 return {
                     ...student,
                     avg: parseFloat((totalScore / subjectCount).toFixed(2)),
                     minScore: minScore,
                     subjectScores: subjectScores,
-                    totalSubjectCount: subjectCount,
-                    avatar: avatarUrl // Trả về URL ảnh
+                    totalSubjectCount: subjectCount
                 };
 
             } catch (err) {
@@ -604,9 +592,23 @@
 
         // === KHỞI TẠO APP ===
         async function initApp() {
-            renderGrid(); // Render trước để UI có sẵn
+            // 1. Tải file avt.json (Lần đầu tải hoặc tải lại)
+            if (Object.keys(avatarMap).length === 0) {
+                try {
+                    const avtRes = await fetch('avt.json');
+                    if (avtRes.ok) {
+                        avatarMap = await avtRes.json();
+                        console.log("Đã tải avt.json:", avatarMap);
+                    }
+                } catch (e) {
+                    console.error("Lỗi tải avt.json:", e);
+                }
+            }
+
+            // 2. Render Grid (sử dụng avatarMap)
+            renderGrid();
             
-            // Fetch điểm số theo học kỳ hiện tại
+            // 3. Fetch điểm số
             const promises = students.map(s => fetchStudentData(s));
             const results = await Promise.all(promises);
             
@@ -619,22 +621,23 @@
             document.getElementById('rankingTable').style.display = 'table';
         }
 
-        // === RENDER GRID (DÙNG AVATAR TỪ DỮ LIỆU) ===
+        // === RENDER GRID ===
         function renderGrid() {
             document.getElementById('totalStudents').textContent = students.length;
             const grid = document.getElementById('studentGrid');
+            grid.innerHTML = '';
             const frag = document.createDocumentFragment();
 
             students.forEach((s, index) => {
                 const card = document.createElement('div');
                 card.className = 'student-card';
                 
+                // Kiểm tra trong avatarMap
+                const avatarUrl = avatarMap[s.name];
                 let avatarContent;
-                // Ưu tiên dùng avatar từ dữ liệu đã fetch, nếu chưa fetch xong (lần đầu load) thì dùng chữ cái
-                const existingData = studentsData.find(d => d.id === s.id);
-                
-                if (existingData && existingData.avatar) {
-                    avatarContent = `<img src="${existingData.avatar}" alt="${s.name}" loading="lazy">`;
+
+                if (avatarUrl) {
+                    avatarContent = `<img src="${avatarUrl}" alt="${s.name}" loading="lazy">`;
                 } else {
                     const initial = s.name.charAt(0).toUpperCase();
                     avatarContent = initial;
@@ -645,10 +648,10 @@
                     <div class="avatar">${avatarContent}</div>
                     <div class="st-name">${s.name}</div>
                 `;
+                // Khi click vào card, mở modal với đúng học kỳ hiện tại
                 card.onclick = () => openGradeModal(s.name, `${BASE_API}&hoc_ky_id=${currentTerm}&hoc_sinh_id=${s.id}`);
                 frag.appendChild(card);
             });
-            grid.innerHTML = ''; // Clear cũ để cập nhật avatar nếu đổi học kỳ
             grid.appendChild(frag);
         }
 
