@@ -1,1 +1,0 @@
-[{"name":"Mặc định","image":"\/assets\/uploads\/chuc-vo-dich\/cvd_1767014383_4013.png"},{"name":"Cup này tên gì vậy anh em","image":"\/assets\/uploads\/chuc-vo-dich\/cvd_1767041944_9054.png"}]
