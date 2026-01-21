@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>11D1 - Hệ Thống Xem Điểm HK2</title>
+    <link rel="icon" href="title11d1.png" type="image/png">
+    <link rel="apple-touch-icon" href="title11d1.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #9b40fc;
+            --primary-glow: rgba(155, 64, 252, 0.6);
+            --secondary: #00d2ff;
+            --bg-dark: #0f0c29;
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            --success: #00ff88;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px; /* Space for footer/music */
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease;
+        }
+        .class-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+            letter-spacing: 2px;
+        }
+        .sub-title {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        /* --- Stats Cards (Dashboard) --- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- Ranking Section --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--secondary);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .btn {
+            background: rgba(155, 64, 252, 0.2);
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .ranking-container {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Table Style */
+        .ranking-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .ranking-table th { text-align: left; padding: 15px; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; }
+        .ranking-table td {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            transition: 0.3s;
+        }
+        .ranking-table tr { opacity: 0; animation: fadeInUp 0.5s forwards; }
+        .ranking-table tr:hover td { background: rgba(255, 255, 255, 0.08); transform: scale(1.01); }
+        .ranking-table td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; text-align: center; }
+        .ranking-table td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; font-weight: bold; }
+
+        /* Rank Badges */
+        .rank-badge {
+            width: 30px; height: 30px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; font-weight: bold; color: #fff;
+        }
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #E0E0E0); box-shadow: 0 0 15px rgba(192, 192, 192, 0.5); color: #333; }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); box-shadow: 0 0 15px rgba(205, 127, 50, 0.5); }
+        .rank-other { background: rgba(255,255,255,0.1); color: var(--text-muted); }
+
+        /* --- Student Grid --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+        .student-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .student-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(155,64,252,0.1), transparent);
+            opacity: 0; transition: 0.3s;
+        }
+        .student-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .student-card:hover::before { opacity: 1; }
+        
+        .avatar {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative; z-index: 1;
+        }
+        .st-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            position: relative; z-index: 1;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-box {
+            background: #1a1a2e;
+            width: 90%; max-width: 900px; height: 85vh;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .modal-header {
+            padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.05);
+        }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--secondary); }
+        .close-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
+        .close-btn:hover { color: #ff4757; transform: rotate(90deg); }
+
+        .modal-body {
+            flex: 1; padding: 20px; overflow-y: auto; position: relative;
+        }
+
+        /* Specifics for Content Modals */
+        .list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; margin-bottom: 10px;
+            background: rgba(255,255,255,0.03); border-radius: 12px;
+            border-left: 3px solid transparent;
+        }
+        .list-item:hover { background: rgba(255,255,255,0.06); border-left-color: var(--primary); }
+        .score-highlight { font-weight: 700; color: var(--success); }
+
+        /* Classification Styles */
+        .class-group { margin-bottom: 20px; }
+        .class-group-title { font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .student-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { 
+            background: rgba(155, 64, 252, 0.2); padding: 5px 12px; 
+            border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(155, 64, 252, 0.3);
+        }
+
+        /* Iframe Modal */
+        iframe { width: 100%; height: 100%; border: none; background: #fff; }
+
+        /* --- Music Toggle --- */
+        .music-control {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 50px; height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--primary-glow);
+            z-index: 999;
+            transition: 0.3s;
+        }
+        .music-control.playing { animation: pulse 2s infinite; }
+
+        /* --- Loader --- */
+        .loader-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 12, 41, 0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(155,64,252,0.7); } 70% { box-shadow: 0 0 0 15px rgba(155,64,252,0); } 100% { box-shadow: 0 0 0 0 rgba(155,64,252,0); } }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .class-title { font-size: 2.5rem; }
+            .modal-box { width: 100%; height: 100%; border-radius: 0; }
+            .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { width: 60%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Music Player -->
+    <audio id="bgMusic" loop>
+        <source src="vnn.mp3" type="audio/mpeg">
+    </audio>
+    <div class="music-control" id="musicToggle" title="Bật/Tắt nhạc">
+        <svg style="width:24px;height:24px;fill:#fff;" viewBox="0 0 24 24">
+            <path d="M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z" id="musicIcon"/>
+        </svg>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="class-title">11D1</div>
+            <div class="sub-title">Năm Học 2026 - Học Kỳ 2</div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="totalStudents">0</div>
+                <div class="stat-label">Học Sinh</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgClassScore">--</div>
+                <div class="stat-label">Điểm TB Cả Lớp</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="topStudentName">...</div>
+                <div class="stat-label">Top 1 Lớp</div>
+            </div>
+        </div>
+
+        <!-- Ranking Section -->
+        <section id="ranking">
+            <div class="section-header">
+                <div class="section-title">Bảng Xếp Hạng</div>
+                <div>
+                    <button class="btn" onclick="openModal('modalSubject')">🏆 Top 1 Môn</button>
+                    <button class="btn" onclick="openModal('modalClassification')">📊 Xếp Loại</button>
+                </div>
+            </div>
+
+            <div class="ranking-container">
+                <div id="rankingLoading" class="loader-container">
+                    <div class="spinner"></div>
+                    <p style="margin-top:15px; color:var(--text-muted)">Đang tải dữ liệu...</p>
+                </div>
+                <table class="ranking-table" style="display:none;" id="rankingTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%">#</th>
+                            <th style="width: 60%">Họ và Tên</th>
+                            <th style="width: 30%; text-align:right;">Điểm TB</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Student Grid -->
+        <section id="grid">
+            <div class="section-header">
+                <div class="section-title">Danh Sách Lớp</div>
+            </div>
+            <div class="grid" id="studentGrid"></div>
+        </section>
+
+        <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.8rem;">
+            <p>Design by Thạch Mô Ra (Rov) © 2025</p>
+        </footer>
+    </div>
+
+    <!-- 1. Modal Xem Điểm Cá Nhân (Iframe) -->
+    <div class="modal-overlay" id="modalGrades">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" id="gradeModalTitle">Hồ Sơ Học Sinh</div>
+                <button class="close-btn" onclick="closeModal('modalGrades')">×</button>
+            </div>
+            <div class="modal-body" style="padding:0;">
+                <div id="iframeLoader" class="loader-container">
+                    <div class="spinner"></div>
+                </div>
+                <iframe id="gradeIframe" style="opacity:0; transition: opacity 0.3s;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal Top 1 Từng Môn -->
+    <div class="modal-overlay" id="modalSubject">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Top 1 Các Môn Học</div>
+                <button class="close-btn" onclick="closeModal('modalSubject')">×</button>
+            </div>
+            <div class="modal-body" id="subjectList">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal Thống Kê Xếp Loại -->
+    <div class="modal-overlay" id="modalClassification">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Thống Kê Xếp Loại</div>
+                <button class="close-btn" onclick="closeModal('modalClassification')">×</button>
+            </div>
+            <div class="modal-body" id="classList">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === CẤU HÌNH & DỮ LIỆU ===
+        const BASE_URL = "https://s19.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=9d47affc-6f0b-4c86-902a-85f02cde0716&device_id=3f638bbb-df36-39bc-aa2f-76ebbfeb76e4&token=cb96a36858bb639cc34e5e8a0ef43a39&nam_hoc=2025&hoc_ky_id=2&hoc_sinh_id=";
+        const students = [
+            {name:"Lại Quế Anh",id:"5010453507"},{name:"Lý Ngọc Lan Anh",id:"5010453527"},
+            {name:"Nguyễn Thị Ngọc Anh",id:"5010453547"},{name:"Thạch Kim Anh",id:"5010453567"},
+            {name:"Huỳnh Tuyết Băng",id:"5010453587"},{name:"Ông Thị Tuyết Chi",id:"5010453607"},
+            {name:"Lê Phong Dân",id:"5010453627"},{name:"Trần Thị Hồng Diệp",id:"5010453647"},
+            {name:"Lâm Trường Duy",id:"5010453667"},{name:"Nguyễn Lâm Nhật Duy",id:"5010453687"},
+            {name:"Tăng Phước Đại",id:"5010453707"},{name:"Mai Lan Em",id:"5010453727"},
+            {name:"Phạm Tấn Đạt",id:"5010454367"},{name:"Huỳnh Ngọc Giao",id:"5010453747"},
+            {name:"Lưu Gia Hân",id:"5010453767"},{name:"Nguyễn Ngọc Gia Hân",id:"5010453787"},
+            {name:"Huỳnh Văn Hóa",id:"5010453807"},{name:"Du Lý Gia Khang",id:"5010454387"},
+            {name:"Lưu Vỹ Khang (Anh Hai)",id:"5010453827"},{name:"Nguyễn Thanh Lâm",id:"5010453847"},
+            {name:"Trần Lâm",id:"5010453867"},{name:"Triệu Thị Ngọc Linh",id:"5010453887"},
+            {name:"Hứa Kim Lượng",id:"5010453907"},{name:"Quách Thảo My",id:"5010453947"},
+            {name:"Lâm Kim Ngân",id:"5010453967"},{name:"Trịnh Khưu Mỹ Nghi",id:"5010453987"},
+            {name:"Ong Thị Bảo Ngọc",id:"5010454007"},{name:"Phan Nguyễn Nhã Nguyên",id:"5010454027"},
+            {name:"Lâm Đặng Phượng Quyên",id:"5010454047"},{name:"Nguyễn Thị Xuân Quỳnh",id:"5010454067"},
+            {name:"Thạch Mô Ra",id:"5010454087"},{name:"Huỳnh Hoàng Tấn",id:"5010454107"},
+            {name:"Nguyễn Tấn Thịnh",id:"5010454127"},{name:"Trần Thị Anh Thư",id:"5010454147"},
+            {name:"Lâm Ngọc Hoài Thương",id:"5010454167"},{name:"Nguyễn Thị Ngọc Tiến",id:"5010454187"},
+            {name:"Châu Thị Thủy Trúc",id:"5010454207"},{name:"Triệu Thanh Tú",id:"5010454227"},
+            {name:"Dương Thị Bích Tuyền",id:"5010454247"},{name:"Trần Văn Tý",id:"5010454267"},{name:"Huỳnh Công Vinh",id:"5010454347"},
+            {name:"Dương Thị Ngọc Vy",id:"5010454287"},{name:"Trịnh Thị Kim Yến",id:"5010454327"}
+        ];
+
+        // Danh sách môn học chính để thống kê
+        const MAIN_SUBJECTS = ["Toán học","Vật lí","Tin học","Ngữ văn","Lịch sử","Địa lí","Ngoại ngữ","Giáo dục quốc phòng và an ninh","Giáo dục kinh tế và pháp luật"];
+
+        // Biến toàn bộ lưu trữ dữ liệu đã xử lý
+        let studentsData = [];
+
+        // === LOGIC CHÍNH ===
+
+        // 1. Hàm fetch và parse điểm từ Vnedu (Gộp chung)
+        async function fetchStudentData(student) {
+            try {
+                const res = await fetch(`${BASE_URL}${student.id}`, { credentials: 'omit' });
+                if (!res.ok) return { ...student, error: true };
+                
+                const text = await res.text();
+                const doc = new DOMParser().parseFromString(text, 'text/html');
+                const table = doc.querySelector('.table-point-content .table') || doc.querySelector('.table');
+
+                if (!table) return { ...student, error: true };
+
+                const rows = table.querySelectorAll('tbody tr');
+                const headers = Array.from(table.querySelectorAll('thead th, thead td')).map(th => th.textContent.trim().toLowerCase());
+                
+                // Tìm cột điểm trung bình môn
+                let tbmColIndex = headers.findIndex(h => h.includes('tb') || h.includes('trung bình'));
+                if (tbmColIndex === -1) tbmColIndex = headers.length - 1;
+
+                let totalScore = 0;
+                let subjectCount = 0;
+                let minScore = 10;
+                let subjectScores = {}; // Lưu điểm từng môn
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td, th');
+                    if (cells.length <= tbmColIndex) return;
+
+                    const subjName = cells[0].textContent.trim();
+                    // Bỏ qua dòng tổng hợp
+                    if (!subjName || subjName.includes('TB') || subjName.includes('Trung bình') || subjName.includes('Tổng') || subjName.includes('Học kỳ')) return;
+
+                    // Chuẩn hóa tên môn
+                    let cleanSubj = subjName;
+                    if (subjName.includes('quốc phòng')) cleanSubj = "Giáo dục quốc phòng và an ninh";
+                    if (subjName.includes('kinh tế')) cleanSubj = "Giáo dục kinh tế và pháp luật";
+
+                    const valStr = cells[tbmColIndex]?.textContent.trim() || '';
+                    const val = parseFloat(valStr.replace(/[^0-9.]/g, ''));
+
+                    if (!isNaN(val) && val >= 0 && val <= 10) {
+                        totalScore += val;
+                        subjectCount++;
+                        if (val < minScore) minScore = val;
+                        // Chỉ lưu các môn chính
+                        if (MAIN_SUBJECTS.includes(cleanSubj)) {
+                            subjectScores[cleanSubj] = val;
+                        }
+                    }
+                });
+
+                if (subjectCount === 0) return { ...student, error: true };
+
+                return {
+                    ...student,
+                    avg: parseFloat((totalScore / subjectCount).toFixed(2)),
+                    minScore: minScore,
+                    subjectScores: subjectScores,
+                    totalSubjectCount: subjectCount
+                };
+
+            } catch (err) {
+                console.error(err);
+                return { ...student, error: true };
+            }
+        }
+
+        // 2. Khởi tạo ứng dụng
+        async function initApp() {
+            renderGrid(); // Render grid trước (UI nhanh)
+            
+            // Fetch dữ liệu song song
+            const promises = students.map(s => fetchStudentData(s));
+            const results = await Promise.all(promises);
+            
+            // Lọc các bản ghi hợp lệ
+            studentsData = results.filter(r => !r.error);
+
+            updateStats();
+            renderRanking();
+            
+            // Hiển thị bảng xếp hạng
+            document.getElementById('rankingLoading').style.display = 'none';
+            document.getElementById('rankingTable').style.display = 'table';
+        }
+
+        // 3. Render Grid (Danh sách học sinh)
+        function renderGrid() {
+            document.getElementById('totalStudents').textContent = students.length;
+            const grid = document.getElementById('studentGrid');
+            const frag = document.createDocumentFragment();
+
+            students.forEach((s, index) => {
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                // Lấy chữ cái đầu tên làm avatar
+                const initial = s.name.charAt(0).toUpperCase();
+                // Hiệu ứng delay khi load
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                card.innerHTML = `
+                    <div class="avatar">${initial}</div>
+                    <div class="st-name">${s.name}</div>
+                `;
+                card.onclick = () => openGradeModal(s.name, BASE_URL + s.id);
+                frag.appendChild(card);
+            });
+            grid.appendChild(frag);
+        }
+
+        // 4. Cập nhật Stats Header
+        function updateStats() {
+            if (studentsData.length === 0) return;
+
+            // Tính TB cả lớp
+            const totalAvg = studentsData.reduce((sum, s) => sum + s.avg, 0);
+            const classAvg = (totalAvg / studentsData.length).toFixed(2);
+            
+            document.getElementById('avgClassScore').textContent = classAvg;
+            
+            // Tìm Top 1
+            const top = studentsData.reduce((prev, current) => (prev.avg > current.avg) ? prev : current);
+            document.getElementById('topStudentName').textContent = top.name;
+            document.getElementById('topStudentName').style.fontSize = "1.5rem"; // Adjust size if name is short
+        }
+
+        // 5. Render BXH
+        function renderRanking() {
+            // Sắp xếp theo điểm giảm dần
+            const sorted = [...studentsData].sort((a, b) => b.avg - a.avg);
+            const tbody = document.getElementById('rankingBody');
+            
+            sorted.forEach((s, i) => {
+                const tr = document.createElement('tr');
+                tr.style.animationDelay = `${i * 0.05}s`;
+                
+                let rankClass = 'rank-other';
+                if (i === 0) rankClass = 'rank-1';
+                else if (i === 1) rankClass = 'rank-2';
+                else if (i === 2) rankClass = 'rank-3';
+
+                tr.innerHTML = `
+                    <td><span class="rank-badge ${rankClass}">${i + 1}</span></td>
+                    <td>
+                        <div style="font-weight:600">${s.name}</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted)">${s.totalSubjectCount} môn</div>
+                    </td>
+                    <td style="text-align:right; color:${i < 3 ? '#ffd700' : 'var(--secondary)'}">${s.avg}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 6. Render Top 1 Môn
+        function renderTopSubjects() {
+            const container = document.getElementById('subjectList');
+            container.innerHTML = '';
+
+            MAIN_SUBJECTS.forEach(subj => {
+                // Tìm người có điểm cao nhất môn này
+                let topStudent = null;
+                let maxScore = -1;
+
+                studentsData.forEach(s => {
+                    if (s.subjectScores[subj] !== undefined && s.subjectScores[subj] > maxScore) {
+                        maxScore = s.subjectScores[subj];
+                        topStudent = s;
+                    }
+                });
+
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div>
+                        <div style="font-weight:600; color:#fff">${subj}</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted)">Nhất môn</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="score-highlight">${topStudent ? maxScore.toFixed(1) : '-'}</div>
+                        <div style="font-size:0.9rem">${topStudent ? topStudent.name : 'Chưa có dữ liệu'}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // 7. Render Xếp Loại
+        function renderClassification() {
+            const container = document.getElementById('classList');
+            container.innerHTML = '';
+
+            const categories = {
+                'Giỏi': [],
+                'Khá': [],
+                'Trung Bình': [],
+                'Yếu': []
+            };
+
+            studentsData.forEach(s => {
+                const avg = s.avg;
+                const min = s.minScore;
+                
+                // Logic xếp loại (có thể tùy chỉnh theo quy định nhà trường)
+                if (avg >= 8.0 && min >= 6.5) categories['Giỏi'].push(s.name);
+                else if (avg >= 6.5 && min >= 5.0) categories['Khá'].push(s.name);
+                else if (avg >= 5.0) categories['Trung Bình'].push(s.name);
+                else categories['Yếu'].push(s.name);
+            });
+
+            Object.keys(categories).forEach(type => {
+                const list = categories[type];
+                const group = document.createElement('div');
+                group.className = 'class-group';
+                
+                let color = '#fff';
+                if(type === 'Giỏi') color = '#ffd700';
+                if(type === 'Khá') color = '#00d2ff';
+                
+                group.innerHTML = `
+                    <div class="class-group-title" style="color:${color}">${type} (${list.length})</div>
+                    <div class="student-tags">
+                        ${list.length > 0 
+                            ? list.map(name => `<span class="tag">${name}</span>`).join('') 
+                            : '<span style="color:var(--text-muted); font-size:0.9rem">Trống</span>'}
+                    </div>
+                `;
+                container.appendChild(group);
+            });
+        }
+
+        // === MODAL FUNCTIONS ===
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            if (modalId === 'modalSubject') renderTopSubjects();
+            if (modalId === 'modalClassification') renderClassification();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+            
+            if (modalId === 'modalGrades') {
+                document.getElementById('gradeIframe').src = '';
+                document.getElementById('gradeIframe').style.opacity = '0';
+                document.getElementById('iframeLoader').style.display = 'flex';
+            }
+        }
+
+        function openGradeModal(name, url) {
+            document.getElementById('gradeModalTitle').textContent = name;
+            document.getElementById('iframeLoader').style.display = 'flex';
+            document.getElementById('gradeIframe').style.opacity = '0';
+            
+            const iframe = document.getElementById('gradeIframe');
+            openModal('modalGrades');
+            
+            iframe.src = url;
+            iframe.onload = () => {
+                iframe.style.opacity = '1';
+                document.getElementById('iframeLoader').style.display = 'none';
+            };
+        }
+
+        // Đóng modal khi click ra ngoài
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    if(overlay.id === 'modalGrades') closeModal('modalGrades');
+                }
+            });
+        });
+
+        // === MUSIC PLAYER ===
+        const audio = document.getElementById('bgMusic');
+        const toggleBtn = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+        let hasInteracted = false;
+
+        function toggleMusic() {
+            hasInteracted = true;
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                toggleBtn.classList.remove('playing');
+                musicIcon.setAttribute('d', "M12,3V13.55C11.41,13.19 10.73,13 10,13A4,4 0 0,0 6,17A4,4 0 0,0 10,21A4,4 0 0,0 14,17V7H18V3H12M10,19A2,2 0 0,1 8,17A2,2 0 0,1 10,15A2,2 0 0,1 12,17A2,2 0 0,1 10,19Z"); // Pause icon path
+            } else {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    toggleBtn.classList.add('playing');
+                    musicIcon.setAttribute('d', "M3,12H7V10H3V12M3,16H7V14H3V16M3,8H7V6H3V8M9,12H21V10H9V12M9,16H21V14H9V16M9,6V8H21V6H9Z"); // Music note playing path (simplified bars or notes)
+                }).catch(e => console.log("Audio play failed until interaction"));
+            }
+        }
+        
+        // Try play on first click anywhere
+        document.body.addEventListener('click', () => {
+            if (!hasInteracted) toggleMusic(); // Optional: Auto play on first click
+        }, {once:true});
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent body click trigger
+            toggleMusic();
+        });
+
+        // Start
+        window.addEventListener('load', () => {
+            initApp();
+        });
+
+    </script>
+</body>
+</html>
