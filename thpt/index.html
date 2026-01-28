@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THPT LHT - Hệ Thống Quản Lý</title>
+    <title>THPT Lịch Hội Thượng - Hệ Thống Quản Lý</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
@@ -30,7 +30,21 @@
             --sidebar-width: 260px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        /* --- FIX GLOBAL: Xóa màu xanh mặc định --- */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Outfit', sans-serif;
+            outline: none !important; /* Xóa viền xanh khi click */
+            -webkit-tap-highlight-color: transparent; /* Xóa chớp xanh trên điện thoại */
+        }
+
+        /* Đổi màu khi bôi đen text (thay vì xanh dương) */
+        ::selection {
+            background: var(--primary);
+            color: #fff;
+        }
 
         body {
             background: var(--gradient-main);
@@ -176,16 +190,16 @@
             transition: all 0.3s ease;
         }
         
-        /* Fix input outline đẹp */
+        /* Input đẹp, không viền xanh */
         .search-input {
             flex: 1; background: transparent; border: none; 
-            color: #fff; font-size: 1rem; outline: none; padding: 5px 0;
+            color: #fff; font-size: 1rem; 
             width: 100%;
         }
         .search-wrapper:focus-within {
             background: rgba(255, 255, 255, 0.08);
             border-color: var(--primary);
-            /* Thay thế viền xanh mặc định bằng box-shadow tím */
+            /* Chỉ giữ box-shadow màu tím */
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3), 0 0 20px rgba(124, 58, 237, 0.2); 
         }
         .search-icon { color: var(--text-muted); font-size: 1.1rem; margin-right: 15px; }
@@ -336,14 +350,13 @@
         <div class="control-panel">
             <div class="search-wrapper">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <!-- Input đã sửa outline -->
+                <!-- Input không viền xanh -->
                 <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm học sinh...">
                 <i class="fa-solid fa-xmark clear-search" id="clear-search"></i>
             </div>
             <div class="action-bar">
                 <button class="tool-btn active" id="btn-sort-name"><i class="fa-solid fa-arrow-down-a-z"></i> Tên A-Z</button>
                 <button class="tool-btn" id="btn-sort-dob"><i class="fa-regular fa-calendar-days"></i> Ngày sinh</button>
-                <!-- Đã bỏ nút xuất excel -->
             </div>
         </div>
 
@@ -422,7 +435,7 @@
             }
         });
 
-        // --- 2. Process Data (Fix Gender Count) ---
+        // --- 2. Process Data ---
         function processText(text) {
             const lines = text.split('\n');
             const students = [];
@@ -434,8 +447,6 @@
                 const parts = line.split('|');
                 if (parts.length >= 4) {
                     const [cls, name, dob, genderRaw] = parts;
-                    
-                    // TRIM Kỹ càng để fix lỗi đếm
                     const cleanGender = genderRaw ? genderRaw.trim() : '';
                     const cleanClass = cls.trim();
                     const cleanName = name.trim();
@@ -458,7 +469,6 @@
             renderSidebar(classCounts);
             renderGrid();
 
-            // Transition UI
             els.loader.style.opacity = '0';
             setTimeout(() => els.loader.style.display = 'none', 500);
         }
