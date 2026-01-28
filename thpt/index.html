@@ -3,327 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Học Sinh - Cổng Thông Tin</title>
-    <!-- Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Icons: RemixIcon -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>Quản Lý Học Sinh - Dark Purple Edition</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <style>
         :root {
-            /* Palette màu sắc hiện đại (Modern Light Theme) */
-            --primary: #4f46e5;       /* Indigo 600 */
-            --primary-hover: #4338ca; /* Indigo 700 */
-            --secondary: #ec4899;     /* Pink 500 */
-            --bg-body: #f3f4f6;       /* Gray 100 */
-            --bg-surface: #ffffff;
-            --text-main: #111827;     /* Gray 900 */
-            --text-muted: #6b7280;    /* Gray 500 */
-            --border-color: #e5e7eb;  /* Gray 200 */
+            /* Palette Tím Tối (Dark Purple Theme) */
+            --bg-deep: #0f0518;
+            --bg-panel: #1a0b2e;
+            --primary: #7c3aed;       /* Violet 600 */
+            --primary-hover: #6d28d9;
+            --accent: #d946ef;        /* Fuchsia 500 */
+            --accent-glow: rgba(217, 70, 239, 0.5);
+            --glass-bg: rgba(45, 20, 75, 0.4);
+            --glass-border: rgba(139, 92, 246, 0.2);
             
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
             
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
+            --gradient-main: linear-gradient(135deg, #0f0518 0%, #2e1065 100%);
+            --gradient-btn: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
 
         body {
-            background-color: var(--bg-body);
+            background: var(--gradient-main);
+            background-attachment: fixed;
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
             display: flex;
         }
 
-        /* --- Upload Loader Screen --- */
-        #loader-screen {
+        /* --- Loader Screen --- */
+        #loader {
             position: fixed; inset: 0; z-index: 9999;
-            background: var(--bg-surface);
+            background: var(--bg-deep);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s;
         }
-        .loader-content { text-align: center; }
-        .spinner {
-            width: 40px; height: 40px; border: 3px solid var(--border-color);
-            border-top-color: var(--primary); border-radius: 50%;
-            animation: spin 0.8s linear infinite; margin: 0 auto 20px;
+        .loader-ring {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(124, 58, 237, 0.3);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
-        #upload-btn {
-            background: var(--primary); color: white; border: none;
-            padding: 10px 24px; border-radius: var(--radius-md);
-            font-weight: 500; cursor: pointer; display: none; margin-top: 10px;
-            transition: 0.2s;
+        #upload-area {
+            display: none; text-align: center;
+            padding: 40px; background: rgba(255,255,255,0.05);
+            border-radius: 20px; border: 1px dashed var(--primary);
         }
-        #upload-btn:hover { background: var(--primary-hover); }
+        .btn-upload {
+            background: var(--gradient-btn); border: none; color: white;
+            padding: 10px 24px; border-radius: 50px; font-weight: 600;
+            cursor: pointer; margin-top: 15px; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+        .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6); }
 
-        /* --- Layout --- */
-        /* Sidebar */
+        /* --- Sidebar --- */
         .sidebar {
-            width: 280px;
-            background: var(--bg-surface);
-            border-right: 1px solid var(--border-color);
+            width: 260px;
+            background: rgba(15, 5, 24, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
             display: flex; flex-direction: column;
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
+            padding: 20px;
             z-index: 50;
         }
-
-        .brand {
-            padding: 24px;
-            font-size: 1.25rem; font-weight: 700;
-            color: var(--primary);
-            display: flex; align-items: center; gap: 10px;
-            border-bottom: 1px solid var(--border-color);
+        .logo {
+            font-size: 1.4rem; font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px; display: flex; align-items: center; gap: 10px;
         }
         
-        .nav-menu {
-            flex: 1; overflow-y: auto; padding: 16px;
+        .nav-label {
+            font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);
+            letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600;
         }
+        .class-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; }
         
-        .nav-group-title {
-            font-size: 0.75rem; text-transform: uppercase;
-            color: var(--text-muted); font-weight: 600; margin: 16px 0 8px 12px;
-            letter-spacing: 0.05em;
-        }
-        
-        .nav-item {
+        .class-btn {
+            padding: 12px 16px; border-radius: 12px;
+            color: var(--text-muted); cursor: pointer; transition: 0.2s;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 12px; margin-bottom: 4px;
-            border-radius: var(--radius-md);
-            color: var(--text-muted); cursor: pointer;
-            transition: all 0.2s;
-        }
-        .nav-item:hover { background: var(--bg-body); color: var(--text-main); }
-        .nav-item.active {
-            background: #e0e7ff; /* Indigo 100 */
-            color: var(--primary);
             font-weight: 500;
         }
-        .badge {
-            font-size: 0.75rem; background: white;
-            border: 1px solid var(--border-color);
-            padding: 2px 8px; border-radius: 99px;
+        .class-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .class-btn.active {
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.2), transparent);
+            color: var(--accent); border-left: 3px solid var(--accent);
+        }
+        .count-badge {
+            background: rgba(255,255,255,0.1); padding: 2px 8px;
+            border-radius: 10px; font-size: 0.75rem;
         }
 
-        /* Main Content */
+        /* --- Main Content --- */
         .main-content {
             flex: 1; display: flex; flex-direction: column;
-            overflow: hidden; position: relative;
+            position: relative; overflow: hidden;
         }
 
-        /* Header */
-        header {
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border-color);
-            padding: 16px 32px;
-            display: flex; justify-content: space-between; align-items: center;
+        /* Dashboard Stats */
+        .stats-bar {
+            padding: 20px 30px;
+            display: flex; gap: 20px;
+            flex-wrap: wrap;
         }
-        .header-title h2 { font-size: 1.5rem; font-weight: 700; }
-        .header-title span { color: var(--text-muted); font-size: 0.9rem; }
+        .stat-card {
+            flex: 1; min-width: 180px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 20px;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .stat-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            background: rgba(124, 58, 237, 0.2);
+            color: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .stat-info h4 { font-size: 1.5rem; font-weight: 700; margin-bottom: 2px; }
+        .stat-info p { color: var(--text-muted); font-size: 0.9rem; }
 
-        .search-container {
-            position: relative; width: 300px;
+        /* --- NEW SEARCH CONTAINER & BAR --- */
+        .control-panel {
+            padding: 0 30px 20px 30px;
         }
+        .search-wrapper {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px; /* Tròn béo đẹp */
+            padding: 8px 8px 8px 24px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .search-wrapper:focus-within {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 25px rgba(217, 70, 239, 0.3); /* Glow effect */
+            transform: translateY(-2px);
+        }
+        .search-icon { color: var(--text-muted); font-size: 1.1rem; margin-right: 15px; }
+        
         .search-input {
-            width: 100%; padding: 10px 10px 10px 40px;
-            border: 1px solid var(--border-color); border-radius: var(--radius-md);
-            background: var(--bg-body);
-            font-size: 0.9rem; color: var(--text-main);
-            transition: 0.2s;
+            flex: 1; background: transparent; border: none;
+            color: #fff; font-size: 1rem; outline: none;
         }
-        .search-input:focus { border-color: var(--primary); outline: none; background: white; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-
-        /* Grid Area */
-        .content-scroll {
-            flex: 1; overflow-y: auto; padding: 32px;
+        .search-input::placeholder { color: rgba(255,255,255,0.3); }
+        
+        .clear-search {
+            color: var(--text-muted); cursor: pointer; padding: 5px;
+            display: none; font-size: 0.9rem; transition: 0.2s;
         }
+        .clear-search:hover { color: #fff; }
 
+        /* Action Buttons */
+        .action-bar {
+            margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;
+        }
+        .tool-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: #fff; padding: 8px 16px; border-radius: 30px;
+            cursor: pointer; font-size: 0.9rem; transition: 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tool-btn:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+        .tool-btn.active { background: var(--gradient-btn); border: none; }
+
+        /* --- Grid --- */
+        .scroll-area {
+            flex: 1; overflow-y: auto; padding: 0 30px 30px 30px;
+        }
         .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 24px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
         }
 
-        /* Student Card - New Design */
         .card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-xl);
-            padding: 24px;
+            background: rgba(30, 10, 50, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 25px 20px;
             display: flex; flex-direction: column; align-items: center;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center; position: relative; overflow: hidden;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            position: relative;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0; transition: 0.3s;
         }
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: rgba(45, 20, 75, 0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: rgba(217, 70, 239, 0.4);
         }
+        .card:hover::before { opacity: 1; }
 
-        /* Avatar Initials */
         .avatar {
-            width: 64px; height: 64px;
-            background: linear-gradient(135deg, #e0e7ff, #ede9fe);
-            color: var(--primary);
-            font-size: 1.5rem; font-weight: 700;
-            border-radius: 50%;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(192,38,211,0.2));
+            border: 2px solid rgba(255,255,255,0.1);
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 16px;
-            border: 2px solid white;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            font-size: 1.8rem; font-weight: 700; color: #fff;
+            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        /* Dynamic Avatar Colors via JS classes could be added, keeping simple for now */
-
-        .card-name {
-            font-weight: 600; font-size: 1.1rem; color: var(--text-main);
-            margin-bottom: 8px; line-height: 1.4;
-            width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .card-meta {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.85rem; color: var(--text-muted);
-            margin-bottom: 12px;
-            width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
+        .card-name { font-size: 1rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+        .card-info { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; }
         
-        .card-footer {
-            width: 100%; padding-top: 16px; border-top: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center;
+        .card-badges { display: flex; gap: 8px; }
+        .badge {
+            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
         }
-        .class-pill {
-            font-size: 0.75rem; font-weight: 600; padding: 4px 10px;
-            background: var(--bg-body); border-radius: 99px; color: var(--text-main);
-        }
-        .gender-icon { font-size: 1rem; color: var(--text-muted); }
-        .male { color: #3b82f6; }
-        .female { color: #ec4899; }
+        .badge-m { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .badge-f { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
 
-        /* --- Mobile Toggle --- */
-        .mobile-toggle {
-            display: none; position: fixed; bottom: 24px; right: 24px;
-            background: var(--primary); color: white; width: 56px; height: 56px;
-            border-radius: 50%; align-items: center; justify-content: center;
-            box-shadow: var(--shadow-lg); z-index: 100; border: none; cursor: pointer;
+        /* --- Modal Detail --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s;
         }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal {
+            background: #1e1b4b; width: 90%; max-width: 400px;
+            border-radius: 24px; border: 1px solid var(--glass-border);
+            padding: 30px; position: relative;
+            transform: scale(0.8); transition: 0.3s;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+        
+        .close-modal {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(255,255,255,0.1); width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #fff; transition: 0.2s;
+        }
+        .close-modal:hover { background: #ef4444; }
+
+        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .detail-label { color: var(--text-muted); font-size: 0.9rem; }
+        .detail-val { font-weight: 600; color: #fff; text-align: right; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 0.5s ease forwards; }
 
-        .fade-up { animation: fadeUp 0.4s ease forwards; }
-
-        /* --- Responsive --- */
+        /* Mobile */
         @media (max-width: 900px) {
-            .sidebar {
-                position: fixed; height: 100%; left: 0; top: 0;
-                transform: translateX(-100%); box-shadow: var(--shadow-lg);
-            }
+            .sidebar { position: fixed; height: 100%; left: 0; transform: translateX(-100%); transition: 0.3s; }
             .sidebar.open { transform: translateX(0); }
-            .mobile-toggle { display: flex; }
-            header { padding: 16px; }
-            .search-container { width: 100%; margin-top: 16px; }
-            .content-scroll { padding: 16px; }
+            .stats-bar { padding: 15px; gap: 10px; }
+            .stat-card { min-width: 45%; padding: 15px; }
+            .control-panel { padding: 0 15px 15px; }
+            .scroll-area { padding: 0 15px 15px; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. Loader & Upload Section -->
-    <div id="loader-screen">
-        <div class="loader-content">
-            <div class="spinner"></div>
-            <h3 id="loading-text" style="font-weight: 500; color: var(--text-muted);">Đang tải dữ liệu...</h3>
-            <p id="error-text" style="font-size: 0.9rem; color: #ef4444; display: none; margin-top: 10px;">
-                Không tìm thấy file <b>dshs.txt</b>.<br>Vui lòng chọn file thủ công.
-            </p>
-            <input type="file" id="file-input" accept=".txt" style="display: none;">
-            <button id="upload-btn" onclick="document.getElementById('file-input').click()">
-                <i class="ri-upload-cloud-2-line" style="vertical-align: bottom;"></i> Chọn File
+    <!-- 1. Loader & Upload -->
+    <div id="loader">
+        <div class="loader-ring"></div>
+        <p style="color: var(--text-muted);">Đang tải dữ liệu...</p>
+        
+        <div id="upload-area">
+            <h3 style="color:white; margin-bottom:10px;">Chưa tìm thấy dữ liệu</h3>
+            <p style="color:var(--text-muted); margin-bottom:15px;">Chọn file <b>dshs.txt</b></p>
+            <input type="file" id="file-input" accept=".txt" style="display:none">
+            <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Tải File Lên
             </button>
         </div>
     </div>
 
-    <!-- 2. Mobile Sidebar Toggle -->
-    <button class="mobile-toggle" id="toggle-sidebar">
-        <i class="ri-menu-4-line" style="font-size: 1.5rem;"></i>
-    </button>
-
-    <!-- 3. App Container -->
+    <!-- 2. Sidebar -->
     <aside class="sidebar" id="sidebar">
-        <div class="brand">
-            <i class="ri-school-line"></i>
-            <span>EduPortal</span>
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i> EduSpace
         </div>
-        <div class="nav-menu" id="class-list">
-            <!-- Class items injected by JS -->
-        </div>
+        
+        <div class="nav-label">Khối 10</div>
+        <div class="class-list" id="list-10"></div>
+        
+        <div class="nav-label">Khối 11</div>
+        <div class="class-list" id="list-11"></div>
+        
+        <div class="nav-label">Khối 12</div>
+        <div class="class-list" id="list-12"></div>
     </aside>
 
+    <!-- 3. Main Content -->
     <main class="main-content">
-        <header>
-            <div class="header-title">
-                <h2 id="page-title">Tất cả học sinh</h2>
-                <span id="page-stats">0 học sinh</span>
+        <!-- Dashboard Stats -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-info">
+                    <h4 id="stat-total">0</h4>
+                    <p>Tổng số</p>
+                </div>
             </div>
-            <div class="search-container">
-                <i class="ri-search-line search-icon"></i>
-                <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm theo tên...">
+            <div class="stat-card">
+                <div class="stat-icon" style="color:#60a5fa; background:rgba(59,130,246,0.2)"><i class="fa-solid fa-mars"></i></div>
+                <div class="stat-info">
+                    <h4 id="stat-male">0</h4>
+                    <p>Nam</p>
+                </div>
             </div>
-        </header>
+            <div class="stat-card">
+                <div class="stat-icon" style="color:#f472b6; background:rgba(236,72,153,0.2)"><i class="fa-solid fa-venus"></i></div>
+                <div class="stat-info">
+                    <h4 id="stat-female">0</h4>
+                    <p>Nữ</p>
+                </div>
+            </div>
+        </div>
 
-        <div class="content-scroll">
+        <!-- Control Panel: Search & Tools -->
+        <div class="control-panel">
+            <!-- Beautiful Search Bar -->
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm học sinh theo tên...">
+                <i class="fa-solid fa-xmark clear-search" id="clear-search"></i>
+            </div>
+
+            <!-- Tool Buttons -->
+            <div class="action-bar">
+                <button class="tool-btn active" id="btn-sort-name">
+                    <i class="fa-solid fa-arrow-down-a-z"></i> Tên A-Z
+                </button>
+                <button class="tool-btn" id="btn-sort-dob">
+                    <i class="fa-regular fa-calendar-days"></i> Ngày sinh
+                </button>
+                <button class="tool-btn" id="btn-export">
+                    <i class="fa-solid fa-file-csv"></i> Xuất Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid Content -->
+        <div class="scroll-area">
             <div class="grid" id="student-grid">
-                <!-- Cards injected by JS -->
+                <!-- Cards injected via JS -->
             </div>
         </div>
     </main>
 
+    <!-- 4. Modal Detail -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="close-modal" id="modal-close"><i class="fa-solid fa-xmark"></i></div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div class="avatar" id="modal-avatar" style="margin: 0 auto 15px; width: 80px; height: 80px; font-size: 2rem;"></div>
+                <h2 id="modal-name" style="font-size: 1.4rem; margin-bottom: 5px;"></h2>
+                <span id="modal-class" class="badge" style="background:var(--primary); color:white;">10A1</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Giới tính</span>
+                <span class="detail-val" id="modal-gender"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Ngày sinh</span>
+                <span class="detail-val" id="modal-dob"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Mã lớp</span>
+                <span class="detail-val" id="modal-id"></span>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- State Management ---
+        // --- State & DOM ---
         const state = {
             students: [],
             filterClass: 'all',
-            filterText: ''
+            filterText: '',
+            sortBy: 'name' // 'name' or 'dob'
         };
 
-        // --- DOM Elements ---
         const els = {
-            loaderScreen: document.getElementById('loader-screen'),
-            loadingText: document.getElementById('loading-text'),
-            errorText: document.getElementById('error-text'),
-            uploadBtn: document.getElementById('upload-btn'),
+            loader: document.getElementById('loader'),
+            uploadArea: document.getElementById('upload-area'),
             fileInput: document.getElementById('file-input'),
-            sidebar: document.getElementById('sidebar'),
-            toggleBtn: document.getElementById('toggle-sidebar'),
-            classList: document.getElementById('class-list'),
+            lists: { '10': document.getElementById('list-10'), '11': document.getElementById('list-11'), '12': document.getElementById('list-12') },
             grid: document.getElementById('student-grid'),
-            pageTitle: document.getElementById('page-title'),
-            pageStats: document.getElementById('page-stats'),
-            searchInput: document.getElementById('search-input')
+            searchInput: document.getElementById('search-input'),
+            clearSearch: document.getElementById('clear-search'),
+            stats: { total: document.getElementById('stat-total'), male: document.getElementById('stat-male'), female: document.getElementById('stat-female') },
+            modal: { overlay: document.getElementById('modal-overlay'), close: document.getElementById('modal-close') },
+            btns: { name: document.getElementById('btn-sort-name'), dob: document.getElementById('btn-sort-dob'), export: document.getElementById('btn-export') }
         };
 
-        // --- 1. Data Loading Logic ---
+        // --- 1. Init & Load Data ---
         window.onload = async () => {
             try {
-                // Attempt fetch
-                const response = await fetch('dshs.txt');
-                if (!response.ok) throw new Error("File not found");
-                const text = await response.text();
-                initApp(text);
+                const res = await fetch('dshs.txt');
+                if (!res.ok) throw new Error("Not Found");
+                const text = await res.text();
+                processText(text);
             } catch (e) {
-                // Show upload option
-                console.log("Fetch failed, showing upload button");
-                els.loadingText.style.display = 'none';
-                document.querySelector('.spinner').style.display = 'none';
-                els.errorText.style.display = 'block';
-                els.uploadBtn.style.display = 'inline-block';
+                els.uploadArea.style.display = 'block';
+                document.querySelector('.loader-ring').style.display = 'none';
+                document.querySelector('#loader p').style.display = 'none';
             }
         };
 
@@ -331,173 +440,184 @@
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (ev) => initApp(ev.target.result);
+                reader.onload = (ev) => processText(ev.target.result);
                 reader.readAsText(file);
             }
         });
 
-        // --- 2. Data Parsing ---
-        function initApp(rawText) {
-            const lines = rawText.split('\n');
+        // --- 2. Processing Data ---
+        function processText(text) {
+            const lines = text.split('\n');
             const students = [];
+            let maleCount = 0, femaleCount = 0;
             const classCounts = {};
 
-            lines.forEach((line) => {
+            lines.forEach((line, idx) => {
                 const parts = line.split('|');
                 if (parts.length >= 4) {
                     const [cls, name, dob, gender] = parts;
-                    const student = {
-                        id: Math.random().toString(36).substr(2, 9),
+                    if (!classCounts[cls]) classCounts[cls] = 0;
+                    classCounts[cls]++;
+
+                    if (gender === 'Nam') maleCount++; else femaleCount++;
+
+                    students.push({
+                        id: idx,
                         className: cls.trim(),
                         name: name.trim(),
                         dob: dob.trim(),
                         gender: gender.trim()
-                    };
-                    students.push(student);
-                    classCounts[student.className] = (classCounts[student.className] || 0) + 1;
-                }
-            });
-
-            if (students.length === 0) {
-                alert("Dữ liệu rỗng!");
-                return;
-            }
-
-            state.students = students;
-            
-            // UI Transition
-            els.loaderScreen.style.opacity = '0';
-            setTimeout(() => {
-                els.loaderScreen.style.display = 'none';
-                renderSidebar(classCounts);
-                renderGrid();
-            }, 500);
-        }
-
-        // --- 3. Render Sidebar ---
-        function renderSidebar(counts) {
-            const classes = Object.keys(counts).sort();
-            
-            // Create "All" button
-            const allBtn = createNavItem('all', 'Tất cả lớp', studentsCount());
-            els.classList.appendChild(allBtn);
-
-            // Grouping Logic
-            const grades = { '10': [], '11': [], '12': [] };
-            
-            classes.forEach(c => {
-                if (c.startsWith('10')) grades['10'].push(c);
-                else if (c.startsWith('11')) grades['11'].push(c);
-                else if (c.startsWith('12')) grades['12'].push(c);
-                else grades['10'].push(c); // Default to 10 or handle others
-            });
-
-            for (const [grade, gradeClasses] of Object.entries(grades)) {
-                if (gradeClasses.length > 0) {
-                    const title = document.createElement('div');
-                    title.className = 'nav-group-title';
-                    title.textContent = `Khối ${grade}`;
-                    els.classList.appendChild(title);
-
-                    gradeClasses.forEach(cls => {
-                        els.classList.appendChild(createNavItem(cls, cls, counts[cls]));
                     });
                 }
-            }
+            });
+
+            state.students = students;
+            updateStats(students.length, maleCount, femaleCount);
+            renderSidebar(classCounts);
+            renderGrid();
+
+            // Transition UI
+            els.loader.style.opacity = '0';
+            setTimeout(() => els.loader.style.display = 'none', 500);
         }
 
-        function createNavItem(key, label, count) {
-            const div = document.createElement('div');
-            div.className = `nav-item ${key === 'all' ? 'active' : ''}`;
-            div.innerHTML = `
-                <span>${label}</span>
-                <span class="badge">${count}</span>
-            `;
-            div.onclick = () => {
-                // Update active state
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                div.classList.add('active');
-                
+        function updateStats(total, m, f) {
+            els.stats.total.innerText = total;
+            els.stats.male.innerText = m;
+            els.stats.female.innerText = f;
+        }
+
+        // --- 3. Sidebar ---
+        function renderSidebar(counts) {
+            // Add "All" button
+            const btnAll = createClassBtn('all', 'Tất cả', state.students.length);
+            els.lists['10'].appendChild(btnAll);
+
+            const classes = Object.keys(counts).sort();
+            classes.forEach(cls => {
+                const btn = createClassBtn(cls, cls, counts[cls]);
+                if (cls.startsWith('10')) els.lists['10'].appendChild(btn);
+                else if (cls.startsWith('11')) els.lists['11'].appendChild(btn);
+                else els.lists['12'].appendChild(btn);
+            });
+        }
+
+        function createClassBtn(key, label, count) {
+            const btn = document.createElement('div');
+            btn.className = `class-btn ${key === 'all' ? 'active' : ''}`;
+            btn.innerHTML = `<span>${label}</span> <span class="count-badge">${count}</span>`;
+            btn.onclick = () => {
+                document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
                 state.filterClass = key;
                 renderGrid();
-                
-                // Close sidebar on mobile
-                if (window.innerWidth <= 900) els.sidebar.classList.remove('open');
             };
-            return div;
+            return btn;
         }
 
-        function studentsCount() { return state.students.length; }
-
-        // --- 4. Render Grid (Cards) ---
+        // --- 4. Rendering Grid & Logic ---
         function renderGrid() {
+            els.grid.innerHTML = '';
+            
             // Filter
-            const filtered = state.students.filter(s => {
+            let filtered = state.students.filter(s => {
                 const matchClass = state.filterClass === 'all' || s.className === state.filterClass;
                 const matchName = s.name.toLowerCase().includes(state.filterText.toLowerCase());
                 return matchClass && matchName;
             });
 
-            // Update Header
-            els.pageTitle.textContent = state.filterClass === 'all' ? 'Tất cả học sinh' : `Lớp ${state.filterClass}`;
-            els.pageStats.textContent = `${filtered.length} học sinh`;
+            // Sort
+            filtered.sort((a, b) => {
+                if (state.sortBy === 'name') return a.name.localeCompare(b.name);
+                if (state.sortBy === 'dob') return new Date(a.dob.split('/').reverse().join('-')) - new Date(b.dob.split('/').reverse().join('-'));
+            });
 
-            // Render Cards
-            els.grid.innerHTML = '';
             if (filtered.length === 0) {
-                els.grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Không tìm thấy học sinh nào.</div>`;
+                els.grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted)">Không tìm thấy kết quả nào.</div>`;
                 return;
             }
 
             filtered.forEach((s, i) => {
-                const initials = getInitials(s.name);
-                const genderIcon = s.gender === 'Nam' ? 'ri-men-fill' : 'ri-women-fill';
-                const genderClass = s.gender === 'Nam' ? 'male' : 'female';
-
                 const card = document.createElement('div');
                 card.className = 'card fade-up';
-                card.style.animationDelay = `${i * 0.03}s`; // Staggered animation
+                card.style.animationDelay = `${i * 0.05}s`;
                 
+                const initial = s.name.split(' ').pop().charAt(0).toUpperCase();
+                const genderBadge = s.gender === 'Nam' ? 'badge-m' : 'badge-f';
+
                 card.innerHTML = `
-                    <div class="avatar">${initials}</div>
-                    <div class="card-name" title="${s.name}">${s.name}</div>
-                    <div class="card-meta">
-                        <i class="ri-calendar-event-line"></i> ${s.dob}
-                    </div>
-                    <div class="card-footer">
-                        <span class="class-pill">${s.className}</span>
-                        <i class="${genderIcon} gender-icon ${genderClass}"></i>
+                    <div class="avatar">${initial}</div>
+                    <div class="card-name">${s.name}</div>
+                    <div class="card-info">${s.dob}</div>
+                    <div class="card-badges">
+                        <span class="badge" style="background:rgba(255,255,255,0.1); color:white;">${s.className}</span>
+                        <span class="badge ${genderBadge}">${s.gender}</span>
                     </div>
                 `;
+                
+                card.onclick = () => showModal(s);
                 els.grid.appendChild(card);
             });
         }
 
-        // --- Helper: Get Initials ---
-        function getInitials(name) {
-            const parts = name.split(' ');
-            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-            return (parts[parts.length - 1][0] + (parts[0] ? parts[0][0] : '')).toUpperCase();
-        }
-
-        // --- Event Listeners ---
+        // --- 5. Interactions (Search, Sort, Modal) ---
         els.searchInput.addEventListener('input', (e) => {
-            state.filterText = e.target.value.trim();
+            state.filterText = e.target.value;
+            els.clearSearch.style.display = state.filterText ? 'block' : 'none';
+            renderGrid();
+        });
+        els.clearSearch.addEventListener('click', () => {
+            state.filterText = '';
+            els.searchInput.value = '';
+            els.clearSearch.style.display = 'none';
             renderGrid();
         });
 
-        els.toggleBtn.addEventListener('click', () => {
-            els.sidebar.classList.toggle('open');
+        els.btns.name.addEventListener('click', () => {
+            state.sortBy = 'name'; updateSortBtns(); renderGrid();
+        });
+        els.btns.dob.addEventListener('click', () => {
+            state.sortBy = 'dob'; updateSortBtns(); renderGrid();
         });
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 900 && 
-                !els.sidebar.contains(e.target) && 
-                !els.toggleBtn.contains(e.target) && 
-                els.sidebar.classList.contains('open')) {
-                els.sidebar.classList.remove('open');
-            }
+        function updateSortBtns() {
+            els.btns.name.className = `tool-btn ${state.sortBy === 'name' ? 'active' : ''}`;
+            els.btns.dob.className = `tool-btn ${state.sortBy === 'dob' ? 'active' : ''}`;
+        }
+
+        // --- Export Function ---
+        els.btns.export.addEventListener('click', () => {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Lớp,Tên,Ngày sinh,Giới tính\n";
+            state.students.forEach(row => {
+                csvContent += `${row.className},${row.name},${row.dob},${row.gender}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "danh_sach_hoc_sinh.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // --- Modal Logic ---
+        function showModal(s) {
+            const initial = s.name.split(' ').pop().charAt(0).toUpperCase();
+            document.getElementById('modal-avatar').innerText = initial;
+            document.getElementById('modal-name').innerText = s.name;
+            document.getElementById('modal-class').innerText = s.className;
+            document.getElementById('modal-gender').innerText = s.gender;
+            document.getElementById('modal-gender').style.color = s.gender === 'Nam' ? '#60a5fa' : '#f472b6';
+            document.getElementById('modal-dob').innerText = s.dob;
+            document.getElementById('modal-id').innerText = `STT - ${s.id + 1}`;
+            
+            els.modal.overlay.classList.add('active');
+        }
+
+        els.modal.close.addEventListener('click', () => els.modal.overlay.classList.remove('active'));
+        els.modal.overlay.addEventListener('click', (e) => {
+            if (e.target === els.modal.overlay) els.modal.overlay.classList.remove('active');
         });
 
     </script>
