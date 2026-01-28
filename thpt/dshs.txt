@@ -637,7 +637,6 @@
 11D1|Nguyễn Lâm Nhật Duy|23/07/2009|Nam
 11D1|Tăng Phước Đại|10/11/2009|Nam
 11D1|Phạm Tấn Đạt|02/02/2009|Nam
-11D1|Mai Lan Em|23/02/2009|Nữ
 11D1|Huỳnh Ngọc Giao|14/11/2009|Nữ
 11D1|Lưu Gia Hân|30/07/2009|Nữ
 11D1|Nguyễn Ngọc Gia Hân|31/08/2009|Nữ
@@ -696,6 +695,7 @@
 11D2|Kim Minh Phúc|25/11/2009|Nam
 11D2|Lý Ngọc Phụng|19/01/2009|Nữ
 11D2|Lý Tú Quyên|27/10/2009|Nữ
+11D2|Mai Lan Em|23/02/2009|Nữ
 11D2|Lâm Thị Kim Thanh|28/05/2009|Nữ
 11D2|Thạch Thị Thanh Thảo|19/03/2009|Nữ
 11D2|Tào Mạnh Thắng|06/10/2009|Nam
@@ -1068,3 +1068,4 @@
 12D2|Hồ Anh Vũ|13/10/2008|Nam
 12D2|Võ Như Ý|14/10/2008|Nữ
 12D2|Ngô Tú Mỹ Yên|14/10/2008|Nữ
+
