@@ -204,7 +204,7 @@
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .st-name { font-size: 0.9rem; font-weight: 500; color: #fff; line-height: 1.3; }
 
-        /* --- Modal (UPDATED SCROLL LOGIC) --- */
+        /* --- Modal --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); z-index: 1000;
@@ -225,13 +225,9 @@
             display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);
             flex-shrink: 0;
         }
-        /* 
-           FIX SCROLL:
-           - overflow: hidden để modal-body không cuộn tràn ra ngoài.
-           - Cuộn sẽ diễn ra bên trong iframe-wrapper
-        */
         .modal-body { 
-            flex: 1; padding: 0; overflow: hidden; position: relative; background: #000; 
+            flex: 1; padding: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; 
+            position: relative; background: #000; 
         }
         .modal-title { font-weight: 700; color: var(--primary); font-size: 1.2rem; }
         .close-btn {
@@ -252,21 +248,9 @@
             font-size: 0.9rem; border: 1px solid var(--glass-border); margin-right: 5px; margin-bottom: 5px; display: inline-block;
         }
 
-        /* --- Iframe Wrapper (FIXED FOR MOBILE SCROLL) --- */
-        .iframe-wrapper { 
-            width: 100%; 
-            height: 100%; 
-            overflow-y: auto; /* CHO PHÉP CUỘN Y */
-            -webkit-overflow-scrolling: touch; /* CUỘN MỊT TRÊN IOS */
-            position: relative; 
-            border-radius: 12px;
-        }
-        iframe { 
-            width: 100%; 
-            height: 2000px; /* ĐẶT CHIỀU CAO LỚN ĐỂ THANH CUỘN XUẤT HIỆN */
-            border: none; 
-            display: block;
-        }
+        /* --- Iframe --- */
+        .iframe-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
         .dark-mode-iframe { filter: invert(0.92) hue-rotate(180deg) contrast(0.9); }
 
         /* --- Animations --- */
@@ -284,11 +268,6 @@
             .modal-box { width: 100%; height: 100%; border-radius: 0; }
             .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { width: 50%; }
             .stat-value { font-size: 2.5rem; }
-            /* Đảm bảo trên mobile lướt được */
-            .iframe-wrapper { 
-                -webkit-overflow-scrolling: touch; 
-                overflow-y: scroll; 
-            }
         }
     </style>
 </head>
