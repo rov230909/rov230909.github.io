@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>11D1 - Hệ Thống Xem Điểm</title>
+    <title>11D1 - Hệ Thống Xem Điểm Pro</title>
     <link rel="icon" href="11d1.png" type="image/png">
     
     <!-- Fonts -->
@@ -143,6 +143,7 @@
             background: rgba(5, 5, 17, 0.9); z-index: 20;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             backdrop-filter: blur(15px);
+            opacity: 1; transition: opacity 0.3s ease; /* Smooth fade out */
         }
         .loader-ring {
             width: 60px; height: 60px; border: 3px solid transparent; border-top: 3px solid var(--primary);
@@ -331,7 +332,7 @@
             <div class="ranking-container">
                 <div id="rankingLoading" class="pro-loader">
                     <div class="loader-ring"></div>
-                    <div class="loader-text" id="loaderText">ĐANG TẢI...</div>
+                    <div class="loader-text" id="loaderText">ĐANG TẢI DỮ LIỆU...</div>
                 </div>
                 <table class="ranking-table" style="display:none;" id="rankingTable">
                     <thead>
@@ -352,7 +353,7 @@
         </section>
 
         <footer style="text-align:center; margin-top:60px; color:var(--text-muted); font-size:0.8rem;">
-            <p>Designed by Thạch Mô Ra (Rov) © 2026</p>
+            <p>Designed by Thạch Mô Ra (Rov) © 2026 | Ultimate Edition</p>
         </footer>
     </div>
 
@@ -402,7 +403,7 @@
             {name:"Huỳnh Tuyết Băng",id:"5010453587"},{name:"Ông Thị Tuyết Chi",id:"5010453607"},
             {name:"Lê Phong Dân",id:"5010453627"},{name:"Trần Thị Hồng Diệp",id:"5010453647"},
             {name:"Lâm Trường Duy",id:"5010453667"},{name:"Nguyễn Lâm Nhật Duy",id:"5010453687"},
-            {name:"Tăng Phước Đại",id:"5010453707"},{name:"Mai Lan Em",id:"5010453727"},
+            {name:"Tăng Phước Đại",id:"5010453707"},
             {name:"Phạm Tấn Đạt",id:"5010454367"},{name:"Huỳnh Ngọc Giao",id:"5010453747"},
             {name:"Lưu Gia Hân",id:"5010453767"},{name:"Nguyễn Ngọc Gia Hân",id:"5010453787"},
             {name:"Huỳnh Văn Hóa",id:"5010453807"},{name:"Du Lý Gia Khang",id:"5010454387"},
@@ -565,7 +566,7 @@
             if (studentsData.length === 0) {
                 document.getElementById('totalStudents').textContent = "0";
                 document.getElementById('avgClassScore').textContent = "0.0";
-                document.getElementById('topStudentName').textContent = "Chưa có";
+                document.getElementById('topStudentName').textContent = "Chưa có dữ liệu";
                 return;
             }
             const totalAvg = studentsData.reduce((sum, s) => sum + s.avg, 0);
@@ -669,14 +670,34 @@
                 document.getElementById('iframeLoader').style.display = 'flex';
             }
         }
+        
+        // === SỬA LỖI LOAD IFRAME ===
         function openGradeModal(name, url) {
             document.getElementById('gradeModalTitle').textContent = `Hồ Sơ: ${name}`;
-            document.getElementById('iframeLoader').style.display = 'flex';
-            document.getElementById('gradeIframe').style.opacity = '0';
+            const loader = document.getElementById('iframeLoader');
             const iframe = document.getElementById('gradeIframe');
+            
             openModal('modalGrades');
-            setTimeout(() => { iframe.src = url; }, 100);
-            iframe.onload = () => { iframe.style.opacity = '1'; document.getElementById('iframeLoader').style.display = 'none'; };
+
+            // Bước 1: Đảm bảo Loader luôn hiển thị và Iframe ẩn
+            loader.style.display = 'flex';
+            loader.style.opacity = '1'; // Reset opacity cho loader
+            iframe.style.opacity = '0';
+            
+            // Bước 2: Xóa sạch nội dung cũ (Tránh lỗi, load lại từ đầu)
+            iframe.src = "about:blank";
+
+            // Bước 3: Tạo độ trễ nhỏ để UI cập nhật rồi mới tải (Cảm giác mượt hơn)
+            setTimeout(() => {
+                iframe.src = url;
+            }, 200);
+
+            // Bước 4: Khi load xong
+            iframe.onload = () => {
+                loader.style.opacity = '0'; // Fade out loader
+                setTimeout(() => { loader.style.display = 'none'; }, 300); // Ẩn loader sau khi fade xong
+                iframe.style.opacity = '1';
+            };
         }
 
         window.addEventListener('load', () => { initApp(); });
