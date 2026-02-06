@@ -144,7 +144,6 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             backdrop-filter: blur(15px);
             opacity: 1; transition: opacity 0.3s ease;
-            pointer-events: none; /* Để click xuyên qua nếu cần, nhưng ở đây iframe ẩn nên không ảnh hưởng */
         }
         .loader-ring {
             width: 60px; height: 60px; border: 3px solid transparent; border-top: 3px solid var(--primary);
@@ -215,7 +214,8 @@
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
         .modal-box {
-            background: #0f1016; width: 92%; max-width: 900px; height: 90vh;
+            background: #fff; /* Modal background changed to white to blend with Iframe or generic */
+            width: 92%; max-width: 900px; height: 90vh;
             border-radius: 24px; border: 1px solid var(--glass-border);
             box-shadow: 0 0 60px rgba(0,0,0,0.8);
             display: flex; flex-direction: column; overflow: hidden;
@@ -223,20 +223,20 @@
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
         .modal-header {
-            padding: 20px 30px; border-bottom: 1px solid var(--glass-border);
-            display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);
+            padding: 15px 20px; border-bottom: 1px solid #eee; /* Light border for white modal */
+            display: flex; justify-content: space-between; align-items: center; background: #f9f9f9;
             flex-shrink: 0;
         }
         .modal-body { 
             flex: 1; padding: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; 
-            position: relative; background: #000; 
+            position: relative; background: #fff; 
         }
-        .modal-title { font-weight: 700; color: var(--primary); font-size: 1.2rem; }
+        .modal-title { font-weight: 700; color: #333; font-size: 1.2rem; } /* Changed to dark text */
         .close-btn {
-            background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px;
+            background: rgba(0,0,0,0.1); border: none; color: #333; width: 36px; height: 36px; /* Darker for light header */
             border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .close-btn:hover { background: var(--secondary); transform: rotate(90deg); }
+        .close-btn:hover { background: var(--secondary); color: white; transform: rotate(90deg); }
         
         /* List Items */
         .list-item {
@@ -250,19 +250,12 @@
             font-size: 0.9rem; border: 1px solid var(--glass-border); margin-right: 5px; margin-bottom: 5px; display: inline-block;
         }
 
-        /* --- Iframe FIXES --- */
+        /* --- Iframe (STANDARD MODE - NO FILTERS) --- */
         .iframe-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
         iframe { 
-            width: 100%; height: 100%; border: none; display: block; 
-            pointer-events: none; /* Chặn click khi đang loading */
-            transition: opacity 0.3s ease;
+            width: 100%; height: 100%; border: none; display: block;
+            opacity: 0; transition: opacity 0.3s ease; /* Fade in effect */
         }
-        
-        /* Class nặng gây lag - CHỈ ÁP DỤNG KHI CÓ DỮ LIỆU */
-        .dark-mode-iframe { filter: invert(0.92) hue-rotate(180deg) contrast(0.9); }
-        
-        /* Khi iframe đã load xong thì mới cho click */
-        .iframe-loaded { pointer-events: auto; }
 
         /* --- Animations --- */
         @keyframes floatOrb { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 50px); } }
@@ -342,7 +335,7 @@
             <div class="ranking-container">
                 <div id="rankingLoading" class="pro-loader">
                     <div class="loader-ring"></div>
-                    <div class="loader-text" id="loaderText">ĐANG TẢI DỮ LIỆU...</div>
+                    <div class="loader-text" id="loaderText">ĐANG TẢI...</div>
                 </div>
                 <table class="ranking-table" style="display:none;" id="rankingTable">
                     <thead>
@@ -363,7 +356,7 @@
         </section>
 
         <footer style="text-align:center; margin-top:60px; color:var(--text-muted); font-size:0.8rem;">
-            <p>Designed by Thạch Mô Ra (Rov) © 2026 | Ultimate Edition</p>
+            <p>Designed by Thạch Mô Ra (Rov) ©2026</p>
         </footer>
     </div>
 
@@ -377,6 +370,7 @@
             <div class="modal-body">
                 <div id="iframeLoader" class="pro-loader"><div class="loader-ring"></div></div>
                 <div class="iframe-wrapper">
+                    <!-- Iframe không còn class dark-mode-iframe, chỉ giữ style opacity cho fade in/out -->
                     <iframe id="gradeIframe" style="opacity:0;"></iframe>
                 </div>
             </div>
@@ -576,7 +570,7 @@
             if (studentsData.length === 0) {
                 document.getElementById('totalStudents').textContent = "0";
                 document.getElementById('avgClassScore').textContent = "0.0";
-                document.getElementById('topStudentName').textContent = "Chưa có dữ liệu";
+                document.getElementById('topStudentName').textContent = "Chưa có";
                 return;
             }
             const totalAvg = studentsData.reduce((sum, s) => sum + s.avg, 0);
@@ -678,47 +672,36 @@
                 const iframe = document.getElementById('gradeIframe');
                 const loader = document.getElementById('iframeLoader');
                 
-                // TẮT FILTER TRƯỚC KHI RESET ĐỂ KHÔNG LAG
-                iframe.classList.remove('dark-mode-iframe'); 
-                iframe.classList.remove('iframe-loaded');
-                
-                iframe.src = ""; // Dừng tải ngay
+                // Reset về trang trắng nhanh
+                iframe.src = ""; 
                 iframe.style.opacity = '0';
                 loader.style.display = 'flex';
             }
         }
 
-        // === SỬA LỖI LAG IFRAME ULTIMATE ===
+        // === LOAD IFRAME (HIỂN THỊ GIAO DIỆN GỐC - KHÔNG FILTER) ===
         function openGradeModal(name, url) {
-            document.getElementById('gradeModalTitle').textContent = `Hồ Sơ: ${name}`;
+            document.getElementById('gradeModalTitle').textContent = `Xem Điểm: ${name}`;
             const loader = document.getElementById('iframeLoader');
             const iframe = document.getElementById('gradeIframe');
             
             openModal('modalGrades');
 
-            // 1. Chuẩn bị trạng thái an toàn (Loading)
+            // 1. Chuẩn bị loading
             loader.style.display = 'flex';
+            loader.style.opacity = '1';
             iframe.style.opacity = '0';
             
-            // QUAN TRỌNG: Tắt class gây nặng (dark-mode-iframe) trong lúc load
-            iframe.classList.remove('dark-mode-iframe'); 
-            iframe.classList.remove('iframe-loaded');
-
-            // 2. Reset cứng (Clear Cache)
+            // 2. Clear cache
             iframe.src = "about:blank";
 
-            // 3. Tải link mới
+            // 3. Tải link (GIAO DIỆN GỐC)
             setTimeout(() => {
                 iframe.src = url;
-            }, 50); // Delay nhỏ để trình duyệt kịp xử lý việc tắt class
+            }, 50);
 
-            // 4. Khi tải xong -> Bật lại filter và hiển thị
+            // 4. Hiển thị khi load xong
             iframe.onload = () => {
-                // Bật class Filter (Nguyên nhân chính gây lag khi chuyển đổi)
-                iframe.classList.add('dark-mode-iframe'); 
-                // Bật click
-                iframe.classList.add('iframe-loaded');
-                
                 loader.style.display = 'none';
                 iframe.style.opacity = '1';
             };
