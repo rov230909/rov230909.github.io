@@ -243,14 +243,11 @@
             border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         .close-btn:hover { background: var(--secondary); transform: rotate(90deg); }
-        
-        /* --- Iframe Fix (Cho phép lướt trên modal body) --- */
         .iframe-wrapper { 
             width: 100%; 
             height: auto; 
             min-height: 80vh; /* Đảm bảo đủ cao để cuộn */
             position: relative;
-            /* Xóa overflow: hidden để modal-body chịu trách nhiệm cuộn */
         }
         iframe { 
             width: 100%; 
