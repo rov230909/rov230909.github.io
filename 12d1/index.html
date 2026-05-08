@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>12D1 - Hệ Thống Xem Điểm</title>
+<link rel="icon" href="11d1.jpeg" type="image/png">
+<meta property="og:image" content="11d1.jpeg">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    
+:root { 
+    --primary: #00f2ea; 
+    --secondary: #ff0055; 
+    --accent: #7000ff; 
+    --bg-dark: #050511; 
+    --bg-darker: #020205; 
+    --glass-border: rgba(255, 255, 255, 0.08); 
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --text-main: #ffffff; 
+    --text-muted: #8b9bb4; 
+    --success: #00ff9d;
+    --glow-primary: rgba(0, 242, 234, 0.3);
+    --glow-secondary: rgba(255, 0, 85, 0.3);
+}
+
+/* --- FIX SCROLLBAR & SCROLL BEHAVIOR --- */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    outline: none; 
+    -webkit-tap-highlight-color: transparent;
+}
+
+body { 
+    font-family: 'Outfit', sans-serif; 
+    background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, #0a0a20 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: var(--text-main); 
+    position: relative;
+}
+
+/* Ẩn thanh cuộn trên mọi trình duyệt */
+::-webkit-scrollbar { display: none; }
+html, body {
+    -ms-overflow-style: none;  /* IE và Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.bg-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-darker);
+    z-index: -10;
+    pointer-events: none;
+}
+
+/* Animated Background Orbs */
+.bg-orb { 
+    position: fixed; 
+    border-radius: 50%; 
+    filter: blur(90px); 
+    z-index: -5; 
+    opacity: 0.5; 
+    animation: floatOrb 20s infinite alternate ease-in-out; 
+    pointer-events: none;
+}
+
+.orb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); animation-delay: 0s; }
+.orb-2 { bottom: -20%; right: -20%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); animation-delay: -7s; }
+.orb-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, var(--secondary) 0%, transparent 70%); animation-delay: -14s; transform: translate(-50%, -50%); }
+
+.particle {
+    position: fixed; width: 4px; height: 4px; background: var(--primary); border-radius: 50%;
+    pointer-events: none; animation: floatParticle 15s infinite linear; opacity: 0.3; z-index: -4; will-change: transform;
+}
+@keyframes floatParticle { 0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.5; } 90% { opacity: 0.5; } 100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; } }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; padding-bottom: 120px; position: relative; z-index: 1; }
+
+header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: relative; }
+.logo-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
+.logo-decoration { position: absolute; top: 50%; left: 50%; width: 140%; height: 120%; transform: translate(-50%, -50%); z-index: -1; pointer-events: none; }
+.logo-shape { position: absolute; border-radius: 20px; border: 2px solid transparent; }
+.shape-1 { top: 0; left: 0; right: 0; bottom: 0; border-color: rgba(0, 242, 234, 0.15); animation: rotateShape 12s linear infinite; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; box-shadow: 0 0 30px rgba(0, 242, 234, 0.1); }
+.shape-2 { top: 8px; left: 8px; right: 8px; bottom: 8px; border-color: rgba(255, 0, 85, 0.15); animation: rotateShape 18s linear infinite reverse; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; box-shadow: 0 0 30px rgba(255, 0, 85, 0.1); }
+
+.class-title { font-size: 6rem; line-height: 1; font-weight: 900; letter-spacing: -3px; background: linear-gradient(135deg, #ffffff 0%, var(--primary) 50%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 30px rgba(0, 242, 234, 0.4)); position: relative; z-index: 2; animation: titlePulse 3s ease-in-out infinite; }
+.class-title::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-20deg); animation: textShine 5s infinite; pointer-events: none; }
+.sub-title { font-size: 1.2rem; color: var(--text-muted); margin-top: 10px; font-weight: 500; letter-spacing: 6px; text-transform: uppercase; position: relative; z-index: 2; animation: fadeInUp 0.8s ease-out 0.3s both; }
+
+.controls-wrapper { display: flex; flex-direction: column; gap: 20px; margin-bottom: 50px; align-items: center; animation: fadeInUp 0.8s ease-out 0.4s both; }
+.search-box { position: relative; width: 100%; max-width: 500px; }
+.search-box input { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--glass-border); padding: 16px 50px 16px 20px; border-radius: 50px; color: white; font-size: 1rem; font-family: inherit; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); }
+.search-box input:focus { border-color: var(--primary); box-shadow: 0 0 40px rgba(0, 242, 234, 0.2), inset 0 0 20px rgba(0, 242, 234, 0.05); background: rgba(0,0,0,0.7); transform: scale(1.02); }
+.search-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: all 0.3s; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.search-icon svg { width: 20px; height: 20px; stroke-width: 2; transition: transform 0.3s; }
+.search-box input:focus ~ .search-icon { color: var(--primary); transform: translateY(-50%) scale(1.1); }
+
+.term-switcher { display: flex; justify-content: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 50px; border: 1px solid var(--glass-border); backdrop-filter: blur(15px); }
+.term-btn { background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 12px 30px; border-radius: 40px; cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+.term-btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: var(--primary); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; opacity: 0.1; z-index: -1; }
+.term-btn:hover::before { width: 300px; height: 300px; }
+.term-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+.term-btn.active { color: var(--bg-dark); background: var(--primary); border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 242, 234, 0.4); transform: translateY(-2px); }
+.term-btn:active { transform: translateY(0) scale(0.98); }
+
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 60px; }
+.stat-card { background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid var(--glass-border); padding: 25px; border-radius: 24px; position: relative; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(15px); animation: fadeInUp 0.8s ease-out 0.5s both; transform: translateZ(0); }
+.stat-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--primary); box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(0, 242, 234, 0.1); }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0.6; transform: translateX(-100%); transition: transform 0.6s; }
+.stat-card:hover::before { transform: translateX(100%); }
+.stat-value { font-size: 3.2rem; font-weight: 700; color: var(--text-main); font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; line-height: 1.1; background: linear-gradient(to bottom, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: all 0.3s; }
+.stat-card:hover .stat-value { transform: scale(1.05); }
+.stat-label { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px; font-weight: 600; }
+
+/* --- CHIP LOADER STYLES --- */
+.pro-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 5, 17, 0.95);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(20px);
+}
+.loader { width: 100%; max-width: 400px; }
+.loader svg { width: 100%; height: auto; }
+.trace-bg { stroke: #252525; stroke-width: 1.8; fill: none; }
+.trace-flow { stroke-width: 1.8; fill: none; stroke-dasharray: 40 400; stroke-dashoffset: 438; filter: drop-shadow(0 0 6px currentColor); animation: flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite; }
+.blue2 { stroke: var(--secondary); color: var(--secondary); }
+.blue { stroke: var(--primary); color: var(--primary); }
+@keyframes flow { to { stroke-dashoffset: 0; } }
+/* ------------------------------- */
+
+.section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; animation: fadeInUp 0.8s ease-out 0.8s both; flex-wrap: wrap; }
+.section-title span { padding: 8px 18px; background: var(--secondary); border-radius: 25px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3); white-space: nowrap; }
+.section-title span:hover { filter: brightness(1.2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 0, 85, 0.4); }
+
+.ranking-container { background: rgba(20, 20, 35, 0.5); border-radius: 24px; padding: 8px; border: 1px solid var(--glass-border); margin-bottom: 60px; position: relative; min-height: 300px; backdrop-filter: blur(25px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+.ranking-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+.ranking-table th { padding: 18px 20px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+.ranking-table td { background: rgba(255, 255, 255, 0.03); padding: 18px 20px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.ranking-table tr:hover td { background: rgba(255, 255, 255, 0.08); transform: scale(1.02) translateX(5px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+.ranking-table td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; border-left: 1px solid var(--glass-border); }
+.ranking-table td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; font-weight: 800; border-right: 1px solid var(--glass-border); }
+
+.rank-badge { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; font-style: italic; font-family: 'Outfit'; transition: all 0.3s; }
+.rank-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.4); animation: glowPulse 2s ease-in-out infinite; }
+.rank-2 { background: linear-gradient(135deg, #e0e0e0, #ffffff); color: #333; box-shadow: 0 0 15px rgba(224, 224, 224, 0.3); }
+.rank-3 { background: linear-gradient(135deg, #cd7f32, #a05a2c); color: #fff; box-shadow: 0 0 15px rgba(205, 127, 50, 0.3); }
+.rank-other { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--glass-border); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding-bottom: 20px; }
+.student-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px 15px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; will-change: transform; backface-visibility: hidden; }
+.student-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0, 242, 234, 0.1), transparent); transition: left 0.6s; }
+.student-card:hover::before { left: 100%; }
+.student-card:hover { transform: translateY(-12px) scale(1.05); border-color: var(--primary); box-shadow: 0 20px 50px rgba(0,242,234,0.15); }
+.avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 18px; background: linear-gradient(135deg, #222, #111); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; border: 3px solid var(--glass-border); overflow: hidden; transition: all 0.4s; position: relative; }
+.student-card:hover .avatar { transform: scale(1.1) rotate(5deg); border-color: var(--primary); box-shadow: 0 0 30px rgba(0, 242, 234, 0.3); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.default-avatar { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+.st-name { font-size: 0.95rem; font-weight: 600; color: #fff; line-height: 1.4; transition: color 0.3s; }
+.student-card:hover .st-name { color: var(--primary); }
+
+/* MODAL: Đảm bảo không chặn khi đóng */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+.modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+.modal-box { background: linear-gradient(180deg, #0f1016 0%, #0a0a15 100%); width: 92%; max-width: 900px; height: 90vh; border-radius: 32px; border: 1px solid var(--glass-border); box-shadow: 0 0 80px rgba(0,0,0,0.9), inset 0 0 60px rgba(255,255,255,0.02); display: flex; flex-direction: column; overflow: hidden; transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+.modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+.modal-header { padding: 25px 35px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); flex-shrink: 0; z-index: 10; }
+.modal-body { flex: 1; padding: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; background: #000; height: 100%; }
+.modal-title { font-weight: 700; color: var(--primary); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
+.close-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 24px; }
+.close-btn:hover { background: var(--secondary); transform: rotate(90deg) scale(1.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); }
+.iframe-wrapper { width: 100%; height: auto; min-height: 80vh; position: relative; background-color: #000; }
+iframe { width: 100%; height: 100vh; border: none; display: block; }
+.dark-mode-iframe { filter: invert(0.92) hue-rotate(180deg) contrast(0.9); }
+.list-item { display: flex; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 15px; background: rgba(255,255,255,0.04); border-radius: 20px; border-left: 4px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); }
+.list-item:hover { background: rgba(255,255,255,0.08); border-left-color: var(--primary); transform: translateX(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.tag { background: rgba(255,255,255,0.05); padding: 10px 18px; border-radius: 15px; font-size: 0.9rem; border: 1px solid var(--glass-border); margin-right: 8px; margin-bottom: 8px; display: inline-block; transition: all 0.3s; }
+.tag:hover { background: rgba(0, 242, 234, 0.1); border-color: var(--primary); transform: translateY(-2px); }
+
+/* Animations */
+@keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40px, 60px) scale(1.1); } 100% { transform: translate(-20px, -30px) scale(0.9); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rotateShape { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes textShine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+@keyframes titlePulse { 0%, 100% { filter: drop-shadow(0 0 30px rgba(0, 242, 234, 0.4)); } 50% { filter: drop-shadow(0 0 50px rgba(0, 242, 234, 0.7)); } }
+@keyframes glowPulse { 0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.4); } 50% { box-shadow: 0 0 35px rgba(255,215,0,0.7); } }
+
+@media (max-width: 768px) {
+    .class-title { font-size: 4rem; letter-spacing: -1px; }
+    .sub-title { letter-spacing: 3px; font-size: 0.9rem; }
+    .logo-decoration { width: 110%; height: 110%; }
+    .modal-box { width: 100%; height: 100%; border-radius: 0; }
+    .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { width: 50%; }
+    .stat-value { font-size: 2.5rem; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .student-card { padding: 20px 10px; }
+    .avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+<div id="particles"></div>
+
+<div class="container">
+    <header>
+        <div class="logo-wrapper">
+            <div class="logo-decoration">
+                <div class="logo-shape shape-1"></div>
+                <div class="logo-shape shape-2"></div>
+            </div>
+            <div class="class-title">12D1</div>
+        </div>
+        <div class="sub-title">Năm Học 2025 - 2026</div>
+    </header>
+
+    <div class="controls-wrapper">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm học sinh..." onkeyup="filterStudents()">
+            <div class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+        </div>
+        <div class="term-switcher">
+            <button class="term-btn" onclick="switchTerm(1)" data-term="1">Học Kỳ 1</button>
+            <button class="term-btn active" onclick="switchTerm(2)" data-term="2">Học Kỳ 2</button>
+            <button class="term-btn" onclick="switchTerm(0)" data-term="0">Cả Năm</button>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-value" id="totalStudents">0</div>
+            <div class="stat-label">Học Sinh Có Điểm</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="avgClassScore">0.0</div>
+            <div class="stat-label">Điểm TB Cả Lớp</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="topStudentName" style="font-size: 1.8rem; line-height: 1.5;">...</div>
+            <div class="stat-label">Top 1 Lớp</div>
+        </div>
+    </div>
+
+    <section id="ranking">
+        <div class="section-title">
+            Bảng Xếp Hạng 
+            <span onclick="openModal('modalSubject')">Top 1 Môn</span>
+            <span onclick="openModal('modalClassification')" style="background: var(--primary); color:black;">Xếp Loại</span>
+        </div>
+
+        <div class="ranking-container">
+            <div id="rankingLoading" class="pro-loader">
+                <div class="loader">
+                    <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#2d2d2d"></stop>
+                                <stop offset="100%" stop-color="#0f0f0f"></stop>
+                            </linearGradient>
+                            <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#eeeeee"></stop>
+                                <stop offset="100%" stop-color="#888888"></stop>
+                            </linearGradient>
+                            <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0">
+                                <stop offset="0%" stop-color="#bbbbbb"></stop>
+                                <stop offset="50%" stop-color="#888888"></stop>
+                                <stop offset="100%" stop-color="#555555"></stop>
+                            </linearGradient>
+                        </defs>
+                        <g id="traces">
+                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
+                            <path d="M100 100 H200 V210 H326" class="trace-flow blue2"></path>
+                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
+                            <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
+                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
+                            <path d="M60 260 H150 V250 H326" class="trace-flow blue2"></path>
+                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
+                            <path d="M100 350 H200 V270 H326" class="trace-flow blue"></path>
+                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
+                            <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
+                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
+                            <path d="M740 160 H580 V230 H474" class="trace-flow blue2"></path>
+                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
+                            <path d="M720 250 H590 V250 H474" class="trace-flow blue"></path>
+                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
+                            <path d="M680 340 H570 V270 H474" class="trace-flow blue2"></path>
+                        </g>
+                        <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
+                        <g><rect x="322" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect></g>
+                        <g><rect x="470" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="470" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="470" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="470" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect></g>
+                        <text id="loaderText" x="400" y="240" font-family="Arial, sans-serif" font-size="22" fill="url(#textGradient)" text-anchor="middle" alignment-baseline="middle">ĐANG TẢI...</text>
+                        <circle cx="100" cy="100" r="5" fill="black"></circle><circle cx="80" cy="180" r="5" fill="black"></circle><circle cx="60" cy="260" r="5" fill="black"></circle><circle cx="100" cy="350" r="5" fill="black"></circle>
+                        <circle cx="700" cy="90" r="5" fill="black"></circle><circle cx="740" cy="160" r="5" fill="black"></circle><circle cx="720" cy="250" r="5" fill="black"></circle><circle cx="680" cy="340" r="5" fill="black"></circle>
+                    </svg>
+                </div>
+            </div>
+            <table class="ranking-table" style="display:none;" id="rankingTable">
+                <thead>
+                    <tr>
+                        <th style="width: 10%">#</th>
+                        <th style="width: 60%">Họ và Tên</th>
+                        <th style="width: 30%; text-align:right;">Điểm TB</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="grid">
+        <div class="section-title">Danh Sách Lớp</div>
+        <div class="grid" id="studentGrid"></div>
+    </section>
+
+    <footer style="text-align:center; margin-top:60px; color:var(--text-muted); font-size:0.8rem; opacity: 0.7;">
+        <p>Designed by Thạch Mô Ra (Rov) ©2026</p>
+    </footer>
+</div>
+
+<div class="modal-overlay" id="modalGrades">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title" id="gradeModalTitle">Hồ Sơ Học Sinh</div>
+            <button class="close-btn" onclick="closeModal('modalGrades')">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="iframeLoader" class="pro-loader">
+                <div class="loader">
+                    <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="chipGradient2" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#2d2d2d"></stop>
+                                <stop offset="100%" stop-color="#0f0f0f"></stop>
+                            </linearGradient>
+                            <linearGradient id="textGradient2" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#eeeeee"></stop>
+                                <stop offset="100%" stop-color="#888888"></stop>
+                            </linearGradient>
+                            <linearGradient id="pinGradient2" x1="1" y1="0" x2="0" y2="0">
+                                <stop offset="0%" stop-color="#bbbbbb"></stop>
+                                <stop offset="50%" stop-color="#888888"></stop>
+                                <stop offset="100%" stop-color="#555555"></stop>
+                            </linearGradient>
+                        </defs>
+                        <g id="traces2">
+                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
+                            <path d="M100 100 H200 V210 H326" class="trace-flow blue2"></path>
+                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
+                            <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
+                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
+                            <path d="M60 260 H150 V250 H326" class="trace-flow blue2"></path>
+                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
+                            <path d="M100 350 H200 V270 H326" class="trace-flow blue"></path>
+                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
+                            <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
+                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
+                            <path d="M740 160 H580 V230 H474" class="trace-flow blue2"></path>
+                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
+                            <path d="M720 250 H590 V250 H474" class="trace-flow blue"></path>
+                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
+                            <path d="M680 340 H570 V270 H474" class="trace-flow blue2"></path>
+                        </g>
+                        <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient2)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
+                        <g><rect x="322" y="205" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="322" y="225" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="322" y="245" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="322" y="265" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect></g>
+                        <g><rect x="470" y="205" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="470" y="225" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="470" y="245" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="470" y="265" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect></g>
+                        <text id="loaderTextIframe" x="400" y="240" font-family="Arial, sans-serif" font-size="22" fill="url(#textGradient2)" text-anchor="middle" alignment-baseline="middle">LOADING...</text>
+                        <circle cx="100" cy="100" r="5" fill="black"></circle><circle cx="80" cy="180" r="5" fill="black"></circle><circle cx="60" cy="260" r="5" fill="black"></circle><circle cx="100" cy="350" r="5" fill="black"></circle>
+                        <circle cx="700" cy="90" r="5" fill="black"></circle><circle cx="740" cy="160" r="5" fill="black"></circle><circle cx="720" cy="250" r="5" fill="black"></circle><circle cx="680" cy="340" r="5" fill="black"></circle>
+                    </svg>
+                </div>
+            </div>
+            <div class="iframe-wrapper">
+                <iframe id="gradeIframe" class="dark-mode-iframe" style="opacity:0; transition: opacity 0.5s;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalSubject">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">Danh Sách Nhất Môn</div>
+            <button class="close-btn" onclick="closeModal('modalSubject')">×</button>
+        </div>
+        <div class="modal-body" id="subjectList" style="padding: 25px;"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalClassification">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">Thống Kê Xếp Loại</div>
+            <button class="close-btn" onclick="closeModal('modalClassification')">×</button>
+        </div>
+        <div class="modal-body" id="classList" style="padding: 25px;"></div>
+    </div>
+</div>
+
+<script>
+function createParticles() {
+    const container = document.getElementById('particles');
+    const particleCount = 30;
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        const colors = ['#00f2ea', '#ff0055', '#7000ff'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        container.appendChild(particle);
+    }
+}
+document.addEventListener('DOMContentLoaded', createParticles);
+
+// ID Lớp mới: 5003408147
+const BASE_API = "https://s19.vnedu.vn/v3/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003408147&session_id=63abe5a2-5d20-4713-b68c-e1a143d93ecd&device_id=b3a20f79-b487-3d7b-b3af-8768248f4ac2&token=1169bbf7c9334ed25b99b5debd96ea8c&nam_hoc=2025";
+
+// Danh sách học sinh 12D1
+const students = [
+    {name:"Kim Tuyết Anh",id:"3928746001"},{name:"Lâm Tiến Anh",id:"3928746003"},{name:"Nguyễn Hoàng Duy",id:"3928746004"},{name:"Châu Bảo Hân",id:"3928746005"},{name:"Phạm Ngọc Hân",id:"3928746009"},{name:"Trịnh Ngọc Hân",id:"3928746013"},
+    {name:"Thái Hồng Hoa",id:"3928746021"},{name:"Kim Lâm Quốc Hưng",id:"3928746028"},{name:"Kim Văn Khải",id:"3928746034"},{name:"Nguyễn Đăng Khoa",id:"3928746042"},{name:"Huỳnh Trung Kiên",id:"3928746051"},{name:"Nguyễn Thị Kim Linh",id:"3928746071"},
+    {name:"Diệp Gia Luân",id:"3928746080"},{name:"Thạch Thị Si Nal",id:"3928746088"},{name:"Lâm Thảo Nga",id:"3928746093"},{name:"Lâm Thảo Ngân",id:"3928746102"},{name:"Trà Thị Mỹ Ngân",id:"3928746111"},{name:"Dương Quốc Nghĩa",id:"3928746123"},
+    {name:"Thạch Hoàng Phong",id:"3928746141"},{name:"Huỳnh Lê Phi Phụng",id:"3928746150"},{name:"Trần Thị Ngọc Thảo",id:"3928746157"},{name:"Trịnh Thu Thảo",id:"3928746165"},{name:"Huỳnh Thị Thanh Thúy",id:"3928746175"},{name:"Lâm Anh Thư",id:"3928746182"},
+    {name:"Lý Thị Anh Thư",id:"3928746191"},{name:"Nguyễn Thị Anh Thư",id:"3928746199"},{name:"Trần Hồng Thư",id:"3928746206"},{name:"Trương Minh Thư",id:"3928746211"},{name:"Thạch Bảo Trâm",id:"3928746222"},{name:"Dương Thị Ngọc Trân",id:"3928746228"},
+    {name:"Lâm Thị Tú Trinh",id:"3928746237"},{name:"Phạm Kim Tuyền",id:"3928746248"},{name:"Trần Thanh Tuyền",id:"3928746256"},{name:"Nguyễn Thị Kim Tuyến",id:"3928746263"},{name:"Nguyễn Thị Ngọc Tuyết",id:"3928746270"},{name:"Trương Duy Tường",id:"3928746274"},
+    {name:"Châu Hạ Vy",id:"3928746279"},{name:"Hồng Thị Như Ý",id:"3928746285"},{name:"Châu Bảo Yến",id:"3928746292"},{name:"Lý Thanh Sơn",id:"3928746300"}
+];
+
+const MAIN_SUBJECTS = ["Toán học","Vật lí","Tin học","Ngữ văn","Lịch sử","Địa lí","Ngoại ngữ","Giáo dục quốc phòng và an ninh","Giáo dục kinh tế và pháp luật"];
+
+let currentTerm = 2;
+let studentsData = [];
+let avatarMap = {};
+let isFetching = false; 
+
+const fmt = (num) => parseFloat(num).toFixed(1);
+
+function animateValue(id, start, end, duration, isFloat) {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+        const val = easeOutCubic * (end - start) + start;
+        obj.innerHTML = isFloat ? val.toFixed(1) : Math.floor(val);
+        if (progress < 1) { window.requestAnimationFrame(step); } else { obj.innerHTML = isFloat ? end.toFixed(1) : end; }
+    };
+    window.requestAnimationFrame(step);
+}
+
+async function fetchStudentData(student) {
+    try {
+        const url = `${BASE_API}&hoc_ky_id=${currentTerm}&hoc_sinh_id=${student.id}`;
+        const res = await fetch(url, { credentials: 'omit' });
+        if (!res.ok) return { ...student, error: true };
+        const text = await res.text();
+        const doc = new DOMParser().parseFromString(text, 'text/html');
+        const table = doc.querySelector('.table-point-content .table') || doc.querySelector('.table');
+        if (!table) return { ...student, error: true };
+
+        const rows = table.querySelectorAll('tbody tr');
+        const headers = Array.from(table.querySelectorAll('thead th, thead td')).map(th => th.textContent.trim().toLowerCase());
+        let tbmColIndex = headers.findIndex(h => h.includes('tb') || h.includes('trung bình'));
+        if (tbmColIndex === -1) tbmColIndex = headers.length - 1;
+
+        let totalScore = 0;
+        let subjectCount = 0;
+        let minScore = 10;
+        let subjectScores = {};
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td, th');
+            if (cells.length <= tbmColIndex) return;
+            const subjName = cells[0].textContent.trim();
+            if (!subjName || subjName.includes('TB') || subjName.includes('Trung bình') || subjName.includes('Tổng')) return;
+
+            let cleanSubj = subjName;
+            if (subjName.includes('quốc phòng')) cleanSubj = "Giáo dục quốc phòng và an ninh";
+            if (subjName.includes('kinh tế')) cleanSubj = "Giáo dục kinh tế và pháp luật";
+
+            const valStr = cells[tbmColIndex]?.textContent.trim() || '';
+            const val = parseFloat(valStr.replace(/[^0-9.]/g, ''));
+
+            if (!isNaN(val) && val >= 0 && val <= 10) {
+                totalScore += val;
+                subjectCount++;
+                if (val < minScore) minScore = val;
+                if (MAIN_SUBJECTS.includes(cleanSubj)) subjectScores[cleanSubj] = val;
+            }
+        });
+
+        if (subjectCount === 0) return { ...student, error: true };
+
+        return { ...student, avg: parseFloat((totalScore / subjectCount).toFixed(2)), minScore: minScore, subjectScores: subjectScores, totalSubjectCount: subjectCount };
+    } catch (err) { return { ...student, error: true }; }
+}
+
+function switchTerm(term) {
+    if (isFetching || currentTerm === term) return;
+    currentTerm = term;
+    document.querySelectorAll('.term-btn').forEach(btn => { 
+        btn.classList.remove('active'); 
+        if (btn.getAttribute('data-term') == term) btn.classList.add('active'); 
+    });
+    document.getElementById('rankingLoading').style.display = 'flex';
+    document.getElementById('rankingTable').style.display = 'none';
+    document.getElementById('rankingBody').innerHTML = '';
+    document.getElementById('loaderText').textContent = "ĐANG CẬP NHẬT DỮ LIỆU...";
+    initApp();
+}
+
+async function initApp() {
+    isFetching = true;
+    if (Object.keys(avatarMap).length === 0) {
+        try { const avtRes = await fetch('avt.json'); if (avtRes.ok) avatarMap = await avtRes.json(); } catch (e) { }
+    }
+    renderGrid();
+    const promises = students.map(s => fetchStudentData(s));
+    const results = await Promise.all(promises);
+    studentsData = results.filter(r => !r.error);
+    updateStats();
+    renderRanking();
+    document.getElementById('rankingLoading').style.display = 'none';
+    document.getElementById('rankingTable').style.display = 'table';
+    isFetching = false;
+}
+
+function renderGrid() {
+    const grid = document.getElementById('studentGrid');
+    grid.innerHTML = '';
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = students.filter(s => s.name.toLowerCase().includes(query));
+    if(!isFetching) document.getElementById('totalStudents').textContent = studentsData.length;
+
+    const frag = document.createDocumentFragment();
+    filtered.forEach((s, index) => {
+        const card = document.createElement('div');
+        card.className = 'student-card';
+        const avatarUrl = avatarMap[s.name];
+        const initials = s.name.split(' ').pop().charAt(0).toUpperCase();
+        let avatarHtml;
+        if (avatarUrl) { avatarHtml = `<img src="${avatarUrl}" alt="${s.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`; }
+        else { avatarHtml = `<div class="default-avatar" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">${initials}</div>`; }
+        card.style.animation = `fadeInUp 0.5s ease-out ${index * 0.05}s both`;
+        card.innerHTML = `<div class="avatar">${avatarHtml}</div><div class="st-name">${s.name}</div>`;
+        card.onclick = () => openGradeModal(s.name, `${BASE_API}&hoc_ky_id=${currentTerm}&hoc_sinh_id=${s.id}`);
+        frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+}
+
+function filterStudents() { renderGrid(); }
+
+function updateStats() {
+    if (studentsData.length === 0) {
+        document.getElementById('totalStudents').textContent = "0";
+        document.getElementById('avgClassScore').textContent = "0.0";
+        document.getElementById('topStudentName').textContent = "Chưa có";
+        return;
+    }
+    const totalAvg = studentsData.reduce((sum, s) => sum + s.avg, 0);
+    const classAvg = totalAvg / studentsData.length;
+    const top = studentsData.reduce((prev, current) => (prev.avg > current.avg) ? prev : current);
+    animateValue("totalStudents", 0, studentsData.length, 2000, false);
+    animateValue("avgClassScore", 0, classAvg, 2000, true);
+    document.getElementById('topStudentName').textContent = top.name;
+}
+
+function renderRanking() {
+    const sorted = [...studentsData].sort((a, b) => b.avg - a.avg);
+    const tbody = document.getElementById('rankingBody');
+    tbody.innerHTML = ''; 
+    if (sorted.length === 0) { 
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px; color:var(--text-muted)">Chưa có dữ liệu điểm vì chưa tổng kết TBM</td></tr>`; 
+        return; 
+    }
+    sorted.forEach((s, i) => {
+        const tr = document.createElement('tr');
+        tr.style.animation = `fadeInUp 0.5s forwards ${i * 0.08}s`;
+        tr.style.opacity = '0';
+        let rankClass = 'rank-other';
+        if (i === 0) rankClass = 'rank-1';
+        else if (i === 1) rankClass = 'rank-2';
+        else if (i === 2) rankClass = 'rank-3';
+        const scoreColor = s.avg >= 9 ? 'var(--success)' : (s.avg >= 8 ? '#00d4ff' : (s.avg >= 6.5 ? '#ff9500' : 'var(--text-main)'));
+        tr.innerHTML = `<td><span class="rank-badge ${rankClass}">${i + 1}</span></td><td><div style="font-weight:600; color:${i < 3 ? 'var(--primary)' : '#fff'}">${s.name}</div><div style="font-size:0.8rem; color:var(--text-muted)">${s.totalSubjectCount} môn</div></td><td style="text-align:right; font-family:'JetBrains Mono'; font-size:1.2rem; font-weight:700; color:${scoreColor}">${fmt(s.avg)}</td>`;
+        tr.onclick = () => openGradeModal(s.name, `${BASE_API}&hoc_ky_id=${currentTerm}&hoc_sinh_id=${s.id}`);
+        tbody.appendChild(tr);
+    });
+}
+
+function renderTopSubjects() {
+    const container = document.getElementById('subjectList');
+    container.innerHTML = '';
+    MAIN_SUBJECTS.forEach((subj, index) => {
+        let topStudent = null; let maxScore = -1;
+        studentsData.forEach(s => { if (s.subjectScores[subj] !== undefined && s.subjectScores[subj] > maxScore) { maxScore = s.subjectScores[subj]; topStudent = s; } });
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
+        const scoreColor = maxScore >= 9 ? 'var(--success)' : (maxScore >= 8 ? 'var(--primary)' : 'var(--text-main)');
+        item.innerHTML = `<div><div style="font-weight:700; color:#fff; font-size:1.05rem;">${subj}</div></div><div style="text-align:right"><div style="color:${scoreColor}; font-weight:700; font-size:1.3rem; font-family:'JetBrains Mono'">${topStudent ? fmt(maxScore) : '-'}</div><div style="font-size:0.95rem; color:var(--text-muted); font-weight:500">${topStudent ? topStudent.name : '--'}</div></div>`;
+        container.appendChild(item);
+    });
+}
+
+function renderClassification() {
+    const container = document.getElementById('classList');
+    container.innerHTML = '';
+    const categories = { 'Giỏi': [], 'Khá': [], 'Trung Bình': [], 'Yếu': [] };
+    studentsData.forEach(s => {
+        const avg = s.avg; const min = s.minScore;
+        if (avg >= 8.0 && min >= 6.5) categories['Giỏi'].push(s.name);
+        else if (avg >= 6.5 && min >= 5.0) categories['Khá'].push(s.name);
+        else if (avg >= 5.0) categories['Trung Bình'].push(s.name);
+        else categories['Yếu'].push(s.name);
+    });
+    let index = 0;
+    Object.keys(categories).forEach(type => {
+        const list = categories[type]; 
+        const group = document.createElement('div'); 
+        group.style.marginBottom = '25px';
+        group.style.animation = `fadeInUp 0.5s ease-out ${index * 0.15}s both`;
+        index++;
+        let color = '#fff'; 
+        if(type === 'Giỏi') color = 'var(--success)'; 
+        if(type === 'Khá') color = 'var(--primary)';
+        group.innerHTML = `<div style="font-weight:700; color:${color}; margin-bottom:12px; border-bottom:2px solid rgba(255,255,255,0.1); padding-bottom:8px; font-size:1.1rem;">${type} (${list.length})</div><div style="display:flex; flex-wrap:wrap; gap:10px">${list.map(name => `<span class="tag">${name}</span>`).join('')}</div>`;
+        container.appendChild(group);
+    });
+}
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (modalId === 'modalSubject') renderTopSubjects();
+    if (modalId === 'modalClassification') renderClassification();
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    if (modalId === 'modalGrades') {
+        document.getElementById('gradeIframe').src = '';
+        document.getElementById('gradeIframe').style.opacity = '0';
+        document.getElementById('iframeLoader').style.display = 'flex';
+    }
+}
+
+function openGradeModal(name, url) {
+    document.getElementById('gradeModalTitle').textContent = `Xem Điểm: ${name}`;
+    document.getElementById('iframeLoader').style.display = 'flex';
+    document.getElementById('gradeIframe').style.opacity = '0';
+    const iframe = document.getElementById('gradeIframe');
+    openModal('modalGrades');
+    setTimeout(() => { iframe.src = url; }, 100);
+    iframe.onload = () => { 
+        iframe.style.opacity = '1'; 
+        document.getElementById('iframeLoader').style.display = 'none'; 
+    };
+}
+
+window.addEventListener('load', () => { initApp(); });
+document.querySelectorAll('.modal-overlay').forEach(overlay => { overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay.id); }); });
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(modal => closeModal(modal.id));
+    }
+});
+</script>
+</body>
+</html>
