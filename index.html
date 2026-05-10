@@ -27,10 +27,9 @@
 html, body {
     height: 100%;
     width: 100%;
-    /* Cho phép lướt dọc, chặn lướt ngang */
     overflow-y: auto;
     overflow-x: hidden;
-    -webkit-overflow-scrolling: touch; /* Mượt mà trên iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 * { 
@@ -48,50 +47,22 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     color: var(--text-main); 
-    /* Bỏ min-height 100vh để html/body tự động tính toán chiều cao nội dung */
     position: relative;
 }
 
 /* Ẩn thanh cuộn trên mọi trình duyệt */
-::-webkit-scrollbar {
-    display: none;
-}
-html, body {
-    -ms-overflow-style: none;  /* IE và Edge */
-    scrollbar-width: none;  /* Firefox */
-}
-/* ---------------------------------------- */
+::-webkit-scrollbar { display: none; }
+html, body { -ms-overflow-style: none; scrollbar-width: none; }
 
-.bg-layer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-darker);
-    z-index: -10;
-    pointer-events: none; /* Đảm bảo nền không chặn sự kiện */
-}
+.bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-darker); z-index: -10; pointer-events: none; }
 
 /* Animated Background Orbs */
-.bg-orb { 
-    position: fixed; 
-    border-radius: 50%; 
-    filter: blur(90px); 
-    z-index: -5; 
-    opacity: 0.5; 
-    animation: floatOrb 20s infinite alternate ease-in-out; 
-    pointer-events: none;
-}
-
+.bg-orb { position: fixed; border-radius: 50%; filter: blur(90px); z-index: -5; opacity: 0.5; animation: floatOrb 20s infinite alternate ease-in-out; pointer-events: none; }
 .orb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); animation-delay: 0s; }
 .orb-2 { bottom: -20%; right: -20%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); animation-delay: -7s; }
 .orb-3 { top: 50%; left: 50%; width: 40vw; height: 40vw; background: radial-gradient(circle, var(--secondary) 0%, transparent 70%); animation-delay: -14s; transform: translate(-50%, -50%); }
 
-.particle {
-    position: fixed; width: 4px; height: 4px; background: var(--primary); border-radius: 50%;
-    pointer-events: none; animation: floatParticle 15s infinite linear; opacity: 0.3; z-index: -4; will-change: transform;
-}
+.particle { position: fixed; width: 4px; height: 4px; background: var(--primary); border-radius: 50%; pointer-events: none; animation: floatParticle 15s infinite linear; opacity: 0.3; z-index: -4; will-change: transform; }
 @keyframes floatParticle { 0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.5; } 90% { opacity: 0.5; } 100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; } }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 20px; padding-bottom: 120px; position: relative; z-index: 1; }
@@ -186,19 +157,43 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .st-name { font-size: 0.95rem; font-weight: 600; color: #fff; line-height: 1.4; transition: color 0.3s; }
 .student-card:hover .st-name { color: var(--primary); }
 
-/* MODAL: Đảm bảo không chặn khi đóng */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; /* Quan trọng: Click-through khi ẩn */ }
-.modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; /* Quan trọng: Bắt sự kiện khi hiện */ }
-.modal-box { background: linear-gradient(180deg, #0f1016 0%, #0a0a15 100%); width: 92%; max-width: 900px; height: 90vh; border-radius: 32px; border: 1px solid var(--glass-border); box-shadow: 0 0 80px rgba(0,0,0,0.9), inset 0 0 60px rgba(255,255,255,0.02); display: flex; flex-direction: column; overflow: hidden; transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+/* MODAL FIXES START */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+.modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+.modal-box { background: linear-gradient(180deg, #0f1016 0%, #0a0a15 100%); width: 92%; max-width: 900px; height: 90vh; border-radius: 32px; border: 1px solid var(--glass-border); box-shadow: 0 0 80px rgba(0,0,0,0.9), inset 0 0 60px rgba(255,255,255,0.02); display: flex; flex-direction: column; overflow: hidden; transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
 .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
-.modal-header { padding: 25px 35px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); flex-shrink: 0; z-index: 10; }
-.modal-body { flex: 1; padding: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; background: #000; height: 100%; }
-.modal-title { font-weight: 700; color: var(--primary); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
-.close-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 24px; }
+.modal-header { padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); flex-shrink: 0; z-index: 50; /* Đảm bảo header nằm trên body */ position: relative; }
+.modal-body { flex: 1; padding: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; background: #000; width: 100%; height: 100%; }
+.modal-title { font-weight: 700; color: var(--primary); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; pointer-events: none; /* Ngăn chặn chọn text làm khó bấm nút */ }
+
+/* FIX NÚT ĐÓNG (CLOSE BUTTON) */
+.close-btn { 
+    background: rgba(255,255,255,0.1); 
+    border: none; 
+    color: #fff; 
+    width: 44px; /* Tăng kích thước để dễ bấm */
+    height: 44px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    font-size: 28px;
+    position: relative; /* Quan trọng cho z-index */
+    z-index: 100; /* Z-index cao nhất để đảm bảo đè lên mọi thứ */
+    pointer-events: auto; /* Bắt buộc nhận sự kiện click */
+    line-height: 0;
+    padding: 0;
+}
 .close-btn:hover { background: var(--secondary); transform: rotate(90deg) scale(1.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); }
-.iframe-wrapper { width: 100%; height: auto; min-height: 80vh; position: relative; background-color: #000; }
-iframe { width: 100%; height: 100vh; border: none; display: block; }
+/* MODAL FIXES END */
+
+.iframe-wrapper { width: 100%; height: auto; min-height: 100%; position: relative; background-color: #000; display: flex; flex-direction: column; }
+/* FIX HEIGHT IFRAME: Sử dụng 100% thay vì 100vh để tránh đè lên header */
+iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
 .dark-mode-iframe { filter: invert(0.92) hue-rotate(180deg) contrast(0.9); }
+
 .list-item { display: flex; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 15px; background: rgba(255,255,255,0.04); border-radius: 20px; border-left: 4px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); }
 .list-item:hover { background: rgba(255,255,255,0.08); border-left-color: var(--primary); transform: translateX(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 .tag { background: rgba(255,255,255,0.05); padding: 10px 18px; border-radius: 15px; font-size: 0.9rem; border: 1px solid var(--glass-border); margin-right: 8px; margin-bottom: 8px; display: inline-block; transition: all 0.3s; }
@@ -222,6 +217,7 @@ iframe { width: 100%; height: 100vh; border: none; display: block; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
     .student-card { padding: 20px 10px; }
     .avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+    .close-btn { width: 40px; height: 40px; font-size: 24px; }
 }
 </style>
 </head>
@@ -354,7 +350,8 @@ iframe { width: 100%; height: 100vh; border: none; display: block; }
     <div class="modal-box">
         <div class="modal-header">
             <div class="modal-title" id="gradeModalTitle">Hồ Sơ Học Sinh</div>
-            <button class="close-btn" onclick="closeModal('modalGrades')">×</button>
+            <!-- Nút đóng với z-index cao và pointer-events rõ ràng -->
+            <button class="close-btn" onclick="closeModal('modalGrades')">&times;</button>
         </div>
         <div class="modal-body">
             <div id="iframeLoader" class="pro-loader">
@@ -413,7 +410,7 @@ iframe { width: 100%; height: 100vh; border: none; display: block; }
     <div class="modal-box">
         <div class="modal-header">
             <div class="modal-title">Danh Sách Nhất Môn</div>
-            <button class="close-btn" onclick="closeModal('modalSubject')">×</button>
+            <button class="close-btn" onclick="closeModal('modalSubject')">&times;</button>
         </div>
         <div class="modal-body" id="subjectList" style="padding: 25px;"></div>
     </div>
@@ -423,7 +420,7 @@ iframe { width: 100%; height: 100vh; border: none; display: block; }
     <div class="modal-box">
         <div class="modal-header">
             <div class="modal-title">Thống Kê Xếp Loại</div>
-            <button class="close-btn" onclick="closeModal('modalClassification')">×</button>
+            <button class="close-btn" onclick="closeModal('modalClassification')">&times;</button>
         </div>
         <div class="modal-body" id="classList" style="padding: 25px;"></div>
     </div>
@@ -666,7 +663,7 @@ function renderClassification() {
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Chặn scroll body khi mở modal
+    document.body.style.overflow = 'hidden';
     if (modalId === 'modalSubject') renderTopSubjects();
     if (modalId === 'modalClassification') renderClassification();
 }
@@ -674,7 +671,7 @@ function openModal(modalId) {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.classList.remove('active');
-    document.body.style.overflow = ''; // Phục hồi scroll body
+    document.body.style.overflow = '';
     if (modalId === 'modalGrades') {
         document.getElementById('gradeIframe').src = '';
         document.getElementById('gradeIframe').style.opacity = '0';
