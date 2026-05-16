@@ -1,0 +1,24 @@
+luanori-vue/
+├── public/
+│   └── static/
+│       └── logo.png          (thêm logo của bạn vào đây)
+├── src/
+│   ├── assets/
+│   │   └── main.css          (style chung)
+│   ├── components/
+│   │   ├── TopBar.vue        (thanh header)
+│   │   ├── BottomNav.vue     (thanh điều hướng dưới)
+│   │   ├── Modals.vue        (các modal dùng chung)
+│   │   └── BioPreview.vue    (component xem trước bio)
+│   ├── views/
+│   │   ├── HomePage.vue      (trang chủ)
+│   │   ├── TokenGenerator.vue (trang tạo token)
+│   │   ├── LongBio.vue       (trang bio dài)
+│   │   └── UniqueBio.vue     (trang bio độc đáo)
+│   ├── composables/
+│   │   └── useBioUtils.js    (các hàm xử lý bio)
+│   ├── App.vue
+│   └── main.js
+├── package.json
+├── vite.config.js
+└── index.html
