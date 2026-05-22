@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>11D1 - Hệ Thống Xem Điểm (Updated Logic)</title>
+<title>11D1 - Hệ Thống Xem Điểm</title>
 <link rel="icon" href="11d1.jpeg" type="image/png">
 <meta property="og:image" content="11d1.jpeg">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-
+    
 :root { 
     --primary: #00f2ea; 
     --secondary: #ff0055; 
@@ -137,7 +137,6 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .ranking-table tr:hover td { background: rgba(255, 255, 255, 0.08); transform: scale(1.02) translateX(5px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
 .ranking-table td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; border-left: 1px solid var(--glass-border); width: 10%; }
 .ranking-table td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; font-weight: 800; border-right: 1px solid var(--glass-border); width: 15%; text-align: right; }
-/* New column for Classification */
 .ranking-table td:nth-child(2) { width: 55%; }
 .ranking-table td:nth-child(3) { width: 20%; text-align: left; }
 
@@ -154,7 +153,7 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .badge-xs { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); border: 1px solid rgba(255,255,255,0.5); }
 .badge-g { background: rgba(0, 255, 157, 0.15); color: var(--success); border: 1px solid var(--success); }
 .badge-k { background: rgba(0, 242, 234, 0.15); color: var(--primary); border: 1px solid var(--primary); }
-.badge-y { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid var(--glass-border); }
+.badge-tb { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid var(--glass-border); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding-bottom: 20px; }
 .student-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px 15px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; will-change: transform; backface-visibility: hidden; }
@@ -370,7 +369,7 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
 <div class="modal-overlay" id="modalClassification">
     <div class="modal-box">
         <div class="modal-header">
-            <div class="modal-title">Thống Kê Xếp Loại (Mới)</div>
+            <div class="modal-title">Thống Kê Xếp Loại</div>
             <button class="close-btn" onclick="closeModal('modalClassification')">&times;</button>
         </div>
         <div class="modal-body" id="classList" style="padding: 25px;"></div>
@@ -478,11 +477,9 @@ async function fetchStudentData(student) {
 
 /* --- LOGIC XẾP LOẠI MỚI --- */
 function getStudentRankType(student) {
-    // Lấy danh sách điểm số từ các môn chính
     const scores = Object.values(student.subjectScores);
     if (scores.length === 0) return "Chưa có điểm";
 
-    // Đếm số lượng môn đạt từng ngưỡng
     let count_9 = 0, count_8 = 0, count_6_5 = 0, count_5 = 0;
 
     scores.forEach(s => {
@@ -510,8 +507,8 @@ function getStudentRankType(student) {
         if (allRemainingAbove5) return "Khá";
     }
 
-    // 4. Yếu: Mọi trường hợp còn lại
-    return "Yếu";
+    // 4. Trung Bình: Mọi trường hợp còn lại
+    return "Trung Bình";
 }
 /* ------------------------- */
 
@@ -587,7 +584,6 @@ function updateStats() {
 }
 
 function renderRanking() {
-    // Sắp xếp theo điểm TB giảm dần
     const sorted = [...studentsData].sort((a, b) => b.avg - a.avg);
     const tbody = document.getElementById('rankingBody');
     tbody.innerHTML = ''; 
@@ -604,9 +600,8 @@ function renderRanking() {
         else if (i === 1) rankClass = 'rank-2';
         else if (i === 2) rankClass = 'rank-3';
         
-        // Tính xếp loại theo luật mới
         const rankType = getStudentRankType(s);
-        let typeClass = 'badge-y';
+        let typeClass = 'badge-tb'; // Default cho Trung Bình
         if(rankType === "Xúc Sắc") typeClass = 'badge-xs';
         else if(rankType === "Giỏi") typeClass = 'badge-g';
         else if(rankType === "Khá") typeClass = 'badge-k';
@@ -645,7 +640,8 @@ function renderTopSubjects() {
 function renderClassification() {
     const container = document.getElementById('classList');
     container.innerHTML = '';
-    const categories = { 'Xúc Sắc': [], 'Giỏi': [], 'Khá': [], 'Yếu': [] };
+    // Đổi key "Yếu" thành "Trung Bình"
+    const categories = { 'Xúc Sắc': [], 'Giỏi': [], 'Khá': [], 'Trung Bình': [] };
     
     studentsData.forEach(s => {
         const type = getStudentRankType(s);
@@ -663,8 +659,8 @@ function renderClassification() {
         if(type === 'Xúc Sắc') color = 'var(--gold)'; 
         else if(type === 'Giỏi') color = 'var(--success)'; 
         else if(type === 'Khá') color = 'var(--primary)';
+        // Trung Bình giữ màu xám nhạt/mặc định
         
-        // Highlight đặc biệt cho nhóm Xúc Sắc
         let bgStyle = "rgba(255,255,255,0.02)";
         if(type === 'Xúc Sắc') {
             bgStyle = "linear-gradient(45deg, rgba(255, 215, 0, 0.1), transparent)";
