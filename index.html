@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>11D1 - Hệ Thống Xem Điểm</title>
+<title>11D1 - Hệ Thống Xem Điểm (Updated Logic)</title>
 <link rel="icon" href="11d1.jpeg" type="image/png">
 <meta property="og:image" content="11d1.jpeg">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -20,8 +20,10 @@
     --text-main: #ffffff; 
     --text-muted: #8b9bb4; 
     --success: #00ff9d;
+    --gold: #ffd700;
     --glow-primary: rgba(0, 242, 234, 0.3);
     --glow-secondary: rgba(255, 0, 85, 0.3);
+    --glow-gold: rgba(255, 215, 0, 0.4);
 }
 
 html, body {
@@ -50,13 +52,11 @@ body {
     position: relative;
 }
 
-/* Ẩn thanh cuộn trên mọi trình duyệt */
 ::-webkit-scrollbar { display: none; }
 html, body { -ms-overflow-style: none; scrollbar-width: none; }
 
 .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-darker); z-index: -10; pointer-events: none; }
 
-/* Animated Background Orbs */
 .bg-orb { position: fixed; border-radius: 50%; filter: blur(90px); z-index: -5; opacity: 0.5; animation: floatOrb 20s infinite alternate ease-in-out; pointer-events: none; }
 .orb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); animation-delay: 0s; }
 .orb-2 { bottom: -20%; right: -20%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); animation-delay: -7s; }
@@ -103,7 +103,7 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .stat-card:hover .stat-value { transform: scale(1.05); }
 .stat-label { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px; font-weight: 600; }
 
-/* --- CHIP LOADER STYLES --- */
+/* CHIP LOADER */
 .pro-loader {
     position: absolute;
     top: 0;
@@ -125,7 +125,6 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .blue2 { stroke: var(--secondary); color: var(--secondary); }
 .blue { stroke: var(--primary); color: var(--primary); }
 @keyframes flow { to { stroke-dashoffset: 0; } }
-/* ------------------------------- */
 
 .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; animation: fadeInUp 0.8s ease-out 0.8s both; flex-wrap: wrap; }
 .section-title span { padding: 8px 18px; background: var(--secondary); border-radius: 25px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3); white-space: nowrap; }
@@ -134,16 +133,28 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .ranking-container { background: rgba(20, 20, 35, 0.5); border-radius: 24px; padding: 8px; border: 1px solid var(--glass-border); margin-bottom: 60px; position: relative; min-height: 300px; backdrop-filter: blur(25px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
 .ranking-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
 .ranking-table th { padding: 18px 20px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
-.ranking-table td { background: rgba(255, 255, 255, 0.03); padding: 18px 20px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.ranking-table td { background: rgba(255, 255, 255, 0.03); padding: 18px 20px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); vertical-align: middle; }
 .ranking-table tr:hover td { background: rgba(255, 255, 255, 0.08); transform: scale(1.02) translateX(5px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
-.ranking-table td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; border-left: 1px solid var(--glass-border); }
-.ranking-table td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; font-weight: 800; border-right: 1px solid var(--glass-border); }
+.ranking-table td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; border-left: 1px solid var(--glass-border); width: 10%; }
+.ranking-table td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; font-weight: 800; border-right: 1px solid var(--glass-border); width: 15%; text-align: right; }
+/* New column for Classification */
+.ranking-table td:nth-child(2) { width: 55%; }
+.ranking-table td:nth-child(3) { width: 20%; text-align: left; }
 
 .rank-badge { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; font-style: italic; font-family: 'Outfit'; transition: all 0.3s; }
 .rank-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #fff; box-shadow: 0 0 20px rgba(255,215,0,0.4); animation: glowPulse 2s ease-in-out infinite; }
 .rank-2 { background: linear-gradient(135deg, #e0e0e0, #ffffff); color: #333; box-shadow: 0 0 15px rgba(224, 224, 224, 0.3); }
 .rank-3 { background: linear-gradient(135deg, #cd7f32, #a05a2c); color: #fff; box-shadow: 0 0 15px rgba(205, 127, 50, 0.3); }
 .rank-other { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--glass-border); }
+
+/* Classification Badges */
+.class-badge { 
+    display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; 
+}
+.badge-xs { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); border: 1px solid rgba(255,255,255,0.5); }
+.badge-g { background: rgba(0, 255, 157, 0.15); color: var(--success); border: 1px solid var(--success); }
+.badge-k { background: rgba(0, 242, 234, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+.badge-y { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border: 1px solid var(--glass-border); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding-bottom: 20px; }
 .student-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px 15px; text-align: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; will-change: transform; backface-visibility: hidden; }
@@ -157,40 +168,23 @@ header { text-align: center; margin-bottom: 50px; padding-top: 40px; position: r
 .st-name { font-size: 0.95rem; font-weight: 600; color: #fff; line-height: 1.4; transition: color 0.3s; }
 .student-card:hover .st-name { color: var(--primary); }
 
-/* MODAL FIXES START */
+/* MODAL */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .modal-box { background: linear-gradient(180deg, #0f1016 0%, #0a0a15 100%); width: 92%; max-width: 900px; height: 90vh; border-radius: 32px; border: 1px solid var(--glass-border); box-shadow: 0 0 80px rgba(0,0,0,0.9), inset 0 0 60px rgba(255,255,255,0.02); display: flex; flex-direction: column; overflow: hidden; transform: scale(0.8) translateY(50px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
 .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
-.modal-header { padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); flex-shrink: 0; z-index: 50; /* Đảm bảo header nằm trên body */ position: relative; }
+.modal-header { padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); flex-shrink: 0; z-index: 50; position: relative; }
 .modal-body { flex: 1; padding: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; background: #000; width: 100%; height: 100%; }
-.modal-title { font-weight: 700; color: var(--primary); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; pointer-events: none; /* Ngăn chặn chọn text làm khó bấm nút */ }
+.modal-title { font-weight: 700; color: var(--primary); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; pointer-events: none; }
 
-/* FIX NÚT ĐÓNG (CLOSE BUTTON) */
 .close-btn { 
-    background: rgba(255,255,255,0.1); 
-    border: none; 
-    color: #fff; 
-    width: 44px; /* Tăng kích thước để dễ bấm */
-    height: 44px; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    font-size: 28px;
-    position: relative; /* Quan trọng cho z-index */
-    z-index: 100; /* Z-index cao nhất để đảm bảo đè lên mọi thứ */
-    pointer-events: auto; /* Bắt buộc nhận sự kiện click */
-    line-height: 0;
-    padding: 0;
+    background: rgba(255,255,255,0.1); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 28px;
+    position: relative; z-index: 100; pointer-events: auto; line-height: 0; padding: 0;
 }
 .close-btn:hover { background: var(--secondary); transform: rotate(90deg) scale(1.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); }
-/* MODAL FIXES END */
 
 .iframe-wrapper { width: 100%; height: auto; min-height: 100%; position: relative; background-color: #000; display: flex; flex-direction: column; }
-/* FIX HEIGHT IFRAME: Sử dụng 100% thay vì 100vh để tránh đè lên header */
 iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
 .dark-mode-iframe { filter: invert(0.92) hue-rotate(180deg) contrast(0.9); }
 
@@ -218,6 +212,7 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
     .student-card { padding: 20px 10px; }
     .avatar { width: 60px; height: 60px; font-size: 1.5rem; }
     .close-btn { width: 40px; height: 40px; font-size: 24px; }
+    .ranking-table td:nth-child(3) { display: none; } /* Ẩn cột xếp loại trên mobile để gọn */
 }
 </style>
 </head>
@@ -265,7 +260,7 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
             <div class="stat-label">Điểm TB Cả Lớp</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value" id="topStudentName" style="font-size: 1.8rem; line-height: 1.5;">...</div>
+            <div class="stat-value" id="topStudentName" style="font-size: 1.5rem; line-height: 1.5;">...</div>
             <div class="stat-label">Top 1 Lớp</div>
         </div>
     </div>
@@ -274,7 +269,7 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
         <div class="section-title">
             Bảng Xếp Hạng 
             <span onclick="openModal('modalSubject')">Top 1 Môn</span>
-            <span onclick="openModal('modalClassification')" style="background: var(--primary); color:black;">Xếp Loại</span>
+            <span onclick="openModal('modalClassification')" style="background: var(--primary); color:black;">Thống Kê Loại</span>
         </div>
 
         <div class="ranking-container">
@@ -282,37 +277,19 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
                 <div class="loader">
                     <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#2d2d2d"></stop>
-                                <stop offset="100%" stop-color="#0f0f0f"></stop>
-                            </linearGradient>
-                            <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#eeeeee"></stop>
-                                <stop offset="100%" stop-color="#888888"></stop>
-                            </linearGradient>
-                            <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0">
-                                <stop offset="0%" stop-color="#bbbbbb"></stop>
-                                <stop offset="50%" stop-color="#888888"></stop>
-                                <stop offset="100%" stop-color="#555555"></stop>
-                            </linearGradient>
+                            <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d2d2d"></stop><stop offset="100%" stop-color="#0f0f0f"></stop></linearGradient>
+                            <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#eeeeee"></stop><stop offset="100%" stop-color="#888888"></stop></linearGradient>
+                            <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#bbbbbb"></stop><stop offset="50%" stop-color="#888888"></stop><stop offset="100%" stop-color="#555555"></stop></linearGradient>
                         </defs>
                         <g id="traces">
-                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
-                            <path d="M100 100 H200 V210 H326" class="trace-flow blue2"></path>
-                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
-                            <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
-                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
-                            <path d="M60 260 H150 V250 H326" class="trace-flow blue2"></path>
-                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
-                            <path d="M100 350 H200 V270 H326" class="trace-flow blue"></path>
-                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
-                            <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
-                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
-                            <path d="M740 160 H580 V230 H474" class="trace-flow blue2"></path>
-                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
-                            <path d="M720 250 H590 V250 H474" class="trace-flow blue"></path>
-                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
-                            <path d="M680 340 H570 V270 H474" class="trace-flow blue2"></path>
+                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path><path d="M100 100 H200 V210 H326" class="trace-flow blue2"></path>
+                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path><path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
+                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path><path d="M60 260 H150 V250 H326" class="trace-flow blue2"></path>
+                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path><path d="M100 350 H200 V270 H326" class="trace-flow blue"></path>
+                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path><path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
+                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path><path d="M740 160 H580 V230 H474" class="trace-flow blue2"></path>
+                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path><path d="M720 250 H590 V250 H474" class="trace-flow blue"></path>
+                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path><path d="M680 340 H570 V270 H474" class="trace-flow blue2"></path>
                         </g>
                         <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
                         <g><rect x="322" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect></g>
@@ -327,8 +304,9 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
                 <thead>
                     <tr>
                         <th style="width: 10%">#</th>
-                        <th style="width: 60%">Họ và Tên</th>
-                        <th style="width: 30%; text-align:right;">Điểm TB</th>
+                        <th style="width: 50%">Họ và Tên</th>
+                        <th style="width: 25%">Xếp Loại</th>
+                        <th style="width: 15%; text-align:right;">Điểm TB</th>
                     </tr>
                 </thead>
                 <tbody id="rankingBody"></tbody>
@@ -346,56 +324,27 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
     </footer>
 </div>
 
+<!-- Modal Grades -->
 <div class="modal-overlay" id="modalGrades">
     <div class="modal-box">
         <div class="modal-header">
             <div class="modal-title" id="gradeModalTitle">Hồ Sơ Học Sinh</div>
-            <!-- Nút đóng với z-index cao và pointer-events rõ ràng -->
             <button class="close-btn" onclick="closeModal('modalGrades')">&times;</button>
         </div>
         <div class="modal-body">
             <div id="iframeLoader" class="pro-loader">
                 <div class="loader">
                     <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="chipGradient2" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#2d2d2d"></stop>
-                                <stop offset="100%" stop-color="#0f0f0f"></stop>
-                            </linearGradient>
-                            <linearGradient id="textGradient2" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#eeeeee"></stop>
-                                <stop offset="100%" stop-color="#888888"></stop>
-                            </linearGradient>
-                            <linearGradient id="pinGradient2" x1="1" y1="0" x2="0" y2="0">
-                                <stop offset="0%" stop-color="#bbbbbb"></stop>
-                                <stop offset="50%" stop-color="#888888"></stop>
-                                <stop offset="100%" stop-color="#555555"></stop>
-                            </linearGradient>
-                        </defs>
-                        <g id="traces2">
-                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
-                            <path d="M100 100 H200 V210 H326" class="trace-flow blue2"></path>
-                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
-                            <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
-                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
-                            <path d="M60 260 H150 V250 H326" class="trace-flow blue2"></path>
-                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
-                            <path d="M100 350 H200 V270 H326" class="trace-flow blue"></path>
-                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
-                            <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
-                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
-                            <path d="M740 160 H580 V230 H474" class="trace-flow blue2"></path>
-                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
-                            <path d="M720 250 H590 V250 H474" class="trace-flow blue"></path>
-                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
-                            <path d="M680 340 H570 V270 H474" class="trace-flow blue2"></path>
-                        </g>
-                        <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient2)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
-                        <g><rect x="322" y="205" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="322" y="225" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="322" y="245" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="322" y="265" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect></g>
-                        <g><rect x="470" y="205" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="470" y="225" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="470" y="245" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect><rect x="470" y="265" width="8" height="10" fill="url(#pinGradient2)" rx="2"></rect></g>
-                        <text id="loaderTextIframe" x="400" y="240" font-family="Arial, sans-serif" font-size="22" fill="url(#textGradient2)" text-anchor="middle" alignment-baseline="middle">11D1</text>
-                        <circle cx="100" cy="100" r="5" fill="black"></circle><circle cx="80" cy="180" r="5" fill="black"></circle><circle cx="60" cy="260" r="5" fill="black"></circle><circle cx="100" cy="350" r="5" fill="black"></circle>
-                        <circle cx="700" cy="90" r="5" fill="black"></circle><circle cx="740" cy="160" r="5" fill="black"></circle><circle cx="720" cy="250" r="5" fill="black"></circle><circle cx="680" cy="340" r="5" fill="black"></circle>
+                        <path d="M100 100 H200 V210 H326" class="trace-bg"></path><path d="M100 100 H200 V210 H326" class="trace-flow blue2"></path>
+                        <path d="M80 180 H180 V230 H326" class="trace-bg"></path><path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
+                        <path d="M60 260 H150 V250 H326" class="trace-bg"></path><path d="M60 260 H150 V250 H326" class="trace-flow blue2"></path>
+                        <path d="M100 350 H200 V270 H326" class="trace-bg"></path><path d="M100 350 H200 V270 H326" class="trace-flow blue"></path>
+                        <path d="M700 90 H560 V210 H474" class="trace-bg"></path><path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
+                        <path d="M740 160 H580 V230 H474" class="trace-bg"></path><path d="M740 160 H580 V230 H474" class="trace-flow blue2"></path>
+                        <path d="M720 250 H590 V250 H474" class="trace-bg"></path><path d="M720 250 H590 V250 H474" class="trace-flow blue"></path>
+                        <path d="M680 340 H570 V270 H474" class="trace-bg"></path><path d="M680 340 H570 V270 H474" class="trace-flow blue2"></path>
+                        <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
+                        <text x="400" y="240" font-family="Arial" font-size="22" fill="#eee" text-anchor="middle">11D1</text>
                     </svg>
                 </div>
             </div>
@@ -406,6 +355,7 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
     </div>
 </div>
 
+<!-- Modal Top Subjects -->
 <div class="modal-overlay" id="modalSubject">
     <div class="modal-box">
         <div class="modal-header">
@@ -416,10 +366,11 @@ iframe { width: 100%; height: 100%; border: none; display: block; flex: 1; }
     </div>
 </div>
 
+<!-- Modal Classification -->
 <div class="modal-overlay" id="modalClassification">
     <div class="modal-box">
         <div class="modal-header">
-            <div class="modal-title">Thống Kê Xếp Loại</div>
+            <div class="modal-title">Thống Kê Xếp Loại (Mới)</div>
             <button class="close-btn" onclick="closeModal('modalClassification')">&times;</button>
         </div>
         <div class="modal-body" id="classList" style="padding: 25px;"></div>
@@ -436,13 +387,13 @@ function createParticles() {
         particle.style.left = Math.random() * 100 + '%';
         particle.style.animationDelay = Math.random() * 15 + 's';
         particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-        const colors = ['#00f2ea', '#ff0055', '#7000ff'];
+        const colors = ['#00f2ea', '#ff0055', '#7000ff', '#ffd700'];
         particle.style.background = colors[Math.floor(Math.random() * colors.length)];
         container.appendChild(particle);
     }
 }
 document.addEventListener('DOMContentLoaded', createParticles);
-                  //  https://app.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&hoc_sinh_id=5010454087&session_id=40c117b1-74df-4b8e-8129-d88671b8f45b&device_id=b3a20f79-b487-3d7b-b3af-8768248f4ac2&token=1169bbf7c9334ed25b99b5debd96ea8c&nam_hoc=2025&hoc_ky_id=2
+
 const BASE_API = "https://app.vnedu.vn/v5/?call=app.mobile.hocsinh.getSLLView&app_truong_id=601067905&lop_hoc_id=5003407987&session_id=40c117b1-74df-4b8e-8129-d88671b8f45b&device_id=b3a20f79-b487-3d7b-b3af-8768248f4ac2&token=1169bbf7c9334ed25b99b5debd96ea8c&nam_hoc=2025";
 
 const students = [
@@ -525,6 +476,45 @@ async function fetchStudentData(student) {
     } catch (err) { return { ...student, error: true }; }
 }
 
+/* --- LOGIC XẾP LOẠI MỚI --- */
+function getStudentRankType(student) {
+    // Lấy danh sách điểm số từ các môn chính
+    const scores = Object.values(student.subjectScores);
+    if (scores.length === 0) return "Chưa có điểm";
+
+    // Đếm số lượng môn đạt từng ngưỡng
+    let count_9 = 0, count_8 = 0, count_6_5 = 0, count_5 = 0;
+
+    scores.forEach(s => {
+        if (s >= 9) count_9++;
+        if (s >= 8) count_8++;
+        if (s >= 6.5) count_6_5++;
+        if (s >= 5) count_5++;
+    });
+
+    // 1. Xúc Sắc: 6 môn >= 9.0. Các môn còn lại > 8.0
+    if (count_9 >= 6) {
+        const allRemainingAbove8 = scores.every(s => s >= 9 || s > 8);
+        if (allRemainingAbove8) return "Xúc Sắc";
+    }
+
+    // 2. Giỏi: 6 môn >= 8.0. Các môn còn lại > 6.5
+    if (count_8 >= 6) {
+        const allRemainingAbove6_5 = scores.every(s => s >= 8 || s > 6.5);
+        if (allRemainingAbove6_5) return "Giỏi";
+    }
+
+    // 3. Khá: 6 môn >= 6.5. Các môn còn lại > 5.0
+    if (count_6_5 >= 6) {
+        const allRemainingAbove5 = scores.every(s => s >= 6.5 || s > 5.0);
+        if (allRemainingAbove5) return "Khá";
+    }
+
+    // 4. Yếu: Mọi trường hợp còn lại
+    return "Yếu";
+}
+/* ------------------------- */
+
 function switchTerm(term) {
     if (isFetching || currentTerm === term) return;
     currentTerm = term;
@@ -597,11 +587,12 @@ function updateStats() {
 }
 
 function renderRanking() {
+    // Sắp xếp theo điểm TB giảm dần
     const sorted = [...studentsData].sort((a, b) => b.avg - a.avg);
     const tbody = document.getElementById('rankingBody');
     tbody.innerHTML = ''; 
     if (sorted.length === 0) { 
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:30px; color:var(--text-muted)">Chưa có dữ liệu BXH vì chưa tổng kết TBM</td></tr>`; 
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:var(--text-muted)">Chưa có dữ liệu BXH vì chưa tổng kết TBM</td></tr>`; 
         return; 
     }
     sorted.forEach((s, i) => {
@@ -612,8 +603,25 @@ function renderRanking() {
         if (i === 0) rankClass = 'rank-1';
         else if (i === 1) rankClass = 'rank-2';
         else if (i === 2) rankClass = 'rank-3';
-        const scoreColor = s.avg >= 9 ? 'var(--success)' : (s.avg >= 8 ? '#00d4ff' : (s.avg >= 6.5 ? '#ff9500' : 'var(--text-main)'));
-        tr.innerHTML = `<td><span class="rank-badge ${rankClass}">${i + 1}</span></td><td><div style="font-weight:600; color:${i < 3 ? 'var(--primary)' : '#fff'}">${s.name}</div><div style="font-size:0.8rem; color:var(--text-muted)">${s.totalSubjectCount} môn</div></td><td style="text-align:right; font-family:'JetBrains Mono'; font-size:1.2rem; font-weight:700; color:${scoreColor}">${fmt(s.avg)}</td>`;
+        
+        // Tính xếp loại theo luật mới
+        const rankType = getStudentRankType(s);
+        let typeClass = 'badge-y';
+        if(rankType === "Xúc Sắc") typeClass = 'badge-xs';
+        else if(rankType === "Giỏi") typeClass = 'badge-g';
+        else if(rankType === "Khá") typeClass = 'badge-k';
+
+        const scoreColor = s.avg >= 9 ? 'var(--gold)' : (s.avg >= 8 ? 'var(--success)' : (s.avg >= 6.5 ? '#00d4ff' : 'var(--text-main)'));
+        
+        tr.innerHTML = `
+            <td><span class="rank-badge ${rankClass}">${i + 1}</span></td>
+            <td>
+                <div style="font-weight:600; color:${i < 3 ? 'var(--primary)' : '#fff'}">${s.name}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted)">${s.totalSubjectCount} môn</div>
+            </td>
+            <td><span class="class-badge ${typeClass}">${rankType}</span></td>
+            <td style="text-align:right; font-family:'JetBrains Mono'; font-size:1.2rem; font-weight:700; color:${scoreColor}">${fmt(s.avg)}</td>
+        `;
         tr.onclick = () => openGradeModal(s.name, `${BASE_API}&hoc_ky_id=${currentTerm}&hoc_sinh_id=${s.id}`);
         tbody.appendChild(tr);
     });
@@ -628,7 +636,7 @@ function renderTopSubjects() {
         const item = document.createElement('div');
         item.className = 'list-item';
         item.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s both`;
-        const scoreColor = maxScore >= 9 ? 'var(--success)' : (maxScore >= 8 ? 'var(--primary)' : 'var(--text-main)');
+        const scoreColor = maxScore >= 9 ? 'var(--gold)' : (maxScore >= 8 ? 'var(--success)' : 'var(--primary)');
         item.innerHTML = `<div><div style="font-weight:700; color:#fff; font-size:1.05rem;">${subj}</div></div><div style="text-align:right"><div style="color:${scoreColor}; font-weight:700; font-size:1.3rem; font-family:'JetBrains Mono'">${topStudent ? fmt(maxScore) : '-'}</div><div style="font-size:0.95rem; color:var(--text-muted); font-weight:500">${topStudent ? topStudent.name : '--'}</div></div>`;
         container.appendChild(item);
     });
@@ -637,14 +645,13 @@ function renderTopSubjects() {
 function renderClassification() {
     const container = document.getElementById('classList');
     container.innerHTML = '';
-    const categories = { 'Giỏi': [], 'Khá': [], 'Trung Bình': [], 'Yếu': [] };
+    const categories = { 'Xúc Sắc': [], 'Giỏi': [], 'Khá': [], 'Yếu': [] };
+    
     studentsData.forEach(s => {
-        const avg = s.avg; const min = s.minScore;
-        if (avg >= 8.0 && min >= 6.5) categories['Giỏi'].push(s.name);
-        else if (avg >= 6.5 && min >= 5.0) categories['Khá'].push(s.name);
-        else if (avg >= 5.0) categories['Trung Bình'].push(s.name);
-        else categories['Yếu'].push(s.name);
+        const type = getStudentRankType(s);
+        categories[type].push(s.name);
     });
+
     let index = 0;
     Object.keys(categories).forEach(type => {
         const list = categories[type]; 
@@ -653,9 +660,20 @@ function renderClassification() {
         group.style.animation = `fadeInUp 0.5s ease-out ${index * 0.15}s both`;
         index++;
         let color = '#fff'; 
-        if(type === 'Giỏi') color = 'var(--success)'; 
-        if(type === 'Khá') color = 'var(--primary)';
-        group.innerHTML = `<div style="font-weight:700; color:${color}; margin-bottom:12px; border-bottom:2px solid rgba(255,255,255,0.1); padding-bottom:8px; font-size:1.1rem;">${type} (${list.length})</div><div style="display:flex; flex-wrap:wrap; gap:10px">${list.map(name => `<span class="tag">${name}</span>`).join('')}</div>`;
+        if(type === 'Xúc Sắc') color = 'var(--gold)'; 
+        else if(type === 'Giỏi') color = 'var(--success)'; 
+        else if(type === 'Khá') color = 'var(--primary)';
+        
+        // Highlight đặc biệt cho nhóm Xúc Sắc
+        let bgStyle = "rgba(255,255,255,0.02)";
+        if(type === 'Xúc Sắc') {
+            bgStyle = "linear-gradient(45deg, rgba(255, 215, 0, 0.1), transparent)";
+            group.style.border = "1px solid rgba(255, 215, 0, 0.3)";
+            group.style.padding = "15px";
+            group.style.borderRadius = "15px";
+        }
+
+        group.innerHTML = `<div style="font-weight:700; color:${color}; margin-bottom:12px; border-bottom:2px solid rgba(255,255,255,0.1); padding-bottom:8px; font-size:1.2rem; text-transform:uppercase;">${type} (${list.length})</div><div style="display:flex; flex-wrap:wrap; gap:10px">${list.map(name => `<span class="tag">${name}</span>`).join('')}</div>`;
         container.appendChild(group);
     });
 }
