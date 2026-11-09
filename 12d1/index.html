@@ -52,6 +52,78 @@ body {
     to { transform: translateY(-60px); }
 }
 
+/* ============ ĐOM ĐÓM BAY ============ */
+.fireflies {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #fff2c4;
+    box-shadow:
+        0 0 6px #fff2c4,
+        0 0 12px #f5dfaa,
+        0 0 20px #f5dfaa88;
+    opacity: 0;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    50% {
+        transform: translateY(50vh) translateX(30px) scale(1);
+        opacity: 1;
+    }
+    90% { opacity: 1; }
+    100% {
+        transform: translateY(-10vh) translateX(-20px) scale(0.6);
+        opacity: 0;
+    }
+}
+
+/* ============ CÁNH HOA RƠI ============ */
+.petals {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.petal {
+    position: absolute;
+    top: -30px;
+    color: #f5dfaa;
+    font-size: 18px;
+    opacity: 0;
+    animation: fall linear infinite;
+    text-shadow: 0 0 8px #f5dfaa66;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-30px) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 0.9; }
+    90% { opacity: 0.9; }
+    100% {
+        transform: translateY(105vh) translateX(80px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
 /* ============ MÀN HÌNH INTRO ============ */
 .intro {
     position: fixed;
@@ -64,14 +136,78 @@ body {
     text-align: center;
     padding: 30px 20px;
     background:
-        radial-gradient(ellipse at 50% 40%, #345b80 0%, transparent 55%),
-        linear-gradient(135deg, #091629, #183653, #101d36);
-    transition: opacity 1s ease, visibility 1s ease;
+        radial-gradient(ellipse 90% 70% at 50% 50%, #1c3a5e 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 30% 30%, #2a4a6e 0%, transparent 55%),
+        linear-gradient(160deg, #08152a 0%, #122845 45%, #0a1828 100%);
+    transition: opacity 1s ease, visibility 1s ease, transform 1s ease, filter 1s ease;
+    overflow: hidden;
+}
+
+/* VÒNG SÁNG SAU TIÊU ĐỀ */
+.intro-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(300px, 60vw, 600px);
+    height: clamp(300px, 60vw, 600px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 223, 170, 0.25) 0%, rgba(120, 180, 255, 0.1) 40%, transparent 70%);
+    filter: blur(30px);
+    animation: glowPulse 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes glowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+}
+
+/* BOKEH - chấm sáng blur lớn ở 2 góc để lấp khoảng trống */
+.intro-bokeh {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(25px);
+    animation: bokehFloat 12s ease-in-out infinite;
+}
+
+.intro-bokeh.b1 {
+    top: 15%;
+    left: 8%;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(120, 180, 255, 0.55), transparent 70%);
+    animation-delay: 0s;
+}
+
+.intro-bokeh.b2 {
+    bottom: 18%;
+    right: 10%;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, rgba(245, 223, 170, 0.4), transparent 70%);
+    animation-delay: -4s;
+}
+
+@keyframes bokehFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    50% { transform: translate(20px, -15px) scale(1.15); opacity: 1; }
 }
 
 .intro.hidden {
     opacity: 0;
     visibility: hidden;
+    transform: scale(1.08);
+    filter: blur(8px);
+}
+
+/* Đảm bảo nội dung nằm trên các lớp nền */
+.intro-label, .intro h1, .intro-subtitle, .intro-decor, .enter-btn, .intro-hint {
+    position: relative;
+    z-index: 2;
 }
 
 .intro-label {
@@ -81,7 +217,21 @@ body {
     color: #c9dff6;
     margin-bottom: 22px;
     text-transform: uppercase;
-    animation: fadeIn 1.4s ease;
+    opacity: 0;
+    animation: fadeIn 1.4s ease 0.2s forwards;
+    position: relative;
+}
+
+.intro-label::before,
+.intro-label::after {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background: #c9dff6;
+    vertical-align: middle;
+    margin: 0 14px;
+    opacity: 0.6;
 }
 
 .intro h1 {
@@ -91,7 +241,28 @@ body {
     color: #fff1c9;
     font-weight: 700;
     text-shadow: 0 0 25px #f5dca477;
-    animation: glow 3s ease-in-out infinite alternate, fadeInUp 1.5s ease;
+    animation: glow 3s ease-in-out infinite alternate;
+    position: relative;
+}
+
+/* Từng chữ tiêu đề xuất hiện */
+.intro h1 .char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px) rotateX(-90deg);
+    animation: charReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.intro h1 .char:nth-child(1) { animation-delay: 0.4s; }
+.intro h1 .char:nth-child(2) { animation-delay: 0.55s; }
+.intro h1 .char:nth-child(3) { animation-delay: 0.7s; }
+.intro h1 .char:nth-child(4) { animation-delay: 0.85s; }
+
+@keyframes charReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0);
+    }
 }
 
 .intro-subtitle {
@@ -100,15 +271,51 @@ body {
     color: #d8e8f7;
     margin-top: 16px;
     margin-bottom: 32px;
-    animation: fadeInUp 1.5s ease 0.3s both;
+    min-height: 1.4em;
+    opacity: 0;
+    animation: fadeIn 0.5s ease 1.2s forwards;
 }
 
-.intro-decor {
-    color: #f5dfaa;
-    letter-spacing: 14px;
+.intro-subtitle .typed {
+    border-right: 2px solid #f5dfaa;
+    padding-right: 4px;
+    animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+    50% { border-color: transparent; }
+}
+
+.intro-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
     margin-bottom: 42px;
-    font-size: 20px;
-    animation: fadeInUp 1.5s ease 0.5s both;
+    opacity: 0;
+    animation: fadeIn 1.5s ease 2.6s forwards;
+}
+
+.intro-divider .line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #f5dfaa);
+}
+
+.intro-divider .line.right {
+    background: linear-gradient(to left, transparent, #f5dfaa);
+}
+
+.intro-divider .heart {
+    color: #f5dfaa;
+    font-size: 15px;
+    text-shadow: 0 0 10px #f5dfaa88;
+    animation: heartbeat 1.8s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.3); opacity: 1; }
 }
 
 .enter-btn {
@@ -123,13 +330,48 @@ body {
     letter-spacing: 3px;
     cursor: pointer;
     transition: all .3s ease;
-    animation: fadeInUp 1.5s ease 0.7s both, pulse 2.5s ease-in-out infinite 2s;
+    opacity: 0;
+    animation: fadeInUp 1s ease 2.9s forwards, btnGlow 2.2s ease-in-out infinite 4s;
     box-shadow: 0 0 20px #f5dfaa44;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hiệu ứng sáng quét qua nút */
+.enter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #ffffff99, transparent);
+    animation: shimmerBtn 3s ease-in-out infinite 4.5s;
+}
+
+@keyframes shimmerBtn {
+    0% { left: -100%; }
+    40%, 100% { left: 100%; }
+}
+
+@keyframes btnGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px #f5dfaa44, 0 0 0 0 #f5dfaa33;
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 35px #f5dfaa99, 0 0 0 12px #f5dfaa00;
+        transform: scale(1.04);
+    }
 }
 
 .enter-btn:hover {
-    transform: scale(1.06);
-    box-shadow: 0 0 35px #f5dfaa99;
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 8px 40px #f5dfaacc, 0 0 0 4px #f5dfaa33;
+}
+
+.enter-btn:active {
+    transform: scale(1.02);
 }
 
 .intro-hint {
@@ -139,7 +381,13 @@ body {
     font-size: 14px;
     color: #8aa6c4;
     letter-spacing: 1px;
-    animation: fadeIn 1.5s ease 1.2s both;
+    opacity: 0;
+    animation: fadeIn 1.5s ease 3.4s forwards, hintPulse 2.5s ease-in-out infinite 5s;
+}
+
+@keyframes hintPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 /* ============ NỘI DUNG CHÍNH ============ */
@@ -156,6 +404,16 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(12px);
+    transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease;
+}
+
+.container.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
 }
 
 .top-label {
@@ -185,11 +443,29 @@ h1 {
     margin-bottom: 25px;
 }
 
-.decor {
-    color: #f5dfaa;
-    letter-spacing: 12px;
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
     margin-bottom: 25px;
-    font-size: 19px;
+}
+
+.divider .line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #f5dfaa);
+}
+
+.divider .line.right {
+    background: linear-gradient(to left, transparent, #f5dfaa);
+}
+
+.divider .heart {
+    color: #f5dfaa;
+    font-size: 15px;
+    text-shadow: 0 0 10px #f5dfaa88;
+    animation: heartbeat 1.8s ease-in-out infinite;
 }
 
 /* ============ KHUNG VIDEO + LOADING ============ */
@@ -206,6 +482,15 @@ h1 {
     backdrop-filter: blur(10px);
     overflow: hidden;
     aspect-ratio: 16 / 9;
+    transform: scale(0.9);
+    transition: transform 1s ease 0.5s, box-shadow 1s ease 0.5s;
+}
+
+.container.revealed .video-frame {
+    transform: scale(1);
+    box-shadow:
+        0 0 35px #8ebde066,
+        0 0 90px #f0dba633;
 }
 
 /* KHUNG LOADING ĐẸP - thay thế khung đen */
@@ -414,13 +699,22 @@ video.loaded {
 <body>
 
 <div class="stars"></div>
+<div class="fireflies" id="fireflies"></div>
+<div class="petals" id="petals"></div>
 
 <!-- ============ MÀN HÌNH INTRO ============ -->
 <div class="intro" id="intro">
+    <div class="intro-glow"></div>
+    <div class="intro-bokeh b1"></div>
+    <div class="intro-bokeh b2"></div>
     <div class="intro-label">A Journey To Remember</div>
-    <h1>12D1</h1>
-    <p class="intro-subtitle">Thanh Xuân – Gửi Những Điều Đẹp Nhất</p>
-    <div class="intro-decor">✦ ───── ♡ ───── ✦</div>
+    <h1><span class="char">1</span><span class="char">2</span><span class="char">D</span><span class="char">1</span></h1>
+    <p class="intro-subtitle"><span class="typed" id="typed"></span></p>
+    <div class="intro-divider">
+        <span class="line left"></span>
+        <span class="heart">♡</span>
+        <span class="line right"></span>
+    </div>
     <button class="enter-btn" id="enterBtn">♡ VÀO KỶ NIỆM ♡</button>
     <div class="intro-hint">Chạm nhẹ – để thanh xuân vang lên ♡</div>
 </div>
@@ -434,7 +728,11 @@ video.loaded {
 
     <p class="subtitle">Thanh Xuân – Gửi Những Điều Đẹp Nhất...</p>
 
-    <div class="decor">✦ ───── ♡ ───── ✦</div>
+    <div class="divider">
+        <span class="line left"></span>
+        <span class="heart">♡</span>
+        <span class="line right"></span>
+    </div>
 
     <div class="video-frame">
 
@@ -475,6 +773,47 @@ const soundBtn = document.getElementById("soundBtn");
 
 let videoReady = false;
 
+// ============ TẠO ĐOM ĐÓM BAY ============
+const firefliesContainer = document.getElementById("fireflies");
+const NUM_FIREFLIES = 10;
+for (let i = 0; i < NUM_FIREFLIES; i++) {
+    const f = document.createElement("div");
+    f.className = "firefly";
+    f.style.left = Math.random() * 100 + "%";
+    f.style.animationDuration = (8 + Math.random() * 7) + "s";
+    f.style.animationDelay = (Math.random() * 10) + "s";
+    f.style.width = f.style.height = (3 + Math.random() * 3) + "px";
+    firefliesContainer.appendChild(f);
+}
+
+// ============ TẠO CÁNH HOA RƠI ============
+const petalsContainer = document.getElementById("petals");
+const petalChars = ["♡", "✦", "❀", "✿"];
+const NUM_PETALS = 6;
+for (let i = 0; i < NUM_PETALS; i++) {
+    const p = document.createElement("div");
+    p.className = "petal";
+    p.textContent = petalChars[Math.floor(Math.random() * petalChars.length)];
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDuration = (7 + Math.random() * 6) + "s";
+    p.style.animationDelay = (Math.random() * 8) + "s";
+    p.style.fontSize = (14 + Math.random() * 10) + "px";
+    p.style.opacity = 0.5 + Math.random() * 0.4;
+    petalsContainer.appendChild(p);
+}
+
+// ============ HIỆU ỨNG TYPEWRITER CHO SUBTITLE ============
+const typedEl = document.getElementById("typed");
+const typedText = "Thanh Xuân – Gửi Những Điều Đẹp Nhất";
+let typedIndex = 0;
+setTimeout(() => {
+    const typeInterval = setInterval(() => {
+        typedIndex++;
+        typedEl.textContent = typedText.slice(0, typedIndex);
+        if (typedIndex >= typedText.length) clearInterval(typeInterval);
+    }, 70);
+}, 1400);
+
 // ẨN LOADER KHI VIDEO SẴN SÀNG
 function showVideo() {
     if (videoReady) return;
@@ -499,9 +838,14 @@ video.addEventListener("error", () => {
 // Cú chạm này là "user gesture" → trình duyệt CHO PHÉP phát video CÓ TIẾNG
 enterBtn.addEventListener("click", async () => {
 
-    // Ẩn màn hình intro
+    // Intro zoom + fade + blur ra
     intro.classList.add("hidden");
     setTimeout(() => { intro.style.display = "none"; }, 1000);
+
+    // Container + video fade/scale/blur in mượt
+    setTimeout(() => {
+        document.querySelector(".container").classList.add("revealed");
+    }, 250);
 
     // Phát video CÓ ÂM THANH (được phép vì user vừa chạm)
     try {
