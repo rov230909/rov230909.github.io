@@ -1,11 +1,11 @@
 
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>12D1 - Thanh Xuân</title>
+
+<title>12D1 | Thanh Xuân - Gửi Những Điều Đẹp Nhất</title>
 
 <style>
 * {
@@ -16,56 +16,181 @@
 
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #101b35, #243c5a, #101b35);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    font-family: 'Segoe UI', sans-serif;
     color: white;
+    background:
+        radial-gradient(ellipse at 50% 35%, #345b80 0%, transparent 55%),
+        linear-gradient(135deg, #091629, #183653, #101d36);
 }
 
+/* ÁNH SAO */
+.stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(2px 2px at 10% 20%, white, transparent),
+        radial-gradient(2px 2px at 80% 30%, white, transparent),
+        radial-gradient(3px 3px at 30% 75%, white, transparent),
+        radial-gradient(2px 2px at 70% 85%, white, transparent),
+        radial-gradient(2px 2px at 50% 10%, white, transparent);
+    background-size: 250px 250px;
+    opacity: .5;
+    animation: sparkle 8s linear infinite;
+}
+
+@keyframes sparkle {
+    from { transform: translateY(0); }
+    to { transform: translateY(-60px); }
+}
+
+/* CONTAINER */
 .container {
+    position: relative;
+    z-index: 1;
     width: 100%;
-    max-width: 950px;
+    max-width: 1000px;
+    min-height: 100vh;
+    margin: auto;
+    padding: 45px 20px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
 }
 
+/* TIÊU ĐỀ */
+.top-label {
+    font-size: 12px;
+    letter-spacing: 7px;
+    color: #c9dff6;
+    margin-bottom: 18px;
+}
+
 h1 {
-    font-size: 30px;
-    letter-spacing: 3px;
-    margin-bottom: 10px;
+    font-family: Georgia, serif;
+    font-size: clamp(55px, 10vw, 90px);
+    letter-spacing: 10px;
+    color: #fff1c9;
+    text-shadow: 0 0 25px #f5dca477;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 12px #fff2c466; }
+    to { text-shadow: 0 0 35px #fff2c4bb; }
 }
 
 .subtitle {
-    color: #d6e1f2;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(15px, 3vw, 21px);
+    color: #d8e8f7;
+    margin-top: 12px;
     margin-bottom: 25px;
 }
 
-.video-box {
-    background: #000;
+.decor {
+    color: #f5dfaa;
+    letter-spacing: 12px;
+    margin-bottom: 25px;
+    font-size: 19px;
+}
+
+/* VIDEO */
+.video-frame {
+    width: 100%;
     padding: 8px;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px #0008;
+    border: 1px solid #e6d6a7aa;
+    border-radius: 20px;
+    background: #ffffff12;
+    box-shadow:
+        0 0 25px #8ebde044,
+        0 0 65px #f0dba622;
+    backdrop-filter: blur(10px);
+    animation: appear 1.5s ease;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 video {
     width: 100%;
     display: block;
-    border-radius: 10px;
+    border-radius: 13px;
+    background: #000;
 }
 
-.footer {
+/* NÚT ÂM THANH */
+.sound-btn {
     margin-top: 22px;
+    padding: 13px 28px;
+    border: 1px solid #f1dfb2;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #f3dfb5, #d5b77c);
+    color: #26354a;
     font-size: 14px;
-    color: #c5d1e4;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.sound-btn:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 25px #f5dfaa88;
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 35px;
+    color: #c7d9eb;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 2;
+}
+
+.footer span {
+    color: #f1d9a2;
+}
+
+/* MOBILE */
+@media(max-width: 600px) {
+    .container {
+        padding: 40px 13px 25px;
+    }
+
+    .video-frame {
+        padding: 5px;
+        border-radius: 14px;
+    }
+
+    .decor {
+        margin-bottom: 18px;
+    }
 }
 </style>
 </head>
 
 <body>
 
+<div class="stars"></div>
+
 <div class="container">
+
+    <div class="top-label">
+        A JOURNEY TO REMEMBER
+    </div>
 
     <h1>12D1</h1>
 
@@ -73,18 +198,94 @@ video {
         Thanh Xuân – Gửi Những Điều Đẹp Nhất...
     </p>
 
-    <div class="video-box">
-        <video controls playsinline preload="metadata">
-            <source src="12D1.mp4" type="video/mp4">
-            Trình duyệt không hỗ trợ video.
-        </video>
+    <div class="decor">
+        ✦ ───── ♡ ───── ✦
     </div>
 
-    <p class="footer">
-        Một thời thanh xuân – Một đời nhớ mãi ❤️
-    </p>
+    <div class="video-frame">
+
+        <video
+            id="myVideo"
+            autoplay
+            playsinline
+            controls
+            preload="auto">
+
+            <source src="12D1.mp4" type="video/mp4">
+
+            Trình duyệt không hỗ trợ video.
+
+        </video>
+
+    </div>
+
+    <button class="sound-btn" id="soundBtn">
+        ♫ BẬT ÂM THANH
+    </button>
+
+    <div class="footer">
+        Có những khoảnh khắc sẽ không bao giờ quay lại...<br>
+        Nhưng ký ức về chúng sẽ mãi ở đây.<br>
+        <span>♡ 12D1 – Một thời để nhớ ♡</span>
+    </div>
 
 </div>
+
+<script>
+
+const video = document.getElementById("myVideo");
+const soundBtn = document.getElementById("soundBtn");
+
+// THỬ TỰ ĐỘNG PHÁT CÓ TIẾNG
+video.muted = false;
+video.volume = 1;
+
+video.play().then(() => {
+    soundBtn.style.display = "none";
+}).catch(() => {
+
+    // Nếu trình duyệt chặn autoplay có tiếng
+    // thử phát video không tiếng
+    video.muted = true;
+
+    video.play().catch(() => {});
+
+    soundBtn.style.display = "inline-block";
+});
+
+// NÚT BẬT / TẮT ÂM THANH
+soundBtn.addEventListener("click", async () => {
+
+    try {
+        video.muted = false;
+        video.volume = 1;
+
+        if (video.paused) {
+            await video.play();
+        }
+
+        soundBtn.style.display = "none";
+
+    } catch (error) {
+        soundBtn.textContent = "▶ CHẠM ĐỂ PHÁT VIDEO";
+    }
+
+});
+
+// KHI VIDEO KẾT THÚC
+video.addEventListener("ended", () => {
+    soundBtn.style.display = "inline-block";
+    soundBtn.textContent = "↻ XEM LẠI KỶ NIỆM";
+});
+
+soundBtn.addEventListener("click", () => {
+    if (video.ended) {
+        video.currentTime = 0;
+        video.play();
+    }
+});
+
+</script>
 
 </body>
 </html>
